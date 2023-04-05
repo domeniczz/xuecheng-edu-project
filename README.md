@@ -1,2 +1,111 @@
 # xuecheng-edu-project
-online education platform
+
+Online Education Platform
+
+## Tech Stack
+
+<img src="https://github.com/domeniczz/xuecheng-edu-project/blob/master/assets/project-tech-stack.png" style="border-radius:.4rem" width="650rem" alt="Tech Stack"/>
+
+## Develop Environment
+
+<table style="width:50rem">
+    <thead>
+        <tr style="text-align:left">
+            <th style="width:35%">Tool</th>
+            <th style="width:35%">Version</th>
+            <th style="width:30%">Install place</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td>Windows 11</td>
+            <td>22H2</td>
+            <td>PC</td>
+        </tr>
+        <tr>
+            <td>IntelliJ IDEA</td>
+            <td>2021.x 及以上</td>
+            <td>PC</td>
+        </tr>
+        <tr>
+            <td>JDK</td>
+            <td>1.8.x</td>
+            <td>PC</td>
+        </tr>
+        <tr>
+            <td>Maven</td>
+            <td>3.8.x</td>
+            <td>PC</td>
+        </tr>
+        <tr>
+            <td>Git</td>
+            <td>2.40.x</td>
+            <td>PC</td>
+        </tr>
+        <tr>
+            <td>VMWare Workstation</td>
+            <td>17.x</td>
+            <td>PC</td>
+        </tr>
+        <tr>
+            <td>CentOS</td>
+            <td>7.x</td>
+            <td>VM</td>
+        </tr>
+        <tr>
+            <td>Docker</td>
+            <td>18.09.0</td>
+            <td>VM</td>
+        </tr>
+        <tr>
+            <td>MySQL</td>
+            <td>8.x</td>
+            <td>Docker</td>
+        </tr>
+        <tr>
+            <td>Nacos</td>
+            <td>1.4.1</td>
+            <td>Docker</td>
+        </tr>
+        <tr>
+            <td>RabbitMQ</td>
+            <td>3.8.34</td>
+            <td>Docker</td>
+        </tr>
+        <tr>
+            <td>Redis</td>
+            <td>6.2.7</td>
+            <td>Docker</td>
+        </tr>
+        <tr>
+            <td>XXL-JOB-Admin</td>
+            <td>2.3.1</td>
+            <td>Docker</td>
+        </tr>
+        <tr>
+            <td>Minio</td>
+            <td>RELEASE.2022-09-07</td>
+            <td>Docker</td>
+        </tr>
+        <tr>
+            <td>Elasticsearch</td>
+            <td>7.12.1</td>
+            <td>Docker</td>
+        </tr>
+        <tr>
+            <td>Kibana</td>
+            <td>7.12.1</td>
+            <td>Docker</td>
+        </tr>
+        <tr>
+            <td>Gogs</td>
+            <td>0.13.0</td>
+            <td>Docker</td>
+        </tr>
+        <tr>
+            <td>Ngnix</td>
+            <td>1.12.2</td>
+            <td>Docker</td>
+        </tr>
+    </tbody>
+</table>
