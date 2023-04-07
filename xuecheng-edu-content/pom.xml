@@ -16,10 +16,10 @@
     <description>xuecheng-edu-content</description>
     <packaging>pom</packaging>
 
-    <!-- <modules> -->
-    <!--     <module>xuecheng-edu-content-api</module> -->
-    <!--     <module>xuecheng-edu-content-model</module> -->
-    <!--     <module>xuecheng-edu-content-service</module> -->
-    <!-- </modules> -->
+    <modules>
+        <module>xuecheng-edu-content-api</module>
+        <module>xuecheng-edu-content-model</module>
+        <module>xuecheng-edu-content-service</module>
+    </modules>
 
 </project>
