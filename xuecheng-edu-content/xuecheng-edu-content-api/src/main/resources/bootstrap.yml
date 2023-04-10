@@ -6,13 +6,12 @@ server:
 
 #微服务配置
 spring:
+  profiles:
+    active: dev-local # use specific config
   application:
     name: content-api
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
-    url: jdbc:mysql://192.168.101.65:3306/xc_edu_content?serverTimezone=UTC&userUnicode=true&useSSL=false
-    username: root
-    password: mysql
 
 # 日志文件配置路径
 logging:
@@ -24,3 +23,19 @@ swagger:
   base-package: com.xuecheng.content
   enabled: true
   version: 1.0.0
+
+--- # specific config for local PC develop environment
+spring:
+  profiles: dev-local
+  datasource:
+    url: jdbc:mysql://localhost:3305/xc_edu_content?serverTimezone=UTC&userUnicode=true&useSSL=false
+    username: root
+    password: root
+
+--- # specific config for local develop environment (in local virtual machine CentOS)
+spring:
+  profiles: dev-local-vm
+  datasource:
+    url: jdbc:mysql://192.168.101.65:3306/xc_edu_content?serverTimezone=UTC&userUnicode=true&useSSL=false
+    username: root
+    password: mysql
