@@ -1,0 +1,5 @@
+### 查询所有数据字典
+GET {{system_host}}/system/dictionary/all
+
+### 根据码查询对应的映射名称
+GET {{system_host}}/system/dictionary/code/002
