@@ -7,3 +7,6 @@ Content-Type: application/json
   "courseName": "java",
   "publishStatus": ""
 }
+
+### 查询课程分类信息
+GET {{content_host}}/content/course-category/tree-nodes
