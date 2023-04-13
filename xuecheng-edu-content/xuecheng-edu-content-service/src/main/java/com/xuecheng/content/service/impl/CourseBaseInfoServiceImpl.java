@@ -8,7 +8,7 @@ import com.xuecheng.base.model.PageResult;
 import com.xuecheng.content.mapper.CourseBaseMapper;
 import com.xuecheng.content.mapper.CourseCategoryMapper;
 import com.xuecheng.content.mapper.CourseMarketMapper;
-import com.xuecheng.content.model.dto.AddCourseDto;
+import com.xuecheng.content.model.dto.AddOrUpdateCourseDto;
 import com.xuecheng.content.model.dto.CourseBaseInfoDto;
 import com.xuecheng.content.model.dto.QueryCourseParamsDto;
 import com.xuecheng.content.model.po.CourseBase;
@@ -87,29 +87,9 @@ public class CourseBaseInfoServiceImpl implements CourseBaseInfoService {
 
     @Override
     @Transactional
-    public CourseBaseInfoDto createCourseBase(Long companyId, AddCourseDto dto) {
-        // 参数合法性校验
-        if (StringUtils.isBlank(dto.getName())) {
-            XueChengEduException.cast("课程名称为空");
-        }
-        if (StringUtils.isBlank(dto.getMt())) {
-            XueChengEduException.cast("课程大分类为空");
-        }
-        if (StringUtils.isBlank(dto.getSt())) {
-            XueChengEduException.cast("课程小分类为空");
-        }
-        if (StringUtils.isBlank(dto.getGrade())) {
-            XueChengEduException.cast("课程等级为空");
-        }
-        if (StringUtils.isBlank(dto.getTeachmode())) {
-            XueChengEduException.cast("教育模式为空");
-        }
-        if (StringUtils.isBlank(dto.getUsers())) {
-            XueChengEduException.cast("适应人群为空");
-        }
-        if (StringUtils.isBlank(dto.getCharge())) {
-            XueChengEduException.cast("收费规则为空");
-        }
+    public CourseBaseInfoDto createCourseBase(Long companyId, AddOrUpdateCourseDto dto) {
+        // 参数合法性校验通过 JSR Validation 进行
+        // Spring 支持 Hibernate Validator 校验框架
 
         /* ---- 写入课程基本信息 ---- */
         CourseBase courseBase = new CourseBase();
