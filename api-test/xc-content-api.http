@@ -66,3 +66,58 @@ Content-Type: application/json
 #]
 
 GET {{content_host}}/content/course-category/tree-nodes
+
+### 新增课程
+
+## 响应结果示例
+#{
+#  "id": 122,
+#  "companyId": 1232141425,
+#  "companyName": null,
+#  "name": "测试课程103",
+#  "users": "初级人员",
+#  "tags": "",
+#  "mt": "1-1",
+#  "st": "1-1-1",
+#  "grade": "204001",
+#  "teachmode": "200002",
+#  "description": "",
+#  "pic": "",
+#  "createDate": "2023-04-13 15:00:25",
+#  "changeDate": null,
+#  "createPeople": null,
+#  "changePeople": null,
+#  "auditStatus": "202002",
+#  "status": "203001",
+#  "charge": "201000",
+#  "price": 0.0,
+#  "originalPrice": 0.0,
+#  "qq": "22333",
+#  "wechat": "223344",
+#  "phone": "13333333",
+#  "validDays": 365,
+#  "mtName": "前端开发",
+#  "stName": "HTML/CSS"
+#}
+
+POST {{content_host}}/content/course
+Content-Type: application/json
+
+{
+  "charge": "201000",
+  "price": 0,
+  "originalPrice":0,
+  "qq": "22333",
+  "wechat": "223344",
+  "phone": "13333333",
+  "validDays": 365,
+  "mt": "1-1",
+  "st": "1-1-1",
+  "name": "测试课程103",
+  "pic": "",
+  "teachmode": "200002",
+  "users": "初级人员",
+  "tags": "",
+  "grade": "204001",
+  "description": ""
+}

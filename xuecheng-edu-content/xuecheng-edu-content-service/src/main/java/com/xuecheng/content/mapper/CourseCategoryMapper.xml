@@ -23,7 +23,7 @@
         WITH RECURSIVE cte AS (
             -- get root node whose id is a variable
             SELECT * FROM course_category WHERE id = #{id}
-                                                -- merge the recursive result to `cte`
+            -- merge the recursive result to `cte`
             UNION ALL
             -- recursive operation
             SELECT child.* FROM course_category child INNER JOIN cte parent ON child.parentid = parent.id
