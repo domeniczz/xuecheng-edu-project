@@ -9,8 +9,6 @@ import java.io.Serializable;
  * <p>
  * 课程营销信息
  * </p>
- *
- * @author itcast
  */
 @Data
 @TableName("course_market")

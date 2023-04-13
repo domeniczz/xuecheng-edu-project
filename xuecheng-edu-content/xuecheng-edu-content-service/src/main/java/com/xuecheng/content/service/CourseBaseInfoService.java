@@ -18,7 +18,7 @@ public interface CourseBaseInfoService {
 
     /**
      * 课程分页查询
-     * @param pageParams 分页查询参数
+     * @param pageParams           分页查询参数
      * @param queryCourseParamsDto 课程查询条件
      * @return PageResult&lt;CourseBase&gt;
      */
@@ -27,7 +27,7 @@ public interface CourseBaseInfoService {
     /**
      * 添加课程基本信息<br/>
      * 审核状态、发布状态会给默认值
-     * @param companyId 教学机构 ID
+     * @param companyId    教学机构 ID
      * @param addCourseDto 课程信息
      * @return CourseBaseInfoDto
      */

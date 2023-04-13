@@ -12,10 +12,8 @@ import java.time.LocalDateTime;
 
 /**
  * <p>
- * 
+ * 课程计划与媒资文件关联表
  * </p>
- *
- * @author itcast
  */
 @Data
 @TableName("teachplan_media")

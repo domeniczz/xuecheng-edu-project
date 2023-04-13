@@ -12,8 +12,6 @@ import java.time.LocalDateTime;
  * <p>
  * 课程发布
  * </p>
- *
- * @author itcast
  */
 @Data
 @TableName("course_publish_pre")

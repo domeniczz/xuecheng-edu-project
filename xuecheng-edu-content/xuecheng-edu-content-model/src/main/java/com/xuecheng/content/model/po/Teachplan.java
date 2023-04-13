@@ -14,8 +14,6 @@ import java.time.LocalDateTime;
  * <p>
  * 课程计划
  * </p>
- *
- * @author itcast
  */
 @Data
 @TableName("teachplan")

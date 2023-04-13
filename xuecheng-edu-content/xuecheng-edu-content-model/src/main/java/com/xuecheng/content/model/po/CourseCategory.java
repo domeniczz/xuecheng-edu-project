@@ -9,8 +9,6 @@ import java.io.Serializable;
  * <p>
  * 课程分类
  * </p>
- *
- * @author itcast
  */
 @Data
 @TableName("course_category")
