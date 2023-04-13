@@ -1,5 +1,6 @@
 package com.xuecheng.content.service.impl;
 
+import com.xuecheng.base.exception.XueChengEduException;
 import com.xuecheng.content.mapper.CourseMarketMapper;
 import com.xuecheng.content.model.po.CourseMarket;
 import com.xuecheng.content.service.CourseMarketService;
@@ -33,8 +34,7 @@ public class CourseMarketServiceImpl implements CourseMarketService {
         // 若课程为收费，但价格没有填写，则抛出异常
         if (charge.equals("201001")) {
             if (courseMarket.getPrice() == null || courseMarket.getPrice() <= 0) {
-                throw new RuntimeException("课程的价格不能为空并且必须大于0");
-                // XueChengPlusException.cast("课程的价格不能为空并且必须大于0");
+                XueChengEduException.cast("课程的价格不能为空，且必须大于 0");
             }
         }
 

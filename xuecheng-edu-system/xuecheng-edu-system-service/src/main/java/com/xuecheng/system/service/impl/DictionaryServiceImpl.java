@@ -2,6 +2,7 @@ package com.xuecheng.system.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.xuecheng.base.exception.XueChengEduException;
 import com.xuecheng.system.mapper.DictionaryMapper;
 import com.xuecheng.system.model.po.Dictionary;
 import com.xuecheng.system.service.DictionaryService;
@@ -36,6 +37,11 @@ public class DictionaryServiceImpl extends ServiceImpl<DictionaryMapper, Diction
         queryWrapper.eq(Dictionary::getCode, code);
 
         Dictionary dictionary = this.getOne(queryWrapper);
+
+        if (dictionary == null) {
+            log.error("根据code查询数据字典失败, code: {}", code);
+            XueChengEduException.cast(String.format("code: %s 查询字典失败", code));
+        }
 
         return dictionary;
     }
