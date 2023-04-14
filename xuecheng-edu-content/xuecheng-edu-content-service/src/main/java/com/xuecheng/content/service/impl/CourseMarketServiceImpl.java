@@ -5,7 +5,6 @@ import com.xuecheng.content.mapper.CourseMarketMapper;
 import com.xuecheng.content.model.po.CourseMarket;
 import com.xuecheng.content.service.CourseMarketService;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -13,7 +12,7 @@ import org.springframework.stereotype.Service;
 /**
  * @author Domenic
  * @Classname CourseMarketServiceImpl
- * @Description TODO
+ * @Description 课程营销信息服务接口实现类
  * @Date 4/13/2023 2:04 PM
  * @Created by Domenic
  */
@@ -24,14 +23,11 @@ public class CourseMarketServiceImpl implements CourseMarketService {
     @Autowired
     CourseMarketMapper courseMarketMapper;
 
-    public int saveCourseMarket(CourseMarket courseMarket) {
-        // 参数合法性校验
-        String charge = courseMarket.getCharge();
-        if (StringUtils.isEmpty(charge)) {
-            throw new RuntimeException("收费规则为空");
-        }
+    public int saveOrUpdateCourseMarket(CourseMarket courseMarket) {
+        // 参数合法性校验在 controller 层已经做过
 
         // 若课程为收费，但价格没有填写，则抛出异常
+        String charge = courseMarket.getCharge();
         if (charge.equals("201001")) {
             if (courseMarket.getPrice() == null || courseMarket.getPrice() <= 0) {
                 XueChengEduException.cast("课程的价格不能为空，且必须大于 0");
@@ -42,10 +38,12 @@ public class CourseMarketServiceImpl implements CourseMarketService {
         CourseMarket market = courseMarketMapper.selectById(courseMarket.getId());
 
         if (market != null) {
+            // 更新
             BeanUtils.copyProperties(courseMarket, market);
             market.setId(courseMarket.getId());
             return courseMarketMapper.updateById(courseMarket);
         } else {
+            // 新增
             return courseMarketMapper.insert(courseMarket);
         }
 

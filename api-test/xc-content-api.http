@@ -159,3 +159,60 @@ Content-Type: application/json
   "grade": "204001",
   "description": ""
 }
+
+
+### 修改课程
+
+## 响应结果示例
+#{
+#  "id": 122,
+#  "companyId": 1232141425,
+#  "companyName": null,
+#  "name": "Java Web 进阶",
+#  "users": "高级人员",
+#  "tags": "",
+#  "mt": "1-3",
+#  "st": "1-3-2",
+#  "grade": "204001",
+#  "teachmode": "200002",
+#  "description": "Java Web 的进阶知识点，深入源码，掌握技巧",
+#  "pic": "",
+#  "createDate": "2023-04-13 15:00:25",
+#  "changeDate": "2023-04-14 16:34:52",
+#  "createPeople": null,
+#  "changePeople": null,
+#  "auditStatus": "202002",
+#  "status": "203001",
+#  "charge": "201001",
+#  "price": 100.0,
+#  "originalPrice": 0.0,
+#  "qq": "22333",
+#  "wechat": "223344",
+#  "phone": "13387492750",
+#  "validDays": 365,
+#  "mtName": "编程开发",
+#  "stName": "Java"
+#}
+
+PUT {{content_host}}/content/course
+Content-Type: application/json
+
+{
+  "id": 122,
+  "charge": "201001",
+  "price": 100,
+  "originalPrice":0,
+  "qq": "22333",
+  "wechat": "223344",
+  "phone": "13387492750",
+  "validDays": 365,
+  "mt": "1-3",
+  "st": "1-3-2",
+  "name": "Java Web 进阶",
+  "pic": "",
+  "teachmode": "200002",
+  "users": "高级人员",
+  "tags": "",
+  "grade": "204001",
+  "description": "Java Web 的进阶知识点，深入源码，掌握技巧"
+}

@@ -5,12 +5,13 @@ import com.xuecheng.base.model.PageResult;
 import com.xuecheng.content.model.dto.AddCourseDto;
 import com.xuecheng.content.model.dto.CourseBaseInfoDto;
 import com.xuecheng.content.model.dto.QueryCourseParamsDto;
+import com.xuecheng.content.model.dto.UpdateCourseDto;
 import com.xuecheng.content.model.po.CourseBase;
 
 /**
  * @author Domenic
  * @Classname CourseBaseService
- * @Description TODO
+ * @Description 课程信息服务接口
  * @Date 4/9/2023 8:17 PM
  * @Created by Domenic
  */
@@ -39,5 +40,13 @@ public interface CourseBaseInfoService {
      * @return CourseBaseInfoDto
      */
     CourseBaseInfoDto createCourseBase(Long companyId, AddCourseDto addCourseDto);
+
+    /**
+     * 更新课程基本信息
+     * @param companyId       教学机构 ID
+     * @param updateCourseDto 课程信息
+     * @return CourseBaseInfoDto
+     */
+    CourseBaseInfoDto updateCourseBase(Long companyId, UpdateCourseDto updateCourseDto);
 
 }

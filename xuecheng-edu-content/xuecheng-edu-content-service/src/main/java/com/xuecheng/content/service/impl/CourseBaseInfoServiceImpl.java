@@ -11,6 +11,7 @@ import com.xuecheng.content.mapper.CourseMarketMapper;
 import com.xuecheng.content.model.dto.AddCourseDto;
 import com.xuecheng.content.model.dto.CourseBaseInfoDto;
 import com.xuecheng.content.model.dto.QueryCourseParamsDto;
+import com.xuecheng.content.model.dto.UpdateCourseDto;
 import com.xuecheng.content.model.po.CourseBase;
 import com.xuecheng.content.model.po.CourseMarket;
 import com.xuecheng.content.service.CourseBaseInfoService;
@@ -28,7 +29,7 @@ import java.util.List;
 /**
  * @author Domenic
  * @Classname CourseBaseServiceImpl
- * @Description TODO
+ * @Description 课程信息服务实现类
  * @Date 4/9/2023 8:18 PM
  * @Created by Domenic
  */
@@ -135,7 +136,8 @@ public class CourseBaseInfoServiceImpl implements CourseBaseInfoService {
 
         int baseRes = courseBaseMapper.insert(courseBase);
         if (baseRes <= 0) {
-            throw new RuntimeException("创建课程失败");
+            log.error(String.format("创建课程 (name: %s) 失败", courseBase.getName()));
+            XueChengEduException.cast("创建课程失败");
         }
 
         /* ---- 写入课程营销信息 ---- */
@@ -143,11 +145,57 @@ public class CourseBaseInfoServiceImpl implements CourseBaseInfoService {
         BeanUtils.copyProperties(dto, courseMarket);
 
         Long courseId = courseBase.getId();
-        // 设置课程id（主键）
+        // 设置课程 id（主键）
         courseMarket.setId(courseId);
-        int marketRes = courseMarketService.saveCourseMarket(courseMarket);
+        int marketRes = courseMarketService.saveOrUpdateCourseMarket(courseMarket);
         if (marketRes <= 0) {
-            throw new RuntimeException("保存课程营销信息失败");
+            log.error(String.format("保存课程 (name: %s) 营销信息失败", courseBase.getName()));
+            XueChengEduException.cast("保存课程营销信息失败");
+        }
+
+        return getCourseBaseAndMarketInfoById(courseId);
+    }
+
+    @Override
+    @Transactional
+    public CourseBaseInfoDto updateCourseBase(Long companyId, UpdateCourseDto dto) {
+        // 参数合法性校验通过 JSR Validation 进行
+        // Spring 支持 Hibernate Validator 校验框架
+
+        long courseId = dto.getId();
+
+        // 检查课程是否存在
+        CourseBase courseBase = courseBaseMapper.selectById(courseId);
+        if (courseBase == null) {
+            XueChengEduException.cast("课程不存在，请先创建课程");
+        }
+
+        // 操作权限合法性校验
+        if (!companyId.equals(courseBase.getCompanyId())) {
+            XueChengEduException.cast("只能修改本机构的课程");
+        }
+
+        /* ---- 写入课程基本信息 ---- */
+        BeanUtils.copyProperties(dto, courseBase);
+
+        courseBase.setChangeDate(LocalDateTime.now());
+
+        int baseRes = courseBaseMapper.updateById(courseBase);
+        if (baseRes <= 0) {
+            log.error(String.format("修改课程 (name: %s) 失败", courseBase.getName()));
+            XueChengEduException.cast("修改课程失败");
+        }
+
+        /* ---- 写入课程营销信息 ---- */
+        CourseMarket courseMarket = new CourseMarket();
+        BeanUtils.copyProperties(dto, courseMarket);
+
+        // 设置课程 id（主键）
+        courseMarket.setId(courseId);
+        int marketRes = courseMarketService.saveOrUpdateCourseMarket(courseMarket);
+        if (marketRes <= 0) {
+            log.error(String.format("更新课程 (name: %s) 营销信息失败", courseBase.getName()));
+            XueChengEduException.cast("更新课程营销信息失败");
         }
 
         return getCourseBaseAndMarketInfoById(courseId);

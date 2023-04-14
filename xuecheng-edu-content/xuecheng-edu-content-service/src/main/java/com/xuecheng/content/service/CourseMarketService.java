@@ -5,7 +5,7 @@ import com.xuecheng.content.model.po.CourseMarket;
 /**
  * @author Domenic
  * @Classname CourseMarketService
- * @Description TODO
+ * @Description 课程营销信息服务接口
  * @Date 4/13/2023 2:03 PM
  * @Created by Domenic
  */
@@ -16,6 +16,6 @@ public interface CourseMarketService {
      * @param courseMarket 课程营销信息
      * @return 1：更新成功 0：更新失败
      */
-    int saveCourseMarket(CourseMarket courseMarket);
+    int saveOrUpdateCourseMarket(CourseMarket courseMarket);
 
 }
