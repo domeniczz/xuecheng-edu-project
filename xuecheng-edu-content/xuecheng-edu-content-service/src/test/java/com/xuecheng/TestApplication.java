@@ -6,8 +6,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 /**
  * @author Domenic
  * @Classname ContentApplication
- * @Description 内容管理服务的启动类
- * @Date 4/7/2023 5:15 PM
+ * @Description 内容管理服务测试的启动类
  * @Created by Domenic
  */
 @SpringBootApplication

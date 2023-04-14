@@ -6,7 +6,6 @@ import com.xuecheng.content.model.po.CourseMarket;
  * @author Domenic
  * @Classname CourseMarketService
  * @Description 课程营销信息服务接口
- * @Date 4/13/2023 2:03 PM
  * @Created by Domenic
  */
 public interface CourseMarketService {

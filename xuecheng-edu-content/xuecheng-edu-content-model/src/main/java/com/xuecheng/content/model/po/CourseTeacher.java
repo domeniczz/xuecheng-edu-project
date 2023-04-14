@@ -11,9 +11,7 @@ import java.io.Serializable;
 import java.time.LocalDateTime;
 
 /**
- * <p>
  * 课程-教师关系表
- * </p>
  */
 @Data
 @TableName("course_teacher")
@@ -57,6 +55,5 @@ public class CourseTeacher implements Serializable {
      */
     @TableField(fill = FieldFill.INSERT)
     private LocalDateTime createDate;
-
 
 }

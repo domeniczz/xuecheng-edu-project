@@ -11,9 +11,7 @@ import java.io.Serializable;
 import java.time.LocalDateTime;
 
 /**
- * <p>
  * 课程计划
- * </p>
  */
 @Data
 @TableName("teachplan")
@@ -100,6 +98,5 @@ public class Teachplan implements Serializable {
      */
     @TableField(fill = FieldFill.INSERT_UPDATE)
     private LocalDateTime changeDate;
-
 
 }

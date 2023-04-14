@@ -10,7 +10,6 @@ import org.springframework.web.filter.CorsFilter;
  * @author Domenic
  * @Classname GlobalCrosConfig
  * @Description 配置 CROS 跨域过滤器
- * @Date 4/11/2023 2:18 PM
  * @Created by Domenic
  */
 @Configuration

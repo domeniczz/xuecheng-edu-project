@@ -7,8 +7,7 @@ import java.util.List;
 /**
  * @author Domenic
  * @Classname CourseCategoryService
- * @Description TODO
- * @Date 4/11/2023 8:36 PM
+ * @Description 课程分类服务接口
  * @Created by Domenic
  */
 public interface CourseCategoryService {

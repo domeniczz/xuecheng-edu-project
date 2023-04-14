@@ -14,10 +14,10 @@ import org.springframework.web.bind.annotation.RestController;
 import java.util.List;
 
 /**
- * <p>
- * 数据字典 前端控制器
- * </p>
- * @author itcast
+ * @author Domenic
+ * @Classname DictionaryController
+ * @Description 数据字典 前端控制器
+ * @Created by Domenic
  */
 @Slf4j
 @RestController

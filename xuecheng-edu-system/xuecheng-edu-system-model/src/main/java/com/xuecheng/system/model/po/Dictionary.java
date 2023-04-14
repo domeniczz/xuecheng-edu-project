@@ -8,9 +8,7 @@ import lombok.Data;
 import java.io.Serializable;
 
 /**
- * <p>
  * 数据字典
- * </p>
  */
 @Data
 @TableName("dictionary")
@@ -51,6 +49,5 @@ public class Dictionary implements Serializable {
      * }]
      */
     private String itemValues;
-
 
 }

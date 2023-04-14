@@ -16,7 +16,6 @@ import java.util.List;
  * @author Domenic
  * @Classname GlobalExceptionHandler
  * @Description 全局异常处理
- * @Date 4/13/2023 4:13 PM
  * @Created by Domenic
  */
 @Slf4j

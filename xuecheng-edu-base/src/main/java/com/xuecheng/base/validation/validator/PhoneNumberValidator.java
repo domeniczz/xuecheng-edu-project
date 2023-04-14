@@ -8,8 +8,7 @@ import javax.validation.ConstraintValidatorContext;
 /**
  * @author Domenic
  * @Classname PhoneNumberValidator
- * @Description TODO
- * @Date 4/13/2023 8:32 PM
+ * @Description 手机号码校验器
  * @Created by Domenic
  */
 public class PhoneNumberValidator implements ConstraintValidator<PhoneNumberConstraint, String> {
@@ -26,8 +25,10 @@ public class PhoneNumberValidator implements ConstraintValidator<PhoneNumberCons
      */
     @Override
     public boolean isValid(String phone, ConstraintValidatorContext cxt) {
-        if (phone == null || phone.isEmpty()) return true;
-        else return phone.matches("^[1][3,4,5,7,8][0-9]{9}$");
+        if (phone == null || phone.isEmpty())
+            return true;
+        else
+            return phone.matches("^[1][3,4,5,7,8][0-9]{9}$");
     }
 
 }

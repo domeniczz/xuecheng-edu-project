@@ -14,8 +14,7 @@ import java.util.List;
 /**
  * @author Domenic
  * @Classname CourseCategoryController
- * @Description 课程分类信息
- * @Date 4/11/2023 4:35 PM
+ * @Description 课程分类信息接口
  * @Created by Domenic
  */
 @RestController

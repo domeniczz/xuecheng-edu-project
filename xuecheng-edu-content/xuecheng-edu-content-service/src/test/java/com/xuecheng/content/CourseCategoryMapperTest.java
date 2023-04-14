@@ -12,8 +12,7 @@ import java.util.List;
 /**
  * @author Domenic
  * @Classname CourseCategoryMapperTest
- * @Description TODO
- * @Date 4/11/2023 8:28 PM
+ * @Description 课程分类服务测试类
  * @Created by Domenic
  */
 @SpringBootTest

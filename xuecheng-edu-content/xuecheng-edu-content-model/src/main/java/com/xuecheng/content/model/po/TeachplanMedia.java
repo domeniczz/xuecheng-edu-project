@@ -11,9 +11,7 @@ import java.io.Serializable;
 import java.time.LocalDateTime;
 
 /**
- * <p>
  * 课程计划与媒资文件关联表
- * </p>
  */
 @Data
 @TableName("teachplan_media")
@@ -60,6 +58,5 @@ public class TeachplanMedia implements Serializable {
      * 修改人
      */
     private String changePeople;
-
 
 }

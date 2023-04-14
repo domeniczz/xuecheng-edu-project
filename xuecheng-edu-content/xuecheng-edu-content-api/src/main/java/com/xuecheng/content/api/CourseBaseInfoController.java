@@ -24,8 +24,7 @@ import org.springframework.web.bind.annotation.RestController;
 /**
  * @author Domenic
  * @Classname CourseBaseInfoController
- * @Description TODO
- * @Date 4/7/2023 5:08 PM
+ * @Description 课程信息编辑接口
  * @Created by Domenic
  */
 @RestController
@@ -38,7 +37,8 @@ public class CourseBaseInfoController {
 
     @PostMapping("/list")
     @ApiOperation("课程列表查询接口")
-    public PageResult<CourseBase> list(PageParams pageParams, @RequestBody(required = false) QueryCourseParamsDto queryCourseParamsDto) {
+    public PageResult<CourseBase> list(PageParams pageParams,
+            @RequestBody(required = false) QueryCourseParamsDto queryCourseParamsDto) {
         return courseBaseInfoService.queryCourseBaseList(pageParams, queryCourseParamsDto);
     }
 
@@ -50,7 +50,8 @@ public class CourseBaseInfoController {
 
     @PostMapping("")
     @ApiOperation("新增课程")
-    public CourseBaseInfoDto createCourseBase(@RequestBody @Validated(ValidationGroups.Insert.class) AddCourseDto addCourseDto) {
+    public CourseBaseInfoDto createCourseBase(
+            @RequestBody @Validated(ValidationGroups.Insert.class) AddCourseDto addCourseDto) {
         // 通过单点登录系统，获取到用户所属机构的 ID
         // 为了方便测试，这里先写死
         // TODO: 4/7/2023 5:09 PM 通过单点登录系统，获取到用户所属机构的 ID
@@ -60,7 +61,8 @@ public class CourseBaseInfoController {
 
     @PutMapping("")
     @ApiOperation("修改课程")
-    public CourseBaseInfoDto updateCourseBaseById(@RequestBody @Validated(ValidationGroups.Update.class) UpdateCourseDto updateCourseDto) {
+    public CourseBaseInfoDto updateCourseBaseById(
+            @RequestBody @Validated(ValidationGroups.Update.class) UpdateCourseDto updateCourseDto) {
         // 通过单点登录系统，获取到用户所属机构的 ID
         // 为了方便测试，这里先写死
         // TODO: 4/7/2023 5:09 PM 通过单点登录系统，获取到用户所属机构的 ID

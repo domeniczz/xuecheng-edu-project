@@ -4,7 +4,6 @@ package com.xuecheng.base.exception;
  * @author Domenic
  * @Classname XueChengEduException
  * @Description 项目自定义异常类
- * @Date 4/13/2023 4:06 PM
  * @Created by Domenic
  */
 public class XueChengEduException extends RuntimeException {

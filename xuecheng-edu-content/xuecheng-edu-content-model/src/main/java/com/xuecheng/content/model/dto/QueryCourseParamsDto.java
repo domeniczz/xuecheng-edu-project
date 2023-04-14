@@ -10,7 +10,6 @@ import lombok.ToString;
  * @author Domenic
  * @Classname QueryCourseParamsDto
  * @Description 请求课程的参数模型类
- * @Date 4/7/2023 4:12 PM
  * @Created by Domenic
  */
 @Data

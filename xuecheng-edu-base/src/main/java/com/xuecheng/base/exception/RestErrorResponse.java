@@ -6,7 +6,6 @@ import java.io.Serializable;
  * @author Domenic
  * @Classname RestErrorResponse
  * @Description REST API 异常响应
- * @Date 4/13/2023 4:03 PM
  * @Created by Domenic
  */
 public class RestErrorResponse implements Serializable {

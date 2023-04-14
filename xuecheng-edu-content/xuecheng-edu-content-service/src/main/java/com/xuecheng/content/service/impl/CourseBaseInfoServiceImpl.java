@@ -30,7 +30,6 @@ import java.util.List;
  * @author Domenic
  * @Classname CourseBaseServiceImpl
  * @Description 课程信息服务实现类
- * @Date 4/9/2023 8:18 PM
  * @Created by Domenic
  */
 @Slf4j
@@ -50,7 +49,8 @@ public class CourseBaseInfoServiceImpl implements CourseBaseInfoService {
     CourseMarketService courseMarketService;
 
     @Override
-    public PageResult<CourseBase> queryCourseBaseList(PageParams pageParams, QueryCourseParamsDto queryCourseParamsDto) {
+    public PageResult<CourseBase> queryCourseBaseList(PageParams pageParams,
+            QueryCourseParamsDto queryCourseParamsDto) {
         // 创建查询接口
         LambdaQueryWrapper<CourseBase> queryWrapper = new LambdaQueryWrapper<>();
 

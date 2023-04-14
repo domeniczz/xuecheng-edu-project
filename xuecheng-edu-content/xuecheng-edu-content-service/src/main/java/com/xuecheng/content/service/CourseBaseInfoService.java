@@ -12,7 +12,6 @@ import com.xuecheng.content.model.po.CourseBase;
  * @author Domenic
  * @Classname CourseBaseService
  * @Description 课程信息服务接口
- * @Date 4/9/2023 8:17 PM
  * @Created by Domenic
  */
 public interface CourseBaseInfoService {

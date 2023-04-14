@@ -3,16 +3,18 @@ package com.xuecheng.base.validation;
 /**
  * @author Domenic
  * @Classname ValidationGroups
- * @Description 用于分级校验
- * @Date 4/13/2023 5:34 PM
+ * @Description 用于分级校验的分组
  * @Created by Domenic
  */
 public class ValidationGroups {
 
-    public interface Insert {}
+    public interface Insert {
+    }
 
-    public interface Update {}
+    public interface Update {
+    }
 
-    public interface Delete {}
+    public interface Delete {
+    }
 
 }

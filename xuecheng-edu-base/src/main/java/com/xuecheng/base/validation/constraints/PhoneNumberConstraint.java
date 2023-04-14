@@ -13,16 +13,17 @@ import java.lang.annotation.Target;
 /**
  * @author Domenic
  * @Classname PhoneNumberConstraint
- * @Description TODO
- * @Date 4/13/2023 8:28 PM
+ * @Description 手机号码校验注解
  * @Created by Domenic
  */
 @Documented
 @Constraint(validatedBy = PhoneNumberValidator.class)
-@Target({ElementType.METHOD, ElementType.FIELD})
+@Target({ ElementType.METHOD, ElementType.FIELD })
 @Retention(RetentionPolicy.RUNTIME)
 public @interface PhoneNumberConstraint {
     String message() default "Invalid phone number";
+
     Class<?>[] groups() default {};
+
     Class<? extends Payload>[] payload() default {};
 }

@@ -8,8 +8,7 @@ import javax.validation.ConstraintValidatorContext;
 /**
  * @author Domenic
  * @Classname QQNumberValidator
- * @Description TODO
- * @Date 4/13/2023 8:56 PM
+ * @Description QQ 号码校验器
  * @Created by Domenic
  */
 public class QQNumberValidator implements ConstraintValidator<QQNumberConstraint, String> {
@@ -26,8 +25,10 @@ public class QQNumberValidator implements ConstraintValidator<QQNumberConstraint
      */
     @Override
     public boolean isValid(String qq, ConstraintValidatorContext cxt) {
-        if (qq == null || qq.isEmpty()) return true;
-        else return qq.matches("^[1-9][0-9]{4,10}$");
+        if (qq == null || qq.isEmpty())
+            return true;
+        else
+            return qq.matches("^[1-9][0-9]{4,10}$");
     }
 
 }

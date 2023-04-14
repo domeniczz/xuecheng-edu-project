@@ -15,8 +15,7 @@ import java.util.stream.Collectors;
 /**
  * @author Domenic
  * @Classname CourseCategoryServiceImpl
- * @Description TODO
- * @Date 4/11/2023 8:40 PM
+ * @Description 课程分类服务实现类
  * @Created by Domenic
  */
 @Service

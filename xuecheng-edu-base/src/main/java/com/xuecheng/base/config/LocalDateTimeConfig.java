@@ -13,7 +13,6 @@ import java.time.format.DateTimeFormatter;
  * @author Domenic
  * @Classname LocalDateTimeConfig
  * @Description Set Date Time Format
- * @Date 4/7/2023 8:07 PM
  * @Created by Domenic
  */
 @Configuration

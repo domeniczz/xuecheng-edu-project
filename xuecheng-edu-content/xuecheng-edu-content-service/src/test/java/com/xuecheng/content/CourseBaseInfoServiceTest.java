@@ -13,8 +13,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 /**
  * @author Domenic
  * @Classname CourseBaseMapperTest
- * @Description TODO
- * @Date 4/7/2023 10:00 PM
+ * @Description 课程信息服务测试类
  * @Created by Domenic
  */
 @SpringBootTest
@@ -37,13 +36,14 @@ public class CourseBaseInfoServiceTest {
         queryCourseParamsDto.setAuditStatus("202004");
         queryCourseParamsDto.setPublishStatus("203001");
 
-        PageResult<CourseBase> courseBasePageResult = courseBaseInfoService.queryCourseBaseList(pageParams, queryCourseParamsDto);
+        PageResult<CourseBase> courseBasePageResult = courseBaseInfoService.queryCourseBaseList(pageParams,
+                queryCourseParamsDto);
         Assertions.assertNotNull(courseBasePageResult);
 
         System.out.println(
                 "\n===================================================\n"
-                + courseBasePageResult
-                + "\n===================================================\n");
+                        + courseBasePageResult
+                        + "\n===================================================\n");
     }
 
 }

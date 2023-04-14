@@ -4,18 +4,15 @@ import com.xuecheng.content.model.po.CourseBase;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
-import java.io.Serializable;
-
 /**
  * @author Domenic
  * @Classname CourseBaseInfoDto
  * @Description 课程信息DTO（课程基本信息 + 课程营销信息）
- * @Date 4/11/2023 10:08 PM
  * @Created by Domenic
  */
 @Data
 @EqualsAndHashCode(callSuper = true)
-public class CourseBaseInfoDto extends CourseBase implements Serializable {
+public class CourseBaseInfoDto extends CourseBase {
 
     private static final long serialVersionUID = 1L;
 
@@ -65,4 +62,3 @@ public class CourseBaseInfoDto extends CourseBase implements Serializable {
     private String stName;
 
 }
-

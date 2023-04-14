@@ -4,7 +4,6 @@ package com.xuecheng.base.exception;
  * @author Domenic
  * @Classname CommonError
  * @Description 通用异常枚举类
- * @Date 4/13/2023 3:54 PM
  * @Created by Domenic
  */
 public enum CommonError {

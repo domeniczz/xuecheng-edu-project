@@ -6,8 +6,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 /**
  * @author Domenic
  * @Classname TestApplication
- * @Description TODO
- * @Date 4/10/2023 7:31 PM
+ * @Description 系统管理启动类
  * @Created by Domenic
  */
 @SpringBootApplication

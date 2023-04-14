@@ -12,7 +12,6 @@ import java.util.List;
  * @author Domenic
  * @Classname PageResult
  * @Description 分页查询的响应数据模型类
- * @Date 4/7/2023 4:16 PM
  * @Created by Domenic
  */
 @Data
