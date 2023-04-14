@@ -8,7 +8,7 @@ import com.xuecheng.base.model.PageResult;
 import com.xuecheng.content.mapper.CourseBaseMapper;
 import com.xuecheng.content.mapper.CourseCategoryMapper;
 import com.xuecheng.content.mapper.CourseMarketMapper;
-import com.xuecheng.content.model.dto.AddOrUpdateCourseDto;
+import com.xuecheng.content.model.dto.AddCourseDto;
 import com.xuecheng.content.model.dto.CourseBaseInfoDto;
 import com.xuecheng.content.model.dto.QueryCourseParamsDto;
 import com.xuecheng.content.model.po.CourseBase;
@@ -85,9 +85,39 @@ public class CourseBaseInfoServiceImpl implements CourseBaseInfoService {
         return new PageResult<>(items, total, pageParams.getPageNo(), pageParams.getPageSize());
     }
 
+    /**
+     * 根据课程 id 查询课程基本信息和课程营销信息
+     * @param courseId 课程 id
+     * @return 课程基本信息和课程营销信息 DTO
+     */
+    public CourseBaseInfoDto getCourseBaseAndMarketInfoById(Long courseId) {
+        // 查询课程基本信息
+        CourseBase courseBase = courseBaseMapper.selectById(courseId);
+        if (courseBase == null) {
+            XueChengEduException.cast("课程不存在");
+        }
+
+        // 查询课程营销信息
+        CourseMarket courseMarket = courseMarketMapper.selectById(courseId);
+        if (courseMarket == null) {
+            XueChengEduException.cast("课程营销信息不存在");
+        }
+
+        // 封装返回数据
+        CourseBaseInfoDto dto = new CourseBaseInfoDto();
+        BeanUtils.copyProperties(courseBase, dto);
+        BeanUtils.copyProperties(courseMarket, dto);
+
+        // 通过 courseCategoryMapper 查询分类信息，将分类名称放在 courseBaseInfoDto 对象
+        dto.setMtName(courseCategoryMapper.selectById(courseBase.getMt()).getName());
+        dto.setStName(courseCategoryMapper.selectById(courseBase.getSt()).getName());
+
+        return dto;
+    }
+
     @Override
     @Transactional
-    public CourseBaseInfoDto createCourseBase(Long companyId, AddOrUpdateCourseDto dto) {
+    public CourseBaseInfoDto createCourseBase(Long companyId, AddCourseDto dto) {
         // 参数合法性校验通过 JSR Validation 进行
         // Spring 支持 Hibernate Validator 校验框架
 
@@ -120,37 +150,7 @@ public class CourseBaseInfoServiceImpl implements CourseBaseInfoService {
             throw new RuntimeException("保存课程营销信息失败");
         }
 
-        return getCourseBaseAndMarketInfo(courseId);
-    }
-
-    /**
-     * 根据课程 id 查询课程基本信息和课程营销信息
-     * @param courseId 课程 id
-     * @return 课程基本信息和课程营销信息 DTO
-     */
-    private CourseBaseInfoDto getCourseBaseAndMarketInfo(long courseId) {
-        // 查询课程基本信息
-        CourseBase courseBase = courseBaseMapper.selectById(courseId);
-        if (courseBase == null) {
-            XueChengEduException.cast("课程不存在");
-        }
-
-        // 查询课程营销信息
-        CourseMarket courseMarket = courseMarketMapper.selectById(courseId);
-        if (courseMarket == null) {
-            XueChengEduException.cast("课程营销信息不存在");
-        }
-
-        // 封装返回数据
-        CourseBaseInfoDto dto = new CourseBaseInfoDto();
-        BeanUtils.copyProperties(courseBase, dto);
-        BeanUtils.copyProperties(courseMarket, dto);
-
-        // 通过 courseCategoryMapper 查询分类信息，将分类名称放在 courseBaseInfoDto 对象
-        dto.setMtName(courseCategoryMapper.selectById(courseBase.getMt()).getName());
-        dto.setStName(courseCategoryMapper.selectById(courseBase.getSt()).getName());
-
-        return dto;
+        return getCourseBaseAndMarketInfoById(courseId);
     }
 
 }

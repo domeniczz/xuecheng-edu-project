@@ -18,6 +18,7 @@
 
 GET {{system_host}}/system/dictionary/all
 
+
 ### 根据码查询对应的映射名称
 
 ## 响应结果示例
