@@ -3,6 +3,7 @@ package com.xuecheng.content.model.dto;
 import com.xuecheng.content.model.po.CourseCategory;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
+import lombok.ToString;
 
 import java.util.List;
 
@@ -13,6 +14,7 @@ import java.util.List;
  * @Created by Domenic
  */
 @Data
+@ToString(callSuper = true)
 @EqualsAndHashCode(callSuper = true)
 public class CourseCategoryTreeDto extends CourseCategory {
 

@@ -22,7 +22,7 @@ import java.util.stream.Collectors;
 public class CourseCategoryServiceImpl implements CourseCategoryService {
 
     @Autowired
-    CourseCategoryMapper courseCategoryMapper;
+    private CourseCategoryMapper courseCategoryMapper;
 
     @Override
     public List<CourseCategoryTreeDto> queryTreeNodes(String rootCourseID) {

@@ -3,6 +3,7 @@ package com.xuecheng.content.model.dto;
 import com.xuecheng.content.model.po.CourseBase;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
+import lombok.ToString;
 
 /**
  * @author Domenic
@@ -11,6 +12,7 @@ import lombok.EqualsAndHashCode;
  * @Created by Domenic
  */
 @Data
+@ToString(callSuper = true)
 @EqualsAndHashCode(callSuper = true)
 public class CourseBaseInfoDto extends CourseBase {
 

@@ -13,7 +13,7 @@ import java.util.List;
 public interface CourseCategoryService {
 
     /**
-     * 获取课程分类的属性结构
+     * 获取课程分类的树形结构
      * @param rootCourseID 根课程的 id 值
      * @return CourseCategoryTreeDto List
      */

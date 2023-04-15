@@ -23,7 +23,7 @@ import java.util.List;
 public class CourseCategoryController {
 
     @Autowired
-    CourseCategoryService courseCategoryService;
+    private CourseCategoryService courseCategoryService;
 
     @GetMapping("/tree-nodes")
     @ApiOperation("查询所有分类信息")

@@ -22,8 +22,7 @@ import javax.validation.constraints.Size;
 public class AddCourseDto {
 
     @ApiModelProperty(value = "课程名称", required = true)
-    @NotEmpty(message = "课程名称不能为空", groups = { ValidationGroups.Insert.class, ValidationGroups.Update.class,
-            ValidationGroups.Delete.class })
+    @NotEmpty(message = "课程名称不能为空", groups = { ValidationGroups.Insert.class, ValidationGroups.Update.class, ValidationGroups.Delete.class })
     private String name;
 
     @ApiModelProperty(value = "适用人群", required = true)
@@ -79,8 +78,7 @@ public class AddCourseDto {
     private String wechat;
 
     @ApiModelProperty(value = "电话")
-    @PhoneNumberConstraint(message = "电话号码不合法", groups = { ValidationGroups.Insert.class,
-            ValidationGroups.Update.class })
+    @PhoneNumberConstraint(message = "电话号码不合法", groups = { ValidationGroups.Insert.class, ValidationGroups.Update.class })
     private String phone;
 
     @ApiModelProperty(value = "有效期")

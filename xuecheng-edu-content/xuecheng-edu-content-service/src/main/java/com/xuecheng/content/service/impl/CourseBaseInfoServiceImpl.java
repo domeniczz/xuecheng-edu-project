@@ -37,16 +37,16 @@ import java.util.List;
 public class CourseBaseInfoServiceImpl implements CourseBaseInfoService {
 
     @Autowired
-    CourseBaseMapper courseBaseMapper;
+    private CourseBaseMapper courseBaseMapper;
 
     @Autowired
-    CourseMarketMapper courseMarketMapper;
+    private CourseMarketMapper courseMarketMapper;
 
     @Autowired
-    CourseCategoryMapper courseCategoryMapper;
+    private CourseCategoryMapper courseCategoryMapper;
 
     @Autowired
-    CourseMarketService courseMarketService;
+    private CourseMarketService courseMarketService;
 
     @Override
     public PageResult<CourseBase> queryCourseBaseList(PageParams pageParams,

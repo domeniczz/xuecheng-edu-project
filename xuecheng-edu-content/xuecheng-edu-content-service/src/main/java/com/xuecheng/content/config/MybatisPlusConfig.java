@@ -29,4 +29,13 @@ public class MybatisPlusConfig {
         return interceptor;
     }
 
+    // @Bean
+    // public ConfigurationCustomizer configurationCustomizer() {
+    //     return configuration -> {
+    //         TypeAliasRegistry typeAliasRegistry = configuration.getTypeAliasRegistry();
+    //         typeAliasRegistry.registerAliases("com.xuecheng.content.model.po");
+    //         typeAliasRegistry.registerAliases("com.xuecheng.content.model.dto");
+    //     };
+    // }
+
 }

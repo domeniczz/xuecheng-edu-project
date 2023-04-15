@@ -20,7 +20,7 @@ import org.springframework.stereotype.Service;
 public class CourseMarketServiceImpl implements CourseMarketService {
 
     @Autowired
-    CourseMarketMapper courseMarketMapper;
+    private CourseMarketMapper courseMarketMapper;
 
     public int saveOrUpdateCourseMarket(CourseMarket courseMarket) {
         // 参数合法性校验在 controller 层已经做过
