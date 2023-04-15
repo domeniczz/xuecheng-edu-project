@@ -1,6 +1,5 @@
-package com.xuecheng.content;
+package com.xuecheng.content.mapper;
 
-import com.xuecheng.content.mapper.CourseCategoryMapper;
 import com.xuecheng.content.model.dto.CourseCategoryTreeDto;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -19,7 +18,7 @@ import java.util.List;
 public class CourseCategoryMapperTest {
 
     @Autowired
-    CourseCategoryMapper courseCategoryMapper;
+    private CourseCategoryMapper courseCategoryMapper;
 
     @Test
     void testCourseCategoryMapper() {

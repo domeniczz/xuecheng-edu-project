@@ -1,6 +1,8 @@
 package com.xuecheng.content.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.xuecheng.base.exception.CommonError;
+import com.xuecheng.base.exception.XueChengEduException;
 import com.xuecheng.base.model.ResponseResult;
 import com.xuecheng.content.mapper.TeachplanMapper;
 import com.xuecheng.content.model.dto.SaveTeachplanDto;
@@ -52,8 +54,12 @@ public class TeachplanServiceImpl implements TeachplanService {
             int res = teachplanMapper.insert(teachplan);
 
             ResponseResult resp = new ResponseResult();
-            resp.setStatusCode(res > 0 ? HttpStatus.OK.value() : HttpStatus.INTERNAL_SERVER_ERROR.value());
-            resp.setMessage(res > 0 ? "新增课程计划成功" : "新增课程计划失败");
+            if (res > 0) {
+                resp.setStatusCode(HttpStatus.OK.value());
+                resp.setMessage("新增课程计划成功");
+            } else {
+                XueChengEduException.cast(CommonError.UNKOWN_ERROR);
+            }
 
             return resp;
         } else {
@@ -66,8 +72,12 @@ public class TeachplanServiceImpl implements TeachplanService {
             int res = teachplanMapper.updateById(teachplan);
 
             ResponseResult resp = new ResponseResult();
-            resp.setStatusCode(res > 0 ? HttpStatus.OK.value() : HttpStatus.INTERNAL_SERVER_ERROR.value());
-            resp.setMessage(res > 0 ? "修改课程计划成功" : "修改课程计划失败");
+            if (res > 0) {
+                resp.setStatusCode(HttpStatus.OK.value());
+                resp.setMessage("修改课程计划成功");
+            } else {
+                XueChengEduException.cast(CommonError.UNKOWN_ERROR);
+            }
 
             return resp;
         }
