@@ -4,27 +4,118 @@
 
     <!-- 通用查询映射结果 -->
     <resultMap id="BaseResultMap" type="com.xuecheng.content.model.po.Teachplan">
-        <id column="id" property="id" />
-        <result column="pname" property="pname" />
-        <result column="parentid" property="parentid" />
-        <result column="grade" property="grade" />
-        <result column="media_type" property="mediaType" />
-        <result column="start_time" property="startTime" />
-        <result column="end_time" property="endTime" />
-        <result column="description" property="description" />
-        <result column="timelength" property="timelength" />
-        <result column="orderby" property="orderby" />
-        <result column="course_id" property="courseId" />
-        <result column="course_pub_id" property="coursePubId" />
-        <result column="status" property="status" />
-        <result column="is_preview" property="isPreview" />
-        <result column="create_date" property="createDate" />
-        <result column="change_date" property="changeDate" />
+        <id column="id" property="id"/>
+        <result column="pname" property="pname"/>
+        <result column="parentid" property="parentid"/>
+        <result column="grade" property="grade"/>
+        <result column="media_type" property="mediaType"/>
+        <result column="start_time" property="startTime"/>
+        <result column="end_time" property="endTime"/>
+        <result column="description" property="description"/>
+        <result column="timelength" property="timelength"/>
+        <result column="orderby" property="orderby"/>
+        <result column="course_id" property="courseId"/>
+        <result column="course_pub_id" property="coursePubId"/>
+        <result column="status" property="status"/>
+        <result column="is_preview" property="isPreview"/>
+        <result column="create_date" property="createDate"/>
+        <result column="change_date" property="changeDate"/>
     </resultMap>
 
     <!-- 通用查询结果列 -->
     <sql id="Base_Column_List">
         id, pname, parentid, grade, media_type, start_time, end_time, description, timelength, orderby, course_id, course_pub_id, status, is_preview, create_date, change_date
     </sql>
+
+
+    <resultMap id="treeNodeResultMap" type="com.xuecheng.content.model.dto.TeachplanDto">
+        <id column="parent_id" property="id"/>
+        <result column="parent_pname" property="pname"/>
+        <result column="parent_parentid" property="parentid"/>
+        <result column="parent_grade" property="grade"/>
+        <result column="parent_mediaType" property="mediaType"/>
+        <result column="parent_startTime" property="startTime"/>
+        <result column="parent_endTime" property="endTime"/>
+        <result column="parent_orderby" property="orderby"/>
+        <result column="parent_courseId" property="courseId"/>
+        <result column="parent_coursePubId" property="coursePubId"/>
+        <!-- 映射子节点，一对多映射，ofType list 中的对象类型 -->
+        <collection property="teachPlanTreeNodes" ofType="com.xuecheng.content.model.dto.TeachplanDto">
+            <id column="child_id" property="id"/>
+            <result column="child_pname" property="pname"/>
+            <result column="child_parentid" property="parentid"/>
+            <result column="child_grade" property="grade"/>
+            <result column="child_mediaType" property="mediaType"/>
+            <result column="child_startTime" property="startTime"/>
+            <result column="child_endTime" property="endTime"/>
+            <result column="child_orderby" property="orderby"/>
+            <result column="child_courseId" property="courseId"/>
+            <result column="child_coursePubId" property="coursePubId"/>
+            <!-- 一对一映射 -->
+            <association property="teachplanMedia" javaType="com.xuecheng.content.model.po.TeachplanMedia">
+                <id column="teachplanMeidaId" property="id"/>
+                <result column="mediaFilename" property="mediaFilename"/>
+                <result column="mediaId" property="mediaId"/>
+            </association>
+        </collection>
+    </resultMap>
+
+    <!--
+        查询课程教学计划的树形结构（包含媒资信息）
+        教学计划在数据库中以树形结构存储，子节点的 parentid 指向父节点的 id
+    -->
+    <select id="selectTreeNodes" parameterType="long" resultMap="treeNodeResultMap">
+        SELECT parent.id            parent_id,
+               parent.pname         parent_pname,
+               parent.parentid      parent_parentid,
+               parent.grade         parent_grade,
+               parent.media_type    parent_mediaType,
+               parent.start_time    parent_startTime,
+               parent.end_time      parent_endTime,
+               parent.orderby       parent_orderby,
+               parent.course_id     parent_courseId,
+               parent.course_pub_id parent_coursePubId,
+               child.id             child_id,
+               child.pname          child_pname,
+               child.parentid       child_parentid,
+               child.grade          child_grade,
+               child.media_type     child_mediaType,
+               child.start_time     child_startTime,
+               child.end_time       child_endTime,
+               child.orderby        child_orderby,
+               child.course_id      child_courseId,
+               child.course_pub_id  child_coursePubId,
+               media.media_fileName mediaFilename,
+               media.id             teachplanMeidaId,
+               media.media_id       mediaId
+        FROM teachplan parent
+                 INNER JOIN teachplan child ON child.parentid = parent.id
+                 LEFT JOIN teachplan_media media ON child.id = media.teachplan_id
+        WHERE parent.parentid = 0
+          AND parent.course_id = #{courseId}
+        ORDER BY parent.orderby,
+                 child.orderby
+
+        /*
+            这里不使用递归查询，是因为父节点没有对应的 media，只有子节点才有
+            若采用以下的递归方式，会因为父节点没有对应的 media 而导致查询结果不完整
+            可以这么理解，递归查询是从根节点开始，先查询根节点，然后查询根节点的子节点，再查询子节点的子节点，以此类推
+            因为父节点没有对应的 media，所以就不会有 media 的查询结果 join 进来
+        */
+        -- -- `cte` is an alias for the result of WITH clause
+        -- WITH RECURSIVE cte AS (
+        --     -- get root node whose id is a variable
+        --     SELECT * FROM teachplan WHERE parentid = 0 AND course_id = 117
+        --
+        --     -- merge the recursive result to `cte`
+        --     UNION ALL
+        --
+        --     -- recursive operation
+        --     SELECT child.* FROM teachplan child INNER JOIN cte parent ON child.parentid = parent.id
+        -- -- 		LEFT JOIN teachplan_media media ON media.teachplan_id = child.id
+        -- )
+        -- -- select all from virtual table `cte` and sort the records by column `id` and `orderby`
+        -- SELECT * FROM cte ORDER BY cte.id, cte.orderby
+    </select>
 
 </mapper>
