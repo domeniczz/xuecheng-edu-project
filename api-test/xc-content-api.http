@@ -220,7 +220,31 @@ Content-Type: application/json
 
 ### 课程计划查询
 
-## 响应结果示例
-#{
-
 GET {{content_host}}/content/teachplan/117/tree-nodes
+
+
+### 课程计划新增
+
+POST {{content_host}}/content/teachplan
+Content-Type: application/json
+
+{
+  "courseId" : 74,
+  "parentid": 0,
+  "grade" : 1,
+  "pname" : "新增章节"
+}
+
+
+### 课程计划修改
+
+POST {{content_host}}/content/teachplan
+Content-Type: application/json
+
+{
+  "id": 251,
+  "courseId" : 74,
+  "parentid": 0,
+  "grade" : 1,
+  "pname" : "新章名称 [点击修改]"
+}

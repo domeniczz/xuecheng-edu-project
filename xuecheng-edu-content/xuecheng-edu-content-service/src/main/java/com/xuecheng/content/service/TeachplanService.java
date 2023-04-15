@@ -1,5 +1,7 @@
 package com.xuecheng.content.service;
 
+import com.xuecheng.base.model.ResponseResult;
+import com.xuecheng.content.model.dto.SaveTeachplanDto;
 import com.xuecheng.content.model.dto.TeachplanDto;
 
 import java.util.List;
@@ -21,9 +23,9 @@ public interface TeachplanService {
 
     /**
      * 添加/修改课程计划
-     * @param teachplanDto 课程计划 dto
+     * @param saveTeachplanDto 保存课程计划 dto
      * @return 添加结果
      */
-    // public boolean saveTeachplan(SaveTeachplanDto saveTeachplanDto);
+    public ResponseResult saveTeachplan(SaveTeachplanDto saveTeachplanDto);
 
 }
