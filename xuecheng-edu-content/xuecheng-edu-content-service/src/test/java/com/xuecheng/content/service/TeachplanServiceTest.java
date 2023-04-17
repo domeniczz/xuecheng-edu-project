@@ -1,5 +1,6 @@
 package com.xuecheng.content.service;
 
+import com.xuecheng.base.model.ResponseResult;
 import com.xuecheng.content.model.dto.SaveTeachplanDto;
 import com.xuecheng.content.model.dto.TeachplanDto;
 import org.junit.jupiter.api.Assertions;
@@ -14,7 +15,7 @@ import static org.junit.jupiter.api.Assertions.*;
 /**
  * @author Domenic
  * @Classname TeachplanServiceTest
- * @Description TODO
+ * @Description 教学计划（章节）测试类
  * @Created by Domenic
  */
 @SpringBootTest
@@ -38,10 +39,11 @@ class TeachplanServiceTest {
     void addTeachplan() {
         SaveTeachplanDto dto = new SaveTeachplanDto();
         dto.setCourseId(74L);
-        dto.setParentid(0L);
+        dto.setParentid(293L);
         dto.setGrade(1);
-        dto.setPname("新增章节");
-        teachplanService.saveTeachplan(dto);
+        dto.setPname("新增章节3");
+        ResponseResult resp = teachplanService.saveTeachplan(dto);
+        System.out.println(resp);
     }
 
     @Test
@@ -52,7 +54,29 @@ class TeachplanServiceTest {
         dto.setParentid(0L);
         dto.setGrade(1);
         dto.setPname("新增章节");
-        teachplanService.saveTeachplan(dto);
+        ResponseResult resp = teachplanService.saveTeachplan(dto);
+        System.out.println(resp);
+    }
+
+    @Test
+    void deleteTeachplan() {
+        long id = 293L;
+        ResponseResult resp = teachplanService.deleteTeachplan(id);
+        System.out.println(resp);
+    }
+
+    @Test
+    void moveUp() {
+        long id = 296L;
+        ResponseResult resp = teachplanService.moveUp(id);
+        System.out.println(resp);
+    }
+
+    @Test
+    void moveDown() {
+        long id = 296L;
+        ResponseResult resp = teachplanService.moveDown(id);
+        System.out.println(resp);
     }
 
 }

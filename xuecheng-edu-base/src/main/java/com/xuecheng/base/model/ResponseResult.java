@@ -1,6 +1,8 @@
 package com.xuecheng.base.model;
 
+import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 /**
  * @author Domenic
@@ -9,6 +11,8 @@ import lombok.Data;
  * @Created by Domenic
  */
 @Data
+@NoArgsConstructor
+@AllArgsConstructor
 public class ResponseResult {
 
     private int statusCode;

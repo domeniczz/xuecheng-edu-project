@@ -157,7 +157,7 @@ Content-Type: application/json
   "users": "初级人员",
   "tags": "",
   "grade": "204001",
-  "description": ""
+  "description": "介绍介绍"
 }
 
 
@@ -220,7 +220,7 @@ Content-Type: application/json
 
 ### 课程计划查询
 
-GET {{content_host}}/content/teachplan/117/tree-nodes
+GET {{content_host}}/content/teachplan/127/tree-nodes
 
 
 ### 课程计划新增
@@ -229,10 +229,10 @@ POST {{content_host}}/content/teachplan
 Content-Type: application/json
 
 {
-  "courseId" : 74,
+  "courseId" : 127,
   "parentid": 0,
   "grade" : 1,
-  "pname" : "新增章节"
+  "pname" : "新大章 Domenic"
 }
 
 
@@ -248,3 +248,18 @@ Content-Type: application/json
   "grade" : 1,
   "pname" : "新章名称 [点击修改]"
 }
+
+
+### 课程计划删除
+
+DELETE {{content_host}}/content/teachplan/297
+
+
+### 课程计划上移
+
+POST {{content_host}}/content/teachplan/move-up/296
+
+
+### 课程计划下移
+
+POST {{content_host}}/content/teachplan/move-down/296

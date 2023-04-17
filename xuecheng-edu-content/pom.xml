@@ -16,6 +16,10 @@
     <description>xuecheng-edu-content</description>
     <packaging>pom</packaging>
 
+    <properties>
+        <java.version>1.8</java.version>
+    </properties>
+
     <modules>
         <module>xuecheng-edu-content-api</module>
         <module>xuecheng-edu-content-model</module>

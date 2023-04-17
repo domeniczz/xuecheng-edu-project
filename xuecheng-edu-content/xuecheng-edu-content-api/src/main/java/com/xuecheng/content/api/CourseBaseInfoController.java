@@ -10,6 +10,7 @@ import com.xuecheng.content.model.dto.QueryCourseParamsDto;
 import com.xuecheng.content.model.po.CourseBase;
 import com.xuecheng.content.service.CourseBaseInfoService;
 import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
@@ -37,19 +38,22 @@ public class CourseBaseInfoController {
 
     @PostMapping("/list")
     @ApiOperation("课程列表查询接口")
-    public PageResult<CourseBase> list(PageParams pageParams, @RequestBody(required = false) QueryCourseParamsDto queryCourseParamsDto) {
+    public PageResult<CourseBase> list(PageParams pageParams,
+            @RequestBody(required = false) QueryCourseParamsDto queryCourseParamsDto) {
         return courseBaseInfoService.queryCourseBaseList(pageParams, queryCourseParamsDto);
     }
 
     @GetMapping("/{courseId}")
     @ApiOperation("根据课程 ID 查询课程信息")
+    @ApiImplicitParam(value = "courseId", name = "课程 id", required = true, dataType = "Long", paramType = "path")
     public CourseBaseInfoDto getCourseBaseInfoById(@PathVariable Long courseId) {
         return courseBaseInfoService.getCourseBaseAndMarketInfoById(courseId);
     }
 
     @PostMapping("")
     @ApiOperation("新增课程")
-    public CourseBaseInfoDto createCourseBase(@RequestBody @Validated(ValidationGroups.Insert.class) AddCourseDto addCourseDto) {
+    public CourseBaseInfoDto createCourseBase(
+            @RequestBody @Validated(ValidationGroups.Insert.class) AddCourseDto addCourseDto) {
         // 通过单点登录系统，获取到用户所属机构的 ID
         // 为了方便测试，这里先写死
         // TODO: 4/7/2023 5:09 PM 通过单点登录系统，获取到用户所属机构的 ID
@@ -59,7 +63,8 @@ public class CourseBaseInfoController {
 
     @PutMapping("")
     @ApiOperation("修改课程")
-    public CourseBaseInfoDto updateCourseBaseById(@RequestBody @Validated(ValidationGroups.Update.class) UpdateCourseDto updateCourseDto) {
+    public CourseBaseInfoDto updateCourseBaseById(
+            @RequestBody @Validated(ValidationGroups.Update.class) UpdateCourseDto updateCourseDto) {
         // 通过单点登录系统，获取到用户所属机构的 ID
         // 为了方便测试，这里先写死
         // TODO: 4/7/2023 5:09 PM 通过单点登录系统，获取到用户所属机构的 ID

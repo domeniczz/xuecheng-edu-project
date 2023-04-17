@@ -8,6 +8,7 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -33,7 +34,7 @@ public class TeachplanController {
 
     @GetMapping("/{courseId}/tree-nodes")
     @ApiOperation("查询课程计划树形结构")
-    @ApiImplicitParam(value = "courseId", name = "课程 Id", required = true, dataType = "Long", paramType = "path")
+    @ApiImplicitParam(value = "courseId", name = "课程 id", required = true, dataType = "Long", paramType = "path")
     public List<TeachplanDto> getTreeNodes(@PathVariable Long courseId) {
         return teachplanService.queryTreeNodes(courseId);
     }
@@ -42,6 +43,27 @@ public class TeachplanController {
     @ApiOperation("课程计划创建或修改")
     public ResponseResult saveTeachplan(@RequestBody SaveTeachplanDto teachplan) {
         return teachplanService.saveTeachplan(teachplan);
+    }
+
+    @DeleteMapping("/{id}")
+    @ApiOperation("删除课程计划")
+    @ApiImplicitParam(value = "id", name = "课程计划 id", required = true, dataType = "Long", paramType = "path")
+    public ResponseResult deleteTeachplan(@PathVariable Long id) {
+        return teachplanService.deleteTeachplan(id);
+    }
+
+    @PostMapping("/moveup/{id}")
+    @ApiOperation("课程计划上移")
+    @ApiImplicitParam(value = "id", name = "课程计划 id", required = true, dataType = "Long", paramType = "path")
+    public ResponseResult moveUp(@PathVariable Long id) {
+        return teachplanService.moveUp(id);
+    }
+
+    @PostMapping("/movedown/{id}")
+    @ApiOperation("课程计划下移")
+    @ApiImplicitParam(value = "id", name = "课程计划 id", required = true, dataType = "Long", paramType = "path")
+    public ResponseResult moveDown(@PathVariable Long id) {
+        return teachplanService.moveDown(id);
     }
 
 }
