@@ -25,27 +25,29 @@ public class CourseCategoryServiceImpl implements CourseCategoryService {
     private CourseCategoryMapper courseCategoryMapper;
 
     @Override
-    public List<CourseCategoryTreeDto> queryTreeNodes(String rootCourseID) {
+    public List<CourseCategoryTreeDto> queryTreeNodes() {
+        String rootCourseId = getRootCourseIdrootCourseId();
+
         /* 获取到课程分类信息 */
-        List<CourseCategoryTreeDto> list = courseCategoryMapper.selectTreeNodes(rootCourseID);
+        List<CourseCategoryTreeDto> list = courseCategoryMapper.selectTreeNodes(rootCourseId);
 
         /* 将结果封装成进 List<CourseCategoryTreeDto> */
 
         // 将 List 转换为 Map：Key 是课程分类的 id；Value 是 CourseCategory
         // 因为通过 ID 查 CourseCategory，Map 更方便
         Map<String, CourseCategoryTreeDto> map = list.stream()
-                .filter(item -> !rootCourseID.equals(item.getId()))
+                .filter(item -> !rootCourseId.equals(item.getId()))
                 .collect(Collectors.toMap(CourseCategory::getId, val -> val, (val1, val2) -> val2));
 
         List<CourseCategoryTreeDto> result = new ArrayList<>();
 
         // 遍历 List，一边遍历一边找子节点放入父节点的 childrenTreeNodes 中
         list.stream()
-                .filter(item -> !rootCourseID.equals(item.getId()))
+                .filter(item -> !rootCourseId.equals(item.getId()))
                 .forEach(item -> {
                     String parentid = item.getParentid();
 
-                    if (rootCourseID.equals(parentid)) {
+                    if (rootCourseId.equals(parentid)) {
                         result.add(item);
                     }
 
@@ -59,6 +61,16 @@ public class CourseCategoryServiceImpl implements CourseCategoryService {
                 });
 
         return result;
+    }
+
+    /**
+     * 获取根节点的 ID
+     */
+    private String getRootCourseIdrootCourseId() {
+        // return courseCategoryMapper
+        //         .selectOne(new LambdaQueryWrapper<CourseCategory>().eq(CourseCategory::getParentid, "0"))
+        //         .getId();
+        return "1";
     }
 
 }

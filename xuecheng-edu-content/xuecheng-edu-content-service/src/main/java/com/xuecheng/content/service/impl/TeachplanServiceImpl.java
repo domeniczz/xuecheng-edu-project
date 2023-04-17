@@ -1,7 +1,6 @@
 package com.xuecheng.content.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
-import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.xuecheng.base.enums.Direction;
 import com.xuecheng.base.exception.CommonError;
 import com.xuecheng.base.exception.XueChengEduException;
@@ -72,15 +71,12 @@ public class TeachplanServiceImpl implements TeachplanService {
 
         int res = teachplanMapper.insert(teachplan);
 
-        ResponseResult resp = new ResponseResult();
         if (res > 0) {
-            resp.setStatusCode(HttpStatus.OK.value());
-            resp.setMessage("新增章节成功");
+            return new ResponseResult(HttpStatus.OK.value(), "新增章节成功");
         } else {
             XueChengEduException.cast(CommonError.UNKOWN_ERROR);
+            return null;
         }
-
-        return resp;
     }
 
     private ResponseResult updateTeachplan(SaveTeachplanDto saveTeachplanDto, Long id) {
@@ -93,13 +89,11 @@ public class TeachplanServiceImpl implements TeachplanService {
 
         ResponseResult resp = new ResponseResult();
         if (res > 0) {
-            resp.setStatusCode(HttpStatus.OK.value());
-            resp.setMessage("修改章节成功");
+            return new ResponseResult(HttpStatus.OK.value(), "修改章节成功");
         } else {
             XueChengEduException.cast(CommonError.UNKOWN_ERROR);
+            return null;
         }
-
-        return resp;
     }
 
     @Override
@@ -114,11 +108,13 @@ public class TeachplanServiceImpl implements TeachplanService {
             // 删除大章节，大章节下有小章节时不允许删除
             if (childCount > 0) {
                 XueChengEduException.cast("课程计划信息还有子级信息，无法操作");
+                return null;
             } else {
                 // 大章节下没有小章节，允许删除
                 int res = teachplanMapper.deleteById(id);
                 if (res < 0) {
                     XueChengEduException.cast(CommonError.UNKOWN_ERROR);
+                    return null;
                 }
             }
         }
@@ -128,11 +124,13 @@ public class TeachplanServiceImpl implements TeachplanService {
             int resPlan = teachplanMapper.deleteById(id);
             if (resPlan < 0) {
                 XueChengEduException.cast(CommonError.UNKOWN_ERROR);
+                return null;
             } else {
                 // 删除小章节后，还要删除在课程计划媒资关联表中的数据
                 int resMedia = teachplanMediaService.deleteTeachplanMedia(id);
                 if (resMedia < 0) {
                     XueChengEduException.cast(CommonError.UNKOWN_ERROR);
+                    return null;
                 } else {
                     // 删除小章节后，将大章节下的小章节排序进行重新排序
                     int teachplanCount = getChildrenCount(teachplanToDelete.getCourseId(),

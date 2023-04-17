@@ -30,6 +30,7 @@ public class CourseMarketServiceImpl implements CourseMarketService {
         if (charge.equals("201001")) {
             if (courseMarket.getPrice() == null || courseMarket.getPrice() <= 0) {
                 XueChengEduException.cast("课程的价格不能为空，且必须大于 0");
+                return -1;
             }
         }
 

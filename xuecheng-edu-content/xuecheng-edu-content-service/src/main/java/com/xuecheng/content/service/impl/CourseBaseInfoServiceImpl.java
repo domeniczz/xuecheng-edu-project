@@ -8,9 +8,9 @@ import com.xuecheng.base.model.PageResult;
 import com.xuecheng.content.mapper.CourseBaseMapper;
 import com.xuecheng.content.mapper.CourseCategoryMapper;
 import com.xuecheng.content.mapper.CourseMarketMapper;
+import com.xuecheng.content.model.dto.QueryCourseParamsDto;
 import com.xuecheng.content.model.dto.AddCourseDto;
 import com.xuecheng.content.model.dto.CourseBaseInfoDto;
-import com.xuecheng.content.model.dto.QueryCourseParamsDto;
 import com.xuecheng.content.model.dto.UpdateCourseDto;
 import com.xuecheng.content.model.po.CourseBase;
 import com.xuecheng.content.model.po.CourseMarket;
@@ -49,27 +49,26 @@ public class CourseBaseInfoServiceImpl implements CourseBaseInfoService {
     private CourseMarketService courseMarketService;
 
     @Override
-    public PageResult<CourseBase> queryCourseBaseList(PageParams pageParams,
-            QueryCourseParamsDto queryCourseParamsDto) {
+    public PageResult<CourseBase> queryCourseBaseList(PageParams pageParams, QueryCourseParamsDto dto) {
         // 创建查询接口
         LambdaQueryWrapper<CourseBase> queryWrapper = new LambdaQueryWrapper<>();
 
         // 拼接查询条件
         // 根据课程名称 模糊查询 name like '%名称%'
         queryWrapper.like(
-                StringUtils.isNotEmpty(queryCourseParamsDto.getCourseName()),
+                StringUtils.isNotEmpty(dto.getCourseName()),
                 CourseBase::getName,
-                queryCourseParamsDto.getCourseName());
+                dto.getCourseName());
         // 根据课程审核状态 精确查询
         queryWrapper.eq(
-                StringUtils.isNotEmpty(queryCourseParamsDto.getAuditStatus()),
+                StringUtils.isNotEmpty(dto.getAuditStatus()),
                 CourseBase::getAuditStatus,
-                queryCourseParamsDto.getAuditStatus());
+                dto.getAuditStatus());
         // 根据课程发布状态 精确查询
         queryWrapper.eq(
-                StringUtils.isNotEmpty(queryCourseParamsDto.getPublishStatus()),
+                StringUtils.isNotEmpty(dto.getPublishStatus()),
                 CourseBase::getStatus,
-                queryCourseParamsDto.getPublishStatus());
+                dto.getPublishStatus());
 
         // 分页参数
         Page<CourseBase> page = new Page<>(pageParams.getPageNo(), pageParams.getPageSize());
@@ -96,12 +95,14 @@ public class CourseBaseInfoServiceImpl implements CourseBaseInfoService {
         CourseBase courseBase = courseBaseMapper.selectById(courseId);
         if (courseBase == null) {
             XueChengEduException.cast("课程不存在");
+            return null;
         }
 
         // 查询课程营销信息
         CourseMarket courseMarket = courseMarketMapper.selectById(courseId);
         if (courseMarket == null) {
             XueChengEduException.cast("课程营销信息不存在");
+            return null;
         }
 
         // 封装返回数据
@@ -138,6 +139,7 @@ public class CourseBaseInfoServiceImpl implements CourseBaseInfoService {
         if (baseRes <= 0) {
             log.error(String.format("创建课程 (name: %s) 失败", courseBase.getName()));
             XueChengEduException.cast("创建课程失败");
+            return null;
         }
 
         /* ---- 写入课程营销信息 ---- */
@@ -151,6 +153,7 @@ public class CourseBaseInfoServiceImpl implements CourseBaseInfoService {
         if (marketRes <= 0) {
             log.error(String.format("保存课程 (name: %s) 营销信息失败", courseBase.getName()));
             XueChengEduException.cast("保存课程营销信息失败");
+            return null;
         }
 
         return getCourseBaseAndMarketInfoById(courseId);
@@ -168,11 +171,13 @@ public class CourseBaseInfoServiceImpl implements CourseBaseInfoService {
         CourseBase courseBase = courseBaseMapper.selectById(courseId);
         if (courseBase == null) {
             XueChengEduException.cast("课程不存在，请先创建课程");
+            return null;
         }
 
         // 操作权限合法性校验
         if (!companyId.equals(courseBase.getCompanyId())) {
             XueChengEduException.cast("只能修改本机构的课程");
+            return null;
         }
 
         /* ---- 写入课程基本信息 ---- */
@@ -184,6 +189,7 @@ public class CourseBaseInfoServiceImpl implements CourseBaseInfoService {
         if (baseRes <= 0) {
             log.error(String.format("修改课程 (name: %s) 失败", courseBase.getName()));
             XueChengEduException.cast("修改课程失败");
+            return null;
         }
 
         /* ---- 写入课程营销信息 ---- */
@@ -196,6 +202,7 @@ public class CourseBaseInfoServiceImpl implements CourseBaseInfoService {
         if (marketRes <= 0) {
             log.error(String.format("更新课程 (name: %s) 营销信息失败", courseBase.getName()));
             XueChengEduException.cast("更新课程营销信息失败");
+            return null;
         }
 
         return getCourseBaseAndMarketInfoById(courseId);

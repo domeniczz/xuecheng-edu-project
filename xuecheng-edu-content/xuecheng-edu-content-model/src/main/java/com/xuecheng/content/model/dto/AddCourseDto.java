@@ -27,7 +27,7 @@ public class AddCourseDto {
 
     @ApiModelProperty(value = "适用人群", required = true)
     @NotEmpty(message = "适用人群不能为空", groups = { ValidationGroups.Insert.class, ValidationGroups.Update.class })
-    @Size(message = "适用人群内容过少", min = 2, groups = { ValidationGroups.Insert.class, ValidationGroups.Update.class })
+    @Size(message = "适用人群内容过少，至少 5 字", min = 5, groups = { ValidationGroups.Insert.class, ValidationGroups.Update.class })
     private String users;
 
     @ApiModelProperty(value = "课程标签")
@@ -50,7 +50,7 @@ public class AddCourseDto {
     private String teachmode;
 
     @ApiModelProperty(value = "课程介绍")
-    @Size(message = "课程介绍内容过少", min = 10, groups = { ValidationGroups.Insert.class, ValidationGroups.Update.class })
+    @Size(message = "课程介绍内容过少，至少 10 字", min = 10, groups = { ValidationGroups.Insert.class, ValidationGroups.Update.class })
     private String description;
 
     @ApiModelProperty(value = "课程图片", required = true)
@@ -61,13 +61,11 @@ public class AddCourseDto {
     private String charge;
 
     @ApiModelProperty(value = "价格")
-    @DecimalMin(value = "0.0", message = "价格不能小于 0", groups = { ValidationGroups.Insert.class,
-            ValidationGroups.Update.class })
+    @DecimalMin(value = "0.0", message = "价格不能小于 0", groups = { ValidationGroups.Insert.class, ValidationGroups.Update.class })
     private Float price;
 
     @ApiModelProperty(value = "原价")
-    @DecimalMin(value = "0.0", message = "价格不能小于 0", groups = { ValidationGroups.Insert.class,
-            ValidationGroups.Update.class })
+    @DecimalMin(value = "0.0", message = "价格不能小于 0", groups = { ValidationGroups.Insert.class, ValidationGroups.Update.class })
     private Float originalPrice;
 
     @ApiModelProperty(value = "qq")

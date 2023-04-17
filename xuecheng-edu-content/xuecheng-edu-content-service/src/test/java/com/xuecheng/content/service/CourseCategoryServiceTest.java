@@ -22,7 +22,7 @@ public class CourseCategoryServiceTest {
 
     @Test
     void testcourseCategoryService() {
-        List<CourseCategoryTreeDto> courseCategoryTreeList = courseCategoryService.queryTreeNodes("1");
+        List<CourseCategoryTreeDto> courseCategoryTreeList = courseCategoryService.queryTreeNodes();
         Assertions.assertNotNull(courseCategoryTreeList);
 
         System.out.println("\n===================================================");
