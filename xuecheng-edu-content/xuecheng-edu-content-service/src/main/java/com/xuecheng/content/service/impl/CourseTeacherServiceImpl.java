@@ -22,19 +22,19 @@ import java.util.List;
  * @Created by Domenic
  */
 @Service
+@Transactional
 public class CourseTeacherServiceImpl implements CourseTeacherService {
 
     @Autowired
     CourseTeacherMapper courseTeacherMapper;
 
     @Override
-    public List<CourseTeacher> queryTeacherList(Long courseId) {
+    public List<CourseTeacher> queryTeacherList(long courseId) {
         return courseTeacherMapper.selectList(new LambdaQueryWrapper<CourseTeacher>()
                 .eq(CourseTeacher::getCourseId, courseId));
     }
 
     @Override
-    @Transactional
     public CourseTeacher save(CourseTeacher teacher) {
         if (teacher.getId() == null) {
             return create(teacher);
@@ -65,8 +65,7 @@ public class CourseTeacherServiceImpl implements CourseTeacherService {
     }
 
     @Override
-    @Transactional
-    public ResponseResult delete(Long courseId, Long teacherId) {
+    public ResponseResult delete(long courseId, long teacherId) {
         int res = courseTeacherMapper.delete(new LambdaQueryWrapper<CourseTeacher>()
                 .eq(CourseTeacher::getCourseId, courseId)
                 .eq(CourseTeacher::getId, teacherId));

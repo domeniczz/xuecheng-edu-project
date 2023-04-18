@@ -2,6 +2,7 @@ package com.xuecheng.content.service;
 
 import com.xuecheng.base.model.PageParams;
 import com.xuecheng.base.model.PageResult;
+import com.xuecheng.base.model.ResponseResult;
 import com.xuecheng.content.model.dto.AddCourseDto;
 import com.xuecheng.content.model.dto.CourseBaseInfoDto;
 import com.xuecheng.content.model.dto.QueryCourseParamsDto;
@@ -29,16 +30,18 @@ public interface CourseBaseInfoService {
      * @param courseId 课程 ID
      * @return CourseBaseInfoDto
      */
-    CourseBaseInfoDto getCourseBaseAndMarketInfoById(Long courseId);
+    CourseBaseInfoDto getCourseBaseAndMarketInfoById(long courseId);
 
     /**
-     * 添加课程基本信息<br/>
+     * <p>
+     * 添加课程基本信息
      * 审核状态、发布状态会给默认值
+     * </p>
      * @param companyId    教学机构 ID
      * @param addCourseDto 课程信息
      * @return CourseBaseInfoDto
      */
-    CourseBaseInfoDto createCourseBase(Long companyId, AddCourseDto addCourseDto);
+    CourseBaseInfoDto create(long companyId, AddCourseDto addCourseDto);
 
     /**
      * 更新课程基本信息
@@ -46,6 +49,16 @@ public interface CourseBaseInfoService {
      * @param updateCourseDto 课程信息
      * @return CourseBaseInfoDto
      */
-    CourseBaseInfoDto updateCourseBase(Long companyId, UpdateCourseDto updateCourseDto);
+    CourseBaseInfoDto update(long companyId, UpdateCourseDto updateCourseDto);
+
+    /**
+     * <p>
+     * 删除课程
+     * 课程的审核状态为未提交时方可删除
+     * 会删除课程相关的基本信息、营销信息、课程计划、课程教师信息
+     * </p>
+     * @param courseId 课程 ID
+     */
+    ResponseResult delete(long courseId);
 
 }

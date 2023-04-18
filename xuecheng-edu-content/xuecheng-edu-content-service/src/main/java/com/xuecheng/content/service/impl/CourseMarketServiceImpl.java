@@ -8,6 +8,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 /**
  * @author Domenic
@@ -17,11 +18,13 @@ import org.springframework.stereotype.Service;
  */
 @Slf4j
 @Service
+@Transactional
 public class CourseMarketServiceImpl implements CourseMarketService {
 
     @Autowired
     private CourseMarketMapper courseMarketMapper;
 
+    @Override
     public int saveOrUpdateCourseMarket(CourseMarket courseMarket) {
         // 参数合法性校验在 controller 层已经做过
 

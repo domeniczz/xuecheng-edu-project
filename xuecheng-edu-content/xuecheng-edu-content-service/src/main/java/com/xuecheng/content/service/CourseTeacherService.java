@@ -18,7 +18,7 @@ public interface CourseTeacherService {
      * @param courseId 课程 id
      * @return 课程师资列表
      */
-    List<CourseTeacher> queryTeacherList(Long courseId);
+    List<CourseTeacher> queryTeacherList(long courseId);
 
     /**
      * 保存课程师资
@@ -33,6 +33,6 @@ public interface CourseTeacherService {
      * @param teacherId 师资 id
      * @return 删除结果
      */
-    ResponseResult delete(Long courseId, Long teacherId);
+    ResponseResult delete(long courseId, long teacherId);
 
 }

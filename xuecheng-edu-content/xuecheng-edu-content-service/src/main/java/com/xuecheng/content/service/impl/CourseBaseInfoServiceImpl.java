@@ -5,17 +5,22 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.xuecheng.base.exception.XueChengEduException;
 import com.xuecheng.base.model.PageParams;
 import com.xuecheng.base.model.PageResult;
+import com.xuecheng.base.model.ResponseResult;
 import com.xuecheng.content.mapper.CourseBaseMapper;
 import com.xuecheng.content.mapper.CourseCategoryMapper;
 import com.xuecheng.content.mapper.CourseMarketMapper;
+import com.xuecheng.content.mapper.CourseTeacherMapper;
 import com.xuecheng.content.model.dto.QueryCourseParamsDto;
 import com.xuecheng.content.model.dto.AddCourseDto;
 import com.xuecheng.content.model.dto.CourseBaseInfoDto;
 import com.xuecheng.content.model.dto.UpdateCourseDto;
 import com.xuecheng.content.model.po.CourseBase;
 import com.xuecheng.content.model.po.CourseMarket;
+import com.xuecheng.content.model.po.CourseTeacher;
 import com.xuecheng.content.service.CourseBaseInfoService;
 import com.xuecheng.content.service.CourseMarketService;
+import com.xuecheng.content.service.TeachplanService;
+
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.BeanUtils;
@@ -34,6 +39,7 @@ import java.util.List;
  */
 @Slf4j
 @Service
+@Transactional
 public class CourseBaseInfoServiceImpl implements CourseBaseInfoService {
 
     @Autowired
@@ -47,6 +53,12 @@ public class CourseBaseInfoServiceImpl implements CourseBaseInfoService {
 
     @Autowired
     private CourseMarketService courseMarketService;
+
+    @Autowired
+    private TeachplanService teachplanService;
+
+    @Autowired
+    private CourseTeacherMapper courseTeacherMapper;
 
     @Override
     public PageResult<CourseBase> queryCourseBaseList(PageParams pageParams, QueryCourseParamsDto dto) {
@@ -90,7 +102,8 @@ public class CourseBaseInfoServiceImpl implements CourseBaseInfoService {
      * @param courseId 课程 id
      * @return 课程基本信息和课程营销信息 DTO
      */
-    public CourseBaseInfoDto getCourseBaseAndMarketInfoById(Long courseId) {
+    @Override
+    public CourseBaseInfoDto getCourseBaseAndMarketInfoById(long courseId) {
         // 查询课程基本信息
         CourseBase courseBase = courseBaseMapper.selectById(courseId);
         if (courseBase == null) {
@@ -118,8 +131,7 @@ public class CourseBaseInfoServiceImpl implements CourseBaseInfoService {
     }
 
     @Override
-    @Transactional
-    public CourseBaseInfoDto createCourseBase(Long companyId, AddCourseDto dto) {
+    public CourseBaseInfoDto create(long companyId, AddCourseDto dto) {
         // 参数合法性校验通过 JSR Validation 进行
         // Spring 支持 Hibernate Validator 校验框架
 
@@ -160,8 +172,7 @@ public class CourseBaseInfoServiceImpl implements CourseBaseInfoService {
     }
 
     @Override
-    @Transactional
-    public CourseBaseInfoDto updateCourseBase(Long companyId, UpdateCourseDto dto) {
+    public CourseBaseInfoDto update(long companyId, UpdateCourseDto dto) {
         // 参数合法性校验通过 JSR Validation 进行
         // Spring 支持 Hibernate Validator 校验框架
 
@@ -175,7 +186,7 @@ public class CourseBaseInfoServiceImpl implements CourseBaseInfoService {
         }
 
         // 操作权限合法性校验
-        if (!companyId.equals(courseBase.getCompanyId())) {
+        if (companyId != courseBase.getCompanyId()) {
             XueChengEduException.cast("只能修改本机构的课程");
             return null;
         }
@@ -206,6 +217,49 @@ public class CourseBaseInfoServiceImpl implements CourseBaseInfoService {
         }
 
         return getCourseBaseAndMarketInfoById(courseId);
+    }
+
+    @Override
+    public ResponseResult delete(long courseId) {
+        boolean ifSubmitForAudit = checkAuditState(courseId);
+        if (!ifSubmitForAudit) {
+            // 删除课程基本信息
+            courseBaseMapper.deleteById(courseId);
+            // 删除课程营销信息
+            courseMarketMapper.deleteById(courseId);
+            // 删除课程计划（章节）信息
+            teachplanService.deleteAll(courseId);
+            // 删除课程教师信息
+            courseTeacherMapper.delete(new LambdaQueryWrapper<CourseTeacher>().eq(CourseTeacher::getCourseId, courseId));
+
+            return new ResponseResult(200, "删除课程成功");
+        } else {
+            XueChengEduException.cast("删除课程失败");
+            return null;
+        }
+    }
+
+    /**
+     * 根据课程 id 确认课程审核状态
+     * @param courseId 课程 id
+     * @return 课程是否已经提交审核，false 未提交审核，true 已经提交审核或课程不存在
+     */
+    private boolean checkAuditState(Long courseId) {
+        // 查询课程基本信息
+        CourseBase courseBase = courseBaseMapper.selectById(courseId);
+        if (courseBase == null) {
+            XueChengEduException.cast("课程不存在");
+            return true;
+        }
+
+        // 检查课程审核状态
+        String auditStatus = courseBase.getAuditStatus();
+
+        // TODO: 2020/3/16 课程审核状态码，应该通过 System 模块提供的接口获取，获取到后用 CodeValueParser 解析出 Code-Value Map (之后若使用了 Spring Cloud，可以通过 Feign 调用 System 模块的接口)
+        if ("202002".equals(auditStatus))
+            return false;
+        else
+            return true;
     }
 
 }

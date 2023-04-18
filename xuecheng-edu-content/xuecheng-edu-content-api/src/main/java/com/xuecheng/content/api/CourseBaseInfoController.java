@@ -2,6 +2,7 @@ package com.xuecheng.content.api;
 
 import com.xuecheng.base.model.PageParams;
 import com.xuecheng.base.model.PageResult;
+import com.xuecheng.base.model.ResponseResult;
 import com.xuecheng.base.validation.ValidationGroups;
 import com.xuecheng.content.model.dto.AddCourseDto;
 import com.xuecheng.content.model.dto.CourseBaseInfoDto;
@@ -14,6 +15,7 @@ import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -57,7 +59,7 @@ public class CourseBaseInfoController {
         // 为了方便测试，这里先写死
         // TODO: 4/7/2023 5:09 PM 通过单点登录系统，获取到用户所属机构的 ID
         Long companyId = 1232141425L;
-        return courseBaseInfoService.createCourseBase(companyId, addCourseDto);
+        return courseBaseInfoService.create(companyId, addCourseDto);
     }
 
     @PutMapping("")
@@ -67,7 +69,14 @@ public class CourseBaseInfoController {
         // 为了方便测试，这里先写死
         // TODO: 4/7/2023 5:09 PM 通过单点登录系统，获取到用户所属机构的 ID
         Long companyId = 1232141425L;
-        return courseBaseInfoService.updateCourseBase(companyId, updateCourseDto);
+        return courseBaseInfoService.update(companyId, updateCourseDto);
+    }
+
+    @DeleteMapping("/{courseId}")
+    @ApiOperation("删除课程")
+    @ApiImplicitParam(value = "courseId", name = "课程 id", required = true, dataType = "Long", paramType = "path")
+    public ResponseResult deleteCourseBaseById(@PathVariable Long courseId) {
+        return courseBaseInfoService.delete(courseId);
     }
 
 }

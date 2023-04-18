@@ -12,9 +12,11 @@ import java.util.List;
 public interface CourseCategoryMapper extends BaseMapper<CourseCategory> {
 
     /**
-     * 使用递归查询课程分类<br/>
-     * 在数据库中，课程分类的数据是以树形结构组织起来的<br/>
+     * <p>
+     * 使用递归查询课程分类
+     * 在数据库中，课程分类的数据是以树形结构组织起来的
      * 因此采用递归，查询时需提供根节点的 id 值
+     * </p>
      * @param rootCourseID 根课程的 id 值
      * @return 未经处理的 CourseCategoryTreeDto List，没有将子节点封装进父节点中
      */

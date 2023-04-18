@@ -21,8 +21,10 @@ public class CourseCategoryTreeDto extends CourseCategory {
     private static final long serialVersionUID = 1L;
 
     /**
-     * 子节点的 List<br/>
+     * <p>
+     * 子节点的 List
      * CourseCategory 是以树形结构存储的，因此需要存储子节点
+     * </p>
      */
     private List<CourseCategory> childrenTreeNodes;
 

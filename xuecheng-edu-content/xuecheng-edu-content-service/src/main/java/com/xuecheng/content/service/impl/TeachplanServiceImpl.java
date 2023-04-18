@@ -29,6 +29,7 @@ import java.util.List;
  */
 @Slf4j
 @Service
+@Transactional
 public class TeachplanServiceImpl implements TeachplanService {
 
     @Autowired
@@ -43,7 +44,6 @@ public class TeachplanServiceImpl implements TeachplanService {
     }
 
     @Override
-    @Transactional
     public ResponseResult saveTeachplan(SaveTeachplanDto saveTeachplanDto) {
         Long id = saveTeachplanDto.getId();
 
@@ -79,7 +79,7 @@ public class TeachplanServiceImpl implements TeachplanService {
         }
     }
 
-    private ResponseResult updateTeachplan(SaveTeachplanDto saveTeachplanDto, Long id) {
+    private ResponseResult updateTeachplan(SaveTeachplanDto saveTeachplanDto, long id) {
         Teachplan teachplan = teachplanMapper.selectById(id);
         BeanUtils.copyProperties(saveTeachplanDto, teachplan);
 
@@ -97,12 +97,11 @@ public class TeachplanServiceImpl implements TeachplanService {
     }
 
     @Override
-    @Transactional
-    public ResponseResult deleteTeachplan(Long id) {
+    public ResponseResult deleteTeachplan(long id) {
         Teachplan teachplanToDelete = teachplanMapper.selectById(id);
         long parentId = getParentId(id);
 
-        // 删除大章节
+        // 删除大章节 (大章节没有媒资关联信息)
         if (parentId == 0) {
             int childCount = getChildrenCount(id);
             // 删除大章节，大章节下有小章节时不允许删除
@@ -118,7 +117,7 @@ public class TeachplanServiceImpl implements TeachplanService {
                 }
             }
         }
-        // 删除小章节
+        // 删除小章节 (只有小章节才有媒资关联信息)
         else {
             // 删除小章节，同时将关联的信息进行删除
             int resPlan = teachplanMapper.deleteById(id);
@@ -154,15 +153,28 @@ public class TeachplanServiceImpl implements TeachplanService {
     }
 
     @Override
-    @Transactional
-    public ResponseResult moveUp(Long id) {
+    public ResponseResult deleteAll(long courseId) {
+        // 先删除课程计划媒资关联表中的数据
+        teachplanMapper.selectList(new LambdaQueryWrapper<Teachplan>().eq(Teachplan::getCourseId, courseId))
+                .forEach(teachplan -> {
+                    // 只有小章节才有媒资关联信息
+                    if (teachplan.getParentid() != 0) {
+                        teachplanMediaService.deleteTeachplanMedia(teachplan.getId());
+                    }
+                });
+        // 再删除课程计划表中的数据
+        teachplanMapper.delete(new LambdaQueryWrapper<Teachplan>().eq(Teachplan::getCourseId, 600));
+        return new ResponseResult(HttpStatus.OK.value(), "删除课程计划成功");
+    }
+
+    @Override
+    public ResponseResult moveUp(long id) {
         move(id, Direction.UP);
         return new ResponseResult(HttpStatus.OK.value(), "上移课程计划成功");
     }
 
     @Override
-    @Transactional
-    public ResponseResult moveDown(Long id) {
+    public ResponseResult moveDown(long id) {
         move(id, Direction.DOWN);
         return new ResponseResult(HttpStatus.OK.value(), "下移课程计划成功");
     }
@@ -173,7 +185,7 @@ public class TeachplanServiceImpl implements TeachplanService {
      * @param parentId 父级 id
      * @return 课程计划数量
      */
-    private int getChildrenCount(Long courseId, Long parentId) {
+    private int getChildrenCount(long courseId, long parentId) {
         // SQL: SELECT COUNT(id) FROM teachplan WHERE course_id = #{courseId} AND parentid = #{parentId}
         LambdaQueryWrapper<Teachplan> queryWrapper = new LambdaQueryWrapper<>();
         queryWrapper = queryWrapper.eq(Teachplan::getCourseId, courseId).eq(Teachplan::getParentid, parentId);
@@ -186,7 +198,7 @@ public class TeachplanServiceImpl implements TeachplanService {
      * @param id id
      * @return 子级节点数量
      */
-    private int getChildrenCount(Long id) {
+    private int getChildrenCount(long id) {
         // SQL: SELECT COUNT(id) FROM teachplan WHERE parentid = #{id}
         LambdaQueryWrapper<Teachplan> queryWrapper = new LambdaQueryWrapper<>();
         queryWrapper = queryWrapper.eq(Teachplan::getParentid, id);
@@ -199,7 +211,7 @@ public class TeachplanServiceImpl implements TeachplanService {
      * @param id id
      * @return 同级节点数量
      */
-    private int getPeerCount(Long id) {
+    private int getPeerCount(long id) {
         // SQL: SELECT parentid FROM teachplan WHERE id = #{id}
         Long parentId = teachplanMapper.selectById(id).getParentid();
         // SQL: SELECT id FROM teachplan WHERE id = #{parentid}
@@ -214,7 +226,7 @@ public class TeachplanServiceImpl implements TeachplanService {
      * @param id id
      * @return 父级节点 id
      */
-    private long getParentId(Long id) {
+    private long getParentId(long id) {
         // SQL: SELECT parentid FROM teachplan WHERE parentid = #{id}
         LambdaQueryWrapper<Teachplan> queryWrapper = new LambdaQueryWrapper<>();
         queryWrapper = queryWrapper.select(Teachplan::getParentid).eq(Teachplan::getId, id);

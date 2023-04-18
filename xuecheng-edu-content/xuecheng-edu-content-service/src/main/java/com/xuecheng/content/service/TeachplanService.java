@@ -29,27 +29,40 @@ public interface TeachplanService {
     public ResponseResult saveTeachplan(SaveTeachplanDto saveTeachplanDto);
 
     /**
-     * 删除课程计划<br/>
-     * 1、删除大章节，大章节下有小章节时不允许删除<br/>
-     * 2、删除大章节，大章节下没有小章节时可以正常删除<br/>
-     * 3、删除小章节，同时将关联的信息进行删除<br/>
+     * <p>
+     * 删除课程计划和媒资关联信息
+     * 1、删除大章节，大章节下有小章节时不允许删除
+     * 2、删除大章节，大章节下没有小章节时可以正常删除
+     * 3、删除小章节，同时将关联的信息进行删除
+     * </p>
      * @param id id
      * @return 删除结果，若有错误则抛出 XueChengException
      */
-    ResponseResult deleteTeachplan(Long id);
+    ResponseResult deleteTeachplan(long id);
+
+    /**
+     * <p>
+     * 删除指定课程下的所有章节(包括大章节和小章节)和媒资关联信息
+     * 谨慎使用，一般在删除课程时调用
+     * 因为课程关联的章节可以为空，所有方法不会因为 delete 语句影响行数为 0 而抛出异常
+     * </p>
+     * @param courseId 课程 id
+     * @return 删除结果
+     */
+    ResponseResult deleteAll(long courseId);
 
     /**
      * 课程计划上移
      * @param id 课程计划 id
      * @return 上移结果
      */
-    public ResponseResult moveUp(Long id);
+    public ResponseResult moveUp(long id);
 
     /**
      * 课程计划下移
      * @param id 课程计划 id
      * @return 下移结果
      */
-    public ResponseResult moveDown(Long id);
+    public ResponseResult moveDown(long id);
 
 }
