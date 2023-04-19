@@ -3,14 +3,18 @@ package com.xuecheng.content.service;
 import com.xuecheng.base.model.ResponseResult;
 import com.xuecheng.content.model.dto.SaveTeachplanDto;
 import com.xuecheng.content.model.dto.TeachplanDto;
+import com.xuecheng.content.model.po.Teachplan;
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.MethodOrderer;
+import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestMethodOrder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
+import java.util.ArrayList;
 import java.util.List;
-
-import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * @author Domenic
@@ -19,14 +23,50 @@ import static org.junit.jupiter.api.Assertions.*;
  * @Created by Domenic
  */
 @SpringBootTest
+@TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 class TeachplanServiceTest {
 
     @Autowired
     private TeachplanService teachplanService;
 
+    private static long courseId;
+    private static final int parentNum = 2; // 父章节数量
+    private static final int childrenNum = parentNum * 2 - 1; // 子章节数量
+    private static List<SaveTeachplanDto> dtoParentList;
+    private static List<SaveTeachplanDto> dtoChildrenList;
+
+    @BeforeAll
+    static void init() {
+        courseId = 1000000L;
+
+        dtoParentList = new ArrayList<>();
+        dtoChildrenList = new ArrayList<>();
+
+        // 初始化父章节
+        for (int i = 0; i < parentNum; i++) {
+            SaveTeachplanDto dto = new SaveTeachplanDto();
+            dto.setCourseId(courseId);
+            dto.setParentid(0L);
+            dto.setGrade(1);
+            dto.setPname("测试章节 Unit Test-" + (int) Math.floor(Math.random() * (100 + 1)));
+            dtoParentList.add(dto);
+        }
+
+        // 初始化子章节
+        for (int i = 0; i < childrenNum; i++) {
+            SaveTeachplanDto dto = new SaveTeachplanDto();
+            dto.setCourseId(courseId);
+            // 父章节的 ID 在创建父章节后设置
+            dto.setParentid(0L);
+            dto.setPname("测试子章节 Unit Test-" + (int) Math.floor(Math.random() * (100 + 1)));
+            dto.setGrade(2);
+            dtoChildrenList.add(dto);
+        }
+    }
+
     @Test
-    void queryTreeNodes() {
-        long courseId = 117L;
+    @Order(2)
+    void testQueryTreeNodes() {
         List<TeachplanDto> teachplanTreeList = teachplanService.queryTreeNodes(courseId);
         Assertions.assertNotNull(teachplanTreeList);
 
@@ -36,47 +76,78 @@ class TeachplanServiceTest {
     }
 
     @Test
-    void addTeachplan() {
-        SaveTeachplanDto dto = new SaveTeachplanDto();
-        dto.setCourseId(74L);
-        dto.setParentid(293L);
-        dto.setGrade(1);
-        dto.setPname("新增章节3");
-        ResponseResult resp = teachplanService.saveTeachplan(dto);
-        System.out.println(resp);
+    @Order(1)
+    void testCreateTeachplan() {
+        dtoParentList.forEach(dto -> {
+            Teachplan res = teachplanService.saveTeachplan(dto);
+            Assertions.assertNotNull(res);
+            // 保存父章节的 ID
+            dto.setId(res.getId());
+        });
+
+        // 第一个父章节下只有一个子节点，其他的有两个子节点
+        double index = 0.5;
+        for (SaveTeachplanDto dto : dtoChildrenList) {
+            // 设置父章节的 ID
+            dto.setParentid(dtoParentList.get((int) Math.floor(index)).getId());
+            // 使每个父章节下最多有两个子章节
+            index += 0.5;
+            Teachplan res = teachplanService.saveTeachplan(dto);
+            Assertions.assertNotNull(res);
+            // 保存子章节的 ID
+            dto.setId(res.getId());
+        }
     }
 
     @Test
-    void updateTeachplan() {
-        SaveTeachplanDto dto = new SaveTeachplanDto();
-        dto.setId(251L);
-        dto.setCourseId(74L);
-        dto.setParentid(0L);
-        dto.setGrade(1);
-        dto.setPname("新增章节");
-        ResponseResult resp = teachplanService.saveTeachplan(dto);
-        System.out.println(resp);
+    @Order(3)
+    void testUpdateTeachplan() {
+        // 使用 create 方法创建的课程的 ID
+        dtoParentList.forEach(dto -> {
+            Teachplan res = teachplanService.saveTeachplan(dto);
+            Assertions.assertNotNull(res);
+        });
+        dtoChildrenList.forEach(dto -> {
+            Teachplan res = teachplanService.saveTeachplan(dto);
+            Assertions.assertNotNull(res);
+        });
     }
 
     @Test
-    void deleteTeachplan() {
-        long id = 293L;
-        ResponseResult resp = teachplanService.deleteTeachplan(id);
-        System.out.println(resp);
+    @Order(6)
+    void testDeleteTeachplan() {
+        // 删除子章节
+        ResponseResult res1 = teachplanService.deleteTeachplan(dtoChildrenList.get(0).getId());
+        Assertions.assertNotNull(res1);
+        // 删除父章节
+        ResponseResult res2 = teachplanService.deleteTeachplan(dtoParentList.get(0).getId());
+        Assertions.assertNotNull(res2);
     }
 
     @Test
-    void moveUp() {
-        long id = 296L;
-        ResponseResult resp = teachplanService.moveUp(id);
-        System.out.println(resp);
+    @Order(7)
+    void testDeleteAll() {
+        // 删除所有章节
+        ResponseResult resp = teachplanService.deleteAll(1000000);
+        Assertions.assertNotNull(resp);
     }
 
     @Test
-    void moveDown() {
-        long id = 296L;
-        ResponseResult resp = teachplanService.moveDown(id);
-        System.out.println(resp);
+    @Order(4)
+    void testMoveUp() {
+        ResponseResult res1 = teachplanService.moveUp(dtoParentList.get(1).getId());
+        Assertions.assertNotNull(res1);
+        ResponseResult res2 = teachplanService.moveUp(dtoChildrenList.get(2).getId());
+        Assertions.assertNotNull(res2);
+    }
+
+    @Test
+    @Order(5)
+    void testMoveDown() {
+        ResponseResult res1 = teachplanService.moveUp(dtoParentList.get(0).getId());
+        Assertions.assertNotNull(res1);
+        ResponseResult res2 = teachplanService.moveUp(dtoChildrenList.get(1).getId());
+        Assertions.assertNotNull(res2);
     }
 
 }

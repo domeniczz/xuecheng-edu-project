@@ -9,10 +9,10 @@ package com.xuecheng.content.service;
 public interface TeachplanMediaService {
 
     /**
-     * 删除课程计划与媒资文件的关联信息
+     * 删除课程计划与媒资文件的关联信息 (可能没有关联的媒资信息）
      * @param teachplanId 课程计划 id
      * @return 删除结果
      */
-    public int deleteTeachplanMedia(long teachplanId);
+    int deleteTeachplanMedia(long teachplanId);
 
 }

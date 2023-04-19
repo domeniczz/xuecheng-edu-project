@@ -44,55 +44,15 @@ public class TeachplanServiceImpl implements TeachplanService {
     }
 
     @Override
-    public ResponseResult saveTeachplan(SaveTeachplanDto saveTeachplanDto) {
+    public Teachplan saveTeachplan(SaveTeachplanDto saveTeachplanDto) {
         Long id = saveTeachplanDto.getId();
 
         if (id == null) {
             // 新增
-            return addTeachplan(saveTeachplanDto);
+            return createTeachplan(saveTeachplanDto);
         } else {
             // 修改
             return updateTeachplan(saveTeachplanDto, id);
-        }
-    }
-
-    private ResponseResult addTeachplan(SaveTeachplanDto saveTeachplanDto) {
-        Teachplan teachplan = new Teachplan();
-        BeanUtils.copyProperties(saveTeachplanDto, teachplan);
-
-        teachplan.setCreateDate(LocalDateTime.now());
-        teachplan.setChangeDate(LocalDateTime.now());
-
-        Long parentid = saveTeachplanDto.getParentid();
-        Long courseId = saveTeachplanDto.getCourseId();
-        int teachplanCount = getChildrenCount(courseId, parentid);
-        // 自动设置，排序在最后
-        teachplan.setOrderby(teachplanCount + 1);
-
-        int res = teachplanMapper.insert(teachplan);
-
-        if (res > 0) {
-            return new ResponseResult(HttpStatus.OK.value(), "新增章节成功");
-        } else {
-            XueChengEduException.cast(CommonError.UNKOWN_ERROR);
-            return null;
-        }
-    }
-
-    private ResponseResult updateTeachplan(SaveTeachplanDto saveTeachplanDto, long id) {
-        Teachplan teachplan = teachplanMapper.selectById(id);
-        BeanUtils.copyProperties(saveTeachplanDto, teachplan);
-
-        teachplan.setChangeDate(LocalDateTime.now());
-
-        int res = teachplanMapper.updateById(teachplan);
-
-        ResponseResult resp = new ResponseResult();
-        if (res > 0) {
-            return new ResponseResult(HttpStatus.OK.value(), "修改章节成功");
-        } else {
-            XueChengEduException.cast(CommonError.UNKOWN_ERROR);
-            return null;
         }
     }
 
@@ -115,6 +75,8 @@ public class TeachplanServiceImpl implements TeachplanService {
                     XueChengEduException.cast(CommonError.UNKOWN_ERROR);
                     return null;
                 }
+                // 删除小章节后，将大章节进行重新排序
+                resetPeerOrderby(teachplanToDelete);
             }
         }
         // 删除小章节 (只有小章节才有媒资关联信息)
@@ -127,25 +89,10 @@ public class TeachplanServiceImpl implements TeachplanService {
             } else {
                 // 删除小章节后，还要删除在课程计划媒资关联表中的数据
                 int resMedia = teachplanMediaService.deleteTeachplanMedia(id);
-                if (resMedia < 0) {
-                    XueChengEduException.cast(CommonError.UNKOWN_ERROR);
-                    return null;
-                } else {
-                    // 删除小章节后，将大章节下的小章节排序进行重新排序
-                    int teachplanCount = getChildrenCount(teachplanToDelete.getCourseId(),
-                            teachplanToDelete.getParentid());
-                    if (teachplanCount > 0) {
-                        // 查询大章节下的所有小章节
-                        List<Teachplan> teachplanList = teachplanMapper.selectList(new LambdaQueryWrapper<Teachplan>()
-                                .eq(Teachplan::getParentid, teachplanToDelete.getParentid()));
-                        // 遍历小章节，重新设置排序字段 orderedby
-                        for (int i = 0; i < teachplanList.size(); i++) {
-                            Teachplan teachplan = teachplanList.get(i);
-                            teachplan.setOrderby(i + 1);
-                            teachplanMapper.updateById(teachplan);
-                        }
-                    }
-                }
+                if (resMedia <= 0)
+                    log.info("课程计划 (id: " + id + ") 没有在媒资关联表中关联的数据");
+                // 删除小章节后，将小章节进行重新排序
+                resetPeerOrderby(teachplanToDelete);
             }
         }
         // 返回操作成功的响应
@@ -159,11 +106,13 @@ public class TeachplanServiceImpl implements TeachplanService {
                 .forEach(teachplan -> {
                     // 只有小章节才有媒资关联信息
                     if (teachplan.getParentid() != 0) {
-                        teachplanMediaService.deleteTeachplanMedia(teachplan.getId());
+                        int res = teachplanMediaService.deleteTeachplanMedia(teachplan.getId());
+                        if (res <= 0)
+                            log.info("课程计划 (id: " + teachplan.getId() + ") 没有在媒资关联表中关联的数据");
                     }
                 });
         // 再删除课程计划表中的数据
-        teachplanMapper.delete(new LambdaQueryWrapper<Teachplan>().eq(Teachplan::getCourseId, 600));
+        teachplanMapper.delete(new LambdaQueryWrapper<Teachplan>().eq(Teachplan::getCourseId, courseId));
         return new ResponseResult(HttpStatus.OK.value(), "删除课程计划成功");
     }
 
@@ -177,6 +126,67 @@ public class TeachplanServiceImpl implements TeachplanService {
     public ResponseResult moveDown(long id) {
         move(id, Direction.DOWN);
         return new ResponseResult(HttpStatus.OK.value(), "下移课程计划成功");
+    }
+
+    private Teachplan createTeachplan(SaveTeachplanDto saveTeachplanDto) {
+        Teachplan teachplan = new Teachplan();
+        BeanUtils.copyProperties(saveTeachplanDto, teachplan);
+
+        teachplan.setCreateDate(LocalDateTime.now());
+        teachplan.setChangeDate(LocalDateTime.now());
+
+        Long parentid = saveTeachplanDto.getParentid();
+        Long courseId = saveTeachplanDto.getCourseId();
+        int teachplanCount = getChildrenCount(courseId, parentid);
+        // 自动设置，排序在最后
+        teachplan.setOrderby(teachplanCount + 1);
+
+        int res = teachplanMapper.insert(teachplan);
+
+        if (res > 0) {
+            return teachplan;
+        } else {
+            XueChengEduException.cast(CommonError.UNKOWN_ERROR);
+            return null;
+        }
+    }
+
+    private Teachplan updateTeachplan(SaveTeachplanDto saveTeachplanDto, long id) {
+        Teachplan teachplan = teachplanMapper.selectById(id);
+        BeanUtils.copyProperties(saveTeachplanDto, teachplan);
+
+        teachplan.setChangeDate(LocalDateTime.now());
+
+        int res = teachplanMapper.updateById(teachplan);
+
+        if (res > 0) {
+            return teachplan;
+        } else {
+            XueChengEduException.cast(CommonError.UNKOWN_ERROR);
+            return null;
+        }
+    }
+
+    /**
+     * 删除一个章节后，重新设置同级章节的排序字段 orderedby
+     * @param teachplanToDelete 要被删除的章节
+     */
+    private void resetPeerOrderby(Teachplan teachplanToDelete) {
+        // 先获取同级的章节数量
+        int teachplanPeerCount = getChildrenCount(teachplanToDelete.getCourseId(), teachplanToDelete.getParentid());
+        if (teachplanPeerCount > 0) {
+            // 获取所有同级章节
+            List<Teachplan> teachplanPeerList = teachplanMapper.selectList(new LambdaQueryWrapper<Teachplan>()
+                    .eq(Teachplan::getParentid, teachplanToDelete.getParentid())
+                    .eq(Teachplan::getCourseId, teachplanToDelete.getCourseId()));
+            // 遍历同级章节，重新设置排序字段 orderedby
+            int size = teachplanPeerList.size();
+            for (int i = 0; i < size; i++) {
+                Teachplan teachplan = teachplanPeerList.get(i);
+                teachplan.setOrderby(i + 1);
+                teachplanMapper.updateById(teachplan);
+            }
+        }
     }
 
     /**

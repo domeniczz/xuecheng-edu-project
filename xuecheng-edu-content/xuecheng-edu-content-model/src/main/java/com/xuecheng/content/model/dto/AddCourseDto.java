@@ -62,11 +62,11 @@ public class AddCourseDto {
 
     @ApiModelProperty(value = "价格")
     @DecimalMin(value = "0.0", message = "价格不能小于 0", groups = { ValidationGroups.Insert.class, ValidationGroups.Update.class })
-    private Float price;
+    private Double price;
 
     @ApiModelProperty(value = "原价")
     @DecimalMin(value = "0.0", message = "价格不能小于 0", groups = { ValidationGroups.Insert.class, ValidationGroups.Update.class })
-    private Float originalPrice;
+    private Double originalPrice;
 
     @ApiModelProperty(value = "qq")
     @QQNumberConstraint(message = "QQ 号码不合法", groups = { ValidationGroups.Insert.class, ValidationGroups.Update.class })

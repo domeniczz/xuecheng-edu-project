@@ -49,7 +49,7 @@ public class CourseBaseInfoController {
     @ApiOperation("根据课程 ID 查询课程信息")
     @ApiImplicitParam(value = "courseId", name = "课程 id", required = true, dataType = "Long", paramType = "path")
     public CourseBaseInfoDto getCourseBaseInfoById(@PathVariable Long courseId) {
-        return courseBaseInfoService.getCourseBaseAndMarketInfoById(courseId);
+        return courseBaseInfoService.queryCourseBaseAndMarketInfoById(courseId);
     }
 
     @PostMapping("")

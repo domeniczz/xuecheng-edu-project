@@ -21,7 +21,7 @@ public interface CourseTeacherService {
     List<CourseTeacher> queryTeacherList(long courseId);
 
     /**
-     * 保存课程师资
+     * 保存课程师资(新增或更新)
      * @param teacher 师资信息
      * @return 保存的师资
      */
@@ -34,5 +34,15 @@ public interface CourseTeacherService {
      * @return 删除结果
      */
     ResponseResult delete(long courseId, long teacherId);
+
+    /**
+     * <p>
+     * 删除指定课程的所有教师信息
+     * 可能课程没有对应的教师信息，也可能有多个
+     * </p>
+     * @param courseId 课程 id
+     * @return 删除结果
+     */
+    ResponseResult deleteAll(long courseId);
 
 }

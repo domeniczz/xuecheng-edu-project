@@ -1,10 +1,13 @@
 package com.xuecheng.content.service;
 
 import com.xuecheng.content.model.dto.CourseCategoryTreeDto;
+import com.xuecheng.content.model.po.CourseCategory;
+
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -15,19 +18,31 @@ import java.util.List;
  * @Created by Domenic
  */
 @SpringBootTest
+@Transactional
 public class CourseCategoryServiceTest {
 
     @Autowired
     private CourseCategoryService courseCategoryService;
 
     @Test
-    void testcourseCategoryService() {
-        List<CourseCategoryTreeDto> courseCategoryTreeList = courseCategoryService.queryTreeNodes();
-        Assertions.assertNotNull(courseCategoryTreeList);
+    void testQueryTreeNodes() {
+        List<CourseCategoryTreeDto> res = courseCategoryService.queryTreeNodes();
+        Assertions.assertNotNull(res);
 
         System.out.println("\n===================================================");
-        courseCategoryTreeList.forEach(System.out::println);
+        res.forEach(System.out::println);
         System.out.println("===================================================\n");
+    }
+
+    @Test
+    void testQuery() {
+        String categoryId = "1-1";
+        CourseCategory res = courseCategoryService.query(categoryId);
+        Assertions.assertNotNull(res);
+
+        System.out.println("\n===================================================\n"
+                + res
+                + "\n===================================================\n");
     }
 
 }
