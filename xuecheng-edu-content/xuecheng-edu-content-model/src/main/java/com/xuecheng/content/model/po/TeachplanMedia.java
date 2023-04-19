@@ -11,7 +11,10 @@ import java.io.Serializable;
 import java.time.LocalDateTime;
 
 /**
- * 课程计划与媒资文件关联表
+ * @author Domenic
+ * @Classname TeachplanMedia
+ * @Description 课程计划与媒资文件关联信息
+ * @Created by Domenic
  */
 @Data
 @TableName("teachplan_media")

@@ -1,6 +1,6 @@
 package com.xuecheng.base.validation.validator;
 
-import com.xuecheng.base.validation.constraints.QQNumberConstraint;
+import com.xuecheng.base.validation.constraints.QqNumberConstraint;
 
 import javax.validation.ConstraintValidator;
 import javax.validation.ConstraintValidatorContext;
@@ -11,10 +11,10 @@ import javax.validation.ConstraintValidatorContext;
  * @Description QQ 号码校验器
  * @Created by Domenic
  */
-public class QQNumberValidator implements ConstraintValidator<QQNumberConstraint, String> {
+public class QqNumberValidator implements ConstraintValidator<QqNumberConstraint, String> {
 
     @Override
-    public void initialize(QQNumberConstraint contactNumber) {
+    public void initialize(QqNumberConstraint contactNumber) {
     }
 
     /**
@@ -25,10 +25,11 @@ public class QQNumberValidator implements ConstraintValidator<QQNumberConstraint
      */
     @Override
     public boolean isValid(String qq, ConstraintValidatorContext cxt) {
-        if (qq == null || qq.isEmpty())
+        if (qq == null || qq.isEmpty()) {
             return true;
-        else
+        } else {
             return qq.matches("^[1-9][0-9]{4,10}$");
+        }
     }
 
 }

@@ -20,7 +20,7 @@ import java.util.stream.Collectors;
  * @Created by Domenic
  */
 @Service
-@Transactional
+@Transactional(rollbackFor = Exception.class)
 public class CourseCategoryServiceImpl implements CourseCategoryService {
 
     @Autowired

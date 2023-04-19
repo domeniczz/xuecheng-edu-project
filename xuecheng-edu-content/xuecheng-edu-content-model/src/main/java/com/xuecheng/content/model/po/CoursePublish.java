@@ -9,7 +9,10 @@ import java.io.Serializable;
 import java.time.LocalDateTime;
 
 /**
- * 课程发布
+ * @author Domenic
+ * @Classname CoursePublish
+ * @Description 课程发布信息
+ * @Created by Domenic
  */
 @Data
 @TableName("course_publish")

@@ -8,7 +8,10 @@ import lombok.Data;
 import java.io.Serializable;
 
 /**
- * 数据字典
+ * @author Domenic
+ * @Classname Dictionary
+ * @Description 数据字典
+ * @Created by Domenic
  */
 @Data
 @TableName("dictionary")

@@ -4,7 +4,6 @@ import com.xuecheng.base.exception.XueChengEduException;
 import com.xuecheng.content.mapper.CourseMarketMapper;
 import com.xuecheng.content.model.po.CourseMarket;
 import com.xuecheng.content.service.CourseMarketService;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -16,9 +15,8 @@ import org.springframework.transaction.annotation.Transactional;
  * @Description 课程营销信息服务接口实现类
  * @Created by Domenic
  */
-@Slf4j
 @Service
-@Transactional
+@Transactional(rollbackFor = Exception.class)
 public class CourseMarketServiceImpl implements CourseMarketService {
 
     @Autowired
@@ -36,7 +34,9 @@ public class CourseMarketServiceImpl implements CourseMarketService {
         // 若课程为收费，但价格没有填写，则抛出异常
         String charge = courseMarket.getCharge();
         // TODO: 这里 charge 类型不能直接写死，应该要从 System 模块中查询 Dictionary 获取
-        if (charge.equals("201001")) {
+        // 201001 是收费，201000 是免费
+        String chargedStatus = "201001";
+        if (chargedStatus.equals(charge)) {
             if (courseMarket.getPrice() == null || courseMarket.getPrice() <= 0) {
                 XueChengEduException.cast("课程的价格不能为空，且必须大于 0");
                 return null;

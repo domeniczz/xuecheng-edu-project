@@ -11,23 +11,30 @@ import com.baomidou.mybatisplus.generator.engine.FreemarkerTemplateEngine;
 import java.util.Arrays;
 
 /**
- * MyBatis-Plus 代码生成类
+ * @author MyBatis-Plus
+ * @Classname CommonCodeGenerator
+ * @Description MyBatis-Plus 代码生成类
+ * @Created by MyBatis-Plus
  */
 public class CommonCodeGenerator {
 
-	// TODO 修改服务名以及数据表名
+	/**
+	 * TODO: 修改服务名以及数据表名
+	 */
 	private static final String SERVICE_NAME = "comments";
 
-	private static final String DATA_SOURCE_USER_NAME  = "root";
-	private static final String DATA_SOURCE_PASSWORD  = "root";
-	private static final String[] TABLE_NAMES = new String[]{
+	private static final String DATA_SOURCE_USER_NAME = "root";
+	private static final String DATA_SOURCE_PASSWORD = "root";
+	private static final String[] TABLE_NAMES = new String[] {
 			"comment",
 			"comment_reply",
 			"comment_target",
 	};
 
-	// TODO 默认生成entity，需要生成DTO修改此变量
-	// 一般情况下要先生成 DTO类 然后修改此参数再生成 PO 类。
+	/**
+	 * TODO: 默认生成 entity，需要生成 DTO 修改此变量
+	 * 一般情况下要先生成 DTO 类 然后修改此参数再生成 PO 类
+	 */
 	private static final Boolean IS_DTO = true;
 
 	public static void main(String[] args) {
@@ -43,8 +50,8 @@ public class CommonCodeGenerator {
 		gc.setOpen(false);
 		gc.setSwagger2(false);
 		gc.setServiceName("%sService");
-        gc.setBaseResultMap(true);
-        gc.setBaseColumnList(true);
+		gc.setBaseResultMap(true);
+		gc.setBaseColumnList(true);
 
 		if (IS_DTO) {
 			gc.setSwagger2(true);
@@ -72,7 +79,6 @@ public class CommonCodeGenerator {
 		pc.setEntity("model.po");
 		mpg.setPackageInfo(pc);
 
-
 		// 设置模板
 		TemplateConfig tc = new TemplateConfig();
 		mpg.setTemplate(tc);
@@ -94,8 +100,7 @@ public class CommonCodeGenerator {
 		strategy.setTableFillList(Arrays.asList(
 				new TableFill("create_date", FieldFill.INSERT),
 				new TableFill("change_date", FieldFill.INSERT_UPDATE),
-				new TableFill("modify_date", FieldFill.UPDATE)
-		));
+				new TableFill("modify_date", FieldFill.UPDATE)));
 		mpg.setStrategy(strategy);
 
 		mpg.execute();

@@ -8,7 +8,10 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 /**
- * Mybatis-Plus 配置
+ * @author Domenic
+ * @Classname MybatisPlusConfig
+ * @Description Mybatis-Plus 配置类
+ * @Created by Domenic
  */
 @Configuration
 @MapperScan("com.xuecheng.system.mapper")

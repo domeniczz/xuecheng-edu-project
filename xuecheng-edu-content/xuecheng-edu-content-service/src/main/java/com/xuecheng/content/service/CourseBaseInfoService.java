@@ -58,6 +58,7 @@ public interface CourseBaseInfoService {
      * 会删除课程相关的基本信息、营销信息、课程计划、课程教师信息
      * </p>
      * @param courseId 课程 ID
+     * @return 操作结果
      */
     ResponseResult delete(long courseId);
 

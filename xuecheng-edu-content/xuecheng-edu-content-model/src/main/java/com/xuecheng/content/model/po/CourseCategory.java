@@ -6,7 +6,10 @@ import lombok.Data;
 import java.io.Serializable;
 
 /**
- * 课程分类
+ * @author Domenic
+ * @Classname CourseCategory
+ * @Description 课程分类信息
+ * @Created by Domenic
  */
 @Data
 @TableName("course_category")

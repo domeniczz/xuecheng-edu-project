@@ -21,7 +21,7 @@ public interface CourseCategoryService {
 
     /**
      * 根据课程分类 id 查询课程分类信息
-     * @param id 课程分类 id
+     * @param categoryId 课程分类 id
      * @return 课程分类信息
      */
     CourseCategory query(String categoryId);

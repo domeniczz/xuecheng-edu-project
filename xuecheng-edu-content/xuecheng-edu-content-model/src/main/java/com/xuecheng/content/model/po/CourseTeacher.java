@@ -16,7 +16,10 @@ import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.Size;
 
 /**
- * 课程-教师关系表
+ * @author Domenic
+ * @Classname CourseTeacher
+ * @Description 课程-教师关系信息
+ * @Created by Domenic
  */
 @Data
 @TableName("course_teacher")

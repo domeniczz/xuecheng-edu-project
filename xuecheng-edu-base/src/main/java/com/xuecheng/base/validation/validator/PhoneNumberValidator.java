@@ -25,10 +25,11 @@ public class PhoneNumberValidator implements ConstraintValidator<PhoneNumberCons
      */
     @Override
     public boolean isValid(String phone, ConstraintValidatorContext cxt) {
-        if (phone == null || phone.isEmpty())
+        if (phone == null || phone.isEmpty()) {
             return true;
-        else
+        } else {
             return phone.matches("^[1][3,4,5,7,8][0-9]{9}$");
+        }
     }
 
 }

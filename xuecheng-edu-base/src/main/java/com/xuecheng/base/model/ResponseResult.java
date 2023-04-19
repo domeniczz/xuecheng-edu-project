@@ -17,6 +17,6 @@ public class ResponseResult {
 
     private int statusCode;
 
-    private String Message;
+    private String message;
 
 }

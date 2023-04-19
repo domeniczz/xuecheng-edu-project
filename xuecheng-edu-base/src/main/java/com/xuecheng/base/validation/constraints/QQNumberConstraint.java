@@ -1,6 +1,6 @@
 package com.xuecheng.base.validation.constraints;
 
-import com.xuecheng.base.validation.validator.QQNumberValidator;
+import com.xuecheng.base.validation.validator.QqNumberValidator;
 
 import javax.validation.Constraint;
 import javax.validation.Payload;
@@ -18,10 +18,10 @@ import java.lang.annotation.Target;
  * @Created by Domenic
  */
 @Documented
-@Constraint(validatedBy = QQNumberValidator.class)
+@Constraint(validatedBy = QqNumberValidator.class)
 @Target({ ElementType.METHOD, ElementType.FIELD })
 @Retention(RetentionPolicy.RUNTIME)
-public @interface QQNumberConstraint {
+public @interface QqNumberConstraint {
     String message() default "Invalid qq number";
 
     Class<?>[] groups() default {};

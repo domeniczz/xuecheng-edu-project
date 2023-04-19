@@ -29,7 +29,7 @@ import java.util.List;
  */
 @Slf4j
 @Service
-@Transactional
+@Transactional(rollbackFor = Exception.class)
 public class TeachplanServiceImpl implements TeachplanService {
 
     @Autowired
@@ -89,8 +89,9 @@ public class TeachplanServiceImpl implements TeachplanService {
             } else {
                 // 删除小章节后，还要删除在课程计划媒资关联表中的数据
                 int resMedia = teachplanMediaService.deleteTeachplanMedia(id);
-                if (resMedia <= 0)
+                if (resMedia <= 0) {
                     log.info("课程计划 (id: " + id + ") 没有在媒资关联表中关联的数据");
+                }
                 // 删除小章节后，将小章节进行重新排序
                 resetPeerOrderby(teachplanToDelete);
             }
@@ -107,8 +108,9 @@ public class TeachplanServiceImpl implements TeachplanService {
                     // 只有小章节才有媒资关联信息
                     if (teachplan.getParentid() != 0) {
                         int res = teachplanMediaService.deleteTeachplanMedia(teachplan.getId());
-                        if (res <= 0)
+                        if (res <= 0) {
                             log.info("课程计划 (id: " + teachplan.getId() + ") 没有在媒资关联表中关联的数据");
+                        }
                     }
                 });
         // 再删除课程计划表中的数据
@@ -199,8 +201,7 @@ public class TeachplanServiceImpl implements TeachplanService {
         // SQL: SELECT COUNT(id) FROM teachplan WHERE course_id = #{courseId} AND parentid = #{parentId}
         LambdaQueryWrapper<Teachplan> queryWrapper = new LambdaQueryWrapper<>();
         queryWrapper = queryWrapper.eq(Teachplan::getCourseId, courseId).eq(Teachplan::getParentid, parentId);
-        Integer count = teachplanMapper.selectCount(queryWrapper);
-        return count;
+        return teachplanMapper.selectCount(queryWrapper);
     }
 
     /**
@@ -212,23 +213,7 @@ public class TeachplanServiceImpl implements TeachplanService {
         // SQL: SELECT COUNT(id) FROM teachplan WHERE parentid = #{id}
         LambdaQueryWrapper<Teachplan> queryWrapper = new LambdaQueryWrapper<>();
         queryWrapper = queryWrapper.eq(Teachplan::getParentid, id);
-        Integer count = teachplanMapper.selectCount(queryWrapper);
-        return count;
-    }
-
-    /**
-     * 根据 id 获取同级节点数量 (包括自己)
-     * @param id id
-     * @return 同级节点数量
-     */
-    private int getPeerCount(long id) {
-        // SQL: SELECT parentid FROM teachplan WHERE id = #{id}
-        Long parentId = teachplanMapper.selectById(id).getParentid();
-        // SQL: SELECT id FROM teachplan WHERE id = #{parentid}
-        Long parentPlanId = teachplanMapper
-                .selectOne(new LambdaQueryWrapper<Teachplan>().eq(Teachplan::getId, parentId)).getId();
-        int count = getChildrenCount(parentPlanId);
-        return count;
+        return teachplanMapper.selectCount(queryWrapper);
     }
 
     /**
@@ -255,8 +240,9 @@ public class TeachplanServiceImpl implements TeachplanService {
 
         long courseId = 0;
         // 如果是大章节
-        if (parentid == 0)
+        if (parentid == 0) {
             courseId = teachPlan.getCourseId();
+        }
 
         // 获取当前排序字段
         int orderby = teachPlan.getOrderby();
@@ -269,30 +255,13 @@ public class TeachplanServiceImpl implements TeachplanService {
                 // 更新当前章节的排序字段
                 int preOrderby = orderby - 1;
 
-                Teachplan preTeachPlan = null;
-                if (parentid != 0) {
-                    // 查找前一个小章节
-                    // SQL: SELECT * FROM teachplan WHERE orderby = #{preOrderby} AND parentid = #{parentid}
-                    preTeachPlan = teachplanMapper.selectOne(new LambdaQueryWrapper<Teachplan>()
-                            .eq(Teachplan::getParentid, parentid)
-                            .eq(Teachplan::getOrderby, preOrderby));
-                } else {
-                    // 查找前一个大章节
-                    // SQL: SELECT * FROM teachplan WHERE orderby = #{preOrderby} AND course_id = #{courseId}
-                    preTeachPlan = teachplanMapper.selectOne(new LambdaQueryWrapper<Teachplan>()
-                            .eq(Teachplan::getCourseId, courseId)
-                            .eq(Teachplan::getOrderby, preOrderby)
-                            .eq(Teachplan::getParentid, parentid));
-                }
+                // 获取前一个章节
+                Teachplan preTeachPlan = findNearByPlan(parentid, courseId, preOrderby);
 
-                // 更新当前章节的排序字段
-                teachPlan.setOrderby(preOrderby);
-                int res1 = teachplanMapper.updateById(teachPlan);
-                // 更新前一个章节的排序字段
-                preTeachPlan.setOrderby(orderby);
-                int res2 = teachplanMapper.updateById(preTeachPlan);
+                // 更新 当前章节 和 前一个章节 的排序字段
+                boolean res = exchangeOrder(teachPlan, preTeachPlan, orderby, preOrderby);
 
-                if (res1 <= 0 || res2 <= 0) {
+                if (!res) {
                     XueChengEduException.cast("上移失败 (T_T)");
                 }
             }
@@ -301,32 +270,15 @@ public class TeachplanServiceImpl implements TeachplanService {
         else if (direction.equals(Direction.DOWN)) {
             int nextOrderby = orderby + 1;
 
-            Teachplan nextTeachPlan = null;
-            if (parentid != 0) {
-                // 查找后一个小章节
-                // SQL: SELECT * FROM teachplan WHERE orderby = #{nextOrderby} AND parentid = #{parentid}
-                nextTeachPlan = teachplanMapper.selectOne(new LambdaQueryWrapper<Teachplan>()
-                        .eq(Teachplan::getParentid, parentid)
-                        .eq(Teachplan::getOrderby, nextOrderby));
-            } else {
-                // 查找后一个大章节
-                // SQL: SELECT * FROM teachplan WHERE orderby = #{nextOrderby} AND course_id = #{courseId}
-                nextTeachPlan = teachplanMapper.selectOne(new LambdaQueryWrapper<Teachplan>()
-                        .eq(Teachplan::getCourseId, courseId)
-                        .eq(Teachplan::getOrderby, nextOrderby)
-                        .eq(Teachplan::getParentid, parentid));
-            }
+            // 获取后一个章节
+            Teachplan nextTeachPlan = findNearByPlan(parentid, courseId, nextOrderby);
 
             if (nextTeachPlan != null) {
-                // 更新当前章节的排序字段
-                teachPlan.setOrderby(nextOrderby);
-                int res1 = teachplanMapper.updateById(teachPlan);
 
-                // 更新后一个章节的排序字段
-                nextTeachPlan.setOrderby(orderby);
-                int res2 = teachplanMapper.updateById(nextTeachPlan);
+                // 更新 当前章节 和 后一个章节 的排序字段
+                boolean res = exchangeOrder(teachPlan, nextTeachPlan, orderby, nextOrderby);
 
-                if (res1 <= 0 || res2 <= 0) {
+                if (!res) {
                     XueChengEduException.cast("下移失败 (T_T)");
                 }
             } else {
@@ -338,6 +290,54 @@ public class TeachplanServiceImpl implements TeachplanService {
             log.error("移动课程计划时，传入的移动方向参数错误");
             XueChengEduException.cast(CommonError.UNKOWN_ERROR);
         }
+    }
+
+    /**
+     * 查找 前一个/后一个 大/小章节
+     * @param parentid 父级 id
+     * @param courseId 课程 id
+     * @param nearByOrderby 前一个/后一个 排序字段
+     * @return 查找到的章节
+     */
+    private Teachplan findNearByPlan(long parentid, long courseId, int nearByOrderby) {
+        Teachplan nearByTeachPlan;
+
+        if (parentid != 0) {
+            // 查找前一个/后一个小章节
+            // SQL: SELECT * FROM teachplan WHERE orderby = #{nearByOrderby} AND parentid = #{parentid}
+            nearByTeachPlan = teachplanMapper.selectOne(new LambdaQueryWrapper<Teachplan>()
+                    .eq(Teachplan::getParentid, parentid)
+                    .eq(Teachplan::getOrderby, nearByOrderby));
+        } else {
+            // 查找前一个/后一个大章节
+            // SQL: SELECT * FROM teachplan WHERE orderby = #{nearByOrderby} AND course_id = #{courseId}
+            nearByTeachPlan = teachplanMapper.selectOne(new LambdaQueryWrapper<Teachplan>()
+                    .eq(Teachplan::getCourseId, courseId)
+                    .eq(Teachplan::getOrderby, nearByOrderby)
+                    .eq(Teachplan::getParentid, parentid));
+        }
+
+        return nearByTeachPlan;
+    }
+
+    /**
+     * 交换两个章节的排序字段
+     * @param thisTeachplan 当前章节
+     * @param nearbyTeachPlan 前一个/后一个 章节
+     * @param orderBy 当前章节的排序字段
+     * @param nearByOrderby 前一个/后一个 章节的排序字段
+     * @return 是否交换成功
+     */
+    private boolean exchangeOrder(Teachplan thisTeachplan, Teachplan nearbyTeachPlan, int orderBy, int nearByOrderby) {
+        // 更新 当前 章节的排序字段
+        thisTeachplan.setOrderby(nearByOrderby);
+        int res1 = teachplanMapper.updateById(thisTeachplan);
+
+        // 更新 前一个/后一个 章节的排序字段
+        nearbyTeachPlan.setOrderby(orderBy);
+        int res2 = teachplanMapper.updateById(nearbyTeachPlan);
+
+        return res1 <= 0 || res2 <= 0;
     }
 
 }

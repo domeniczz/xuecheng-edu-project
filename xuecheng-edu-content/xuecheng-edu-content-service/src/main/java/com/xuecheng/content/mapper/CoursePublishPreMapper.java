@@ -4,7 +4,10 @@ import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.xuecheng.content.model.po.CoursePublishPre;
 
 /**
- * 课程发布 Mapper 接口
+ * @author Domenic
+ * @Classname CoursePublishPreMapper
+ * @Description 课程发布 Mapper 接口
+ * @Created by Domenic
  */
 public interface CoursePublishPreMapper extends BaseMapper<CoursePublishPre> {
 

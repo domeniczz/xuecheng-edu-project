@@ -4,7 +4,10 @@ import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.xuecheng.system.model.po.Dictionary;
 
 /**
- * 数据字典 Mapper 接口
+ * @author Domenic
+ * @Classname DictionaryMapper
+ * @Description 数据字典 Mapper 接口
+ * @Created by Domenic
  */
 public interface DictionaryMapper extends BaseMapper<Dictionary> {
 

@@ -13,11 +13,14 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
 
 /**
- * 数据字典 服务实现类
+ * @author Domenic
+ * @Classname DictionaryServiceImpl
+ * @Description 数据字典 服务实现类
+ * @Created by Domenic
  */
 @Slf4j
 @Service
-@Transactional
+@Transactional(rollbackFor = Exception.class)
 public class DictionaryServiceImpl extends ServiceImpl<DictionaryMapper, Dictionary> implements DictionaryService {
 
     @Override

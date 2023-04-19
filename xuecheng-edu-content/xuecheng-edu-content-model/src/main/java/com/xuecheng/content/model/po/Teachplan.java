@@ -11,7 +11,10 @@ import java.io.Serializable;
 import java.time.LocalDateTime;
 
 /**
- * 课程计划
+ * @author Domenic
+ * @Classname Teachplan
+ * @Description 课程计划信息
+ * @Created by Domenic
  */
 @Data
 @TableName("teachplan")

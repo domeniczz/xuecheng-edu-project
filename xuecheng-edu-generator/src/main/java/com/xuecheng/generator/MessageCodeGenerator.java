@@ -11,33 +11,46 @@ import com.baomidou.mybatisplus.generator.engine.FreemarkerTemplateEngine;
 import java.util.Arrays;
 
 /**
- * MyBatis-Plus 代码生成类
+ * @author MyBatis-Plus
+ * @Classname ContentCodeGenerator
+ * @Description MyBatis-Plus 代码生成类
+ * @Created by MyBatis-Plus
  */
 public class MessageCodeGenerator {
 
-	// TODO 修改服务名以及数据表名
+	/**
+	 * TODO: 修改服务名以及数据表名
+	 */
 	private static final String SERVICE_NAME = "messagesdk";
 
-	//数据库账号
-	private static final String DATA_SOURCE_USER_NAME  = "root";
-	//数据库密码
-	private static final String DATA_SOURCE_PASSWORD  = "mysql";
-	//生成的表
-	private static final String[] TABLE_NAMES = new String[]{
+	/**
+	 * 数据库账号
+	 */
+	private static final String DATA_SOURCE_USER_NAME = "root";
+	/**
+	 * 数据库密码
+	 */
+	private static final String DATA_SOURCE_PASSWORD = "mysql";
+	/**
+	 * 生成的表
+	 */
+	private static final String[] TABLE_NAMES = new String[] {
 			"mq_message",
 			"mq_message_history"
-//			 "course_base",
-//			 "course_market",
-//			 "teachplan",
-//			 "teachplan_media",
-//			 "course_teacher",
-//			 "course_pub",
-//			 "course_pub_pre"
-//			"course_category"
+			//			 "course_base",
+			//			 "course_market",
+			//			 "teachplan",
+			//			 "teachplan_media",
+			//			 "course_teacher",
+			//			 "course_pub",
+			//			 "course_pub_pre"
+			//			"course_category"
 	};
 
-	// TODO 默认生成entity，需要生成DTO修改此变量
-	// 一般情况下要先生成 DTO类 然后修改此参数再生成 PO 类。
+	/**
+	 * TODO: 默认生成 entity，需要生成 DTO 修改此变量
+	 * 一般情况下要先生成 DTO 类 然后修改此参数再生成 PO 类
+	 */
 	private static final Boolean IS_DTO = false;
 
 	public static void main(String[] args) {
@@ -54,8 +67,8 @@ public class MessageCodeGenerator {
 		gc.setOpen(false);
 		gc.setSwagger2(false);
 		gc.setServiceName("%sService");
-        gc.setBaseResultMap(true);
-        gc.setBaseColumnList(true);
+		gc.setBaseResultMap(true);
+		gc.setBaseColumnList(true);
 
 		if (IS_DTO) {
 			gc.setSwagger2(true);
@@ -68,7 +81,7 @@ public class MessageCodeGenerator {
 		dsc.setDbType(DbType.MYSQL);
 		dsc.setUrl("jdbc:mysql://192.168.101.65:3306/xcplus_content"
 				+ "?serverTimezone=UTC&useUnicode=true&useSSL=false&characterEncoding=utf8");
-//		dsc.setDriverName("com.mysql.jdbc.Driver");
+		//		dsc.setDriverName("com.mysql.jdbc.Driver");
 		dsc.setDriverName("com.mysql.cj.jdbc.Driver");
 		dsc.setUsername(DATA_SOURCE_USER_NAME);
 		dsc.setPassword(DATA_SOURCE_PASSWORD);
@@ -83,7 +96,6 @@ public class MessageCodeGenerator {
 		pc.setXml("mapper");
 		pc.setEntity("model.po");
 		mpg.setPackageInfo(pc);
-
 
 		// 设置模板
 		TemplateConfig tc = new TemplateConfig();
@@ -106,8 +118,7 @@ public class MessageCodeGenerator {
 		strategy.setTableFillList(Arrays.asList(
 				new TableFill("create_date", FieldFill.INSERT),
 				new TableFill("change_date", FieldFill.INSERT_UPDATE),
-				new TableFill("modify_date", FieldFill.UPDATE)
-		));
+				new TableFill("modify_date", FieldFill.UPDATE)));
 		mpg.setStrategy(strategy);
 
 		mpg.execute();

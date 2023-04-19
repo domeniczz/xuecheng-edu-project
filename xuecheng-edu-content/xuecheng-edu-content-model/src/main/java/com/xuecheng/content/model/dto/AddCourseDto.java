@@ -2,7 +2,7 @@ package com.xuecheng.content.model.dto;
 
 import com.xuecheng.base.validation.ValidationGroups;
 import com.xuecheng.base.validation.constraints.PhoneNumberConstraint;
-import com.xuecheng.base.validation.constraints.QQNumberConstraint;
+import com.xuecheng.base.validation.constraints.QqNumberConstraint;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
@@ -69,7 +69,7 @@ public class AddCourseDto {
     private Double originalPrice;
 
     @ApiModelProperty(value = "qq")
-    @QQNumberConstraint(message = "QQ 号码不合法", groups = { ValidationGroups.Insert.class, ValidationGroups.Update.class })
+    @QqNumberConstraint(message = "QQ 号码不合法", groups = { ValidationGroups.Insert.class, ValidationGroups.Update.class })
     private String qq;
 
     @ApiModelProperty(value = "微信")

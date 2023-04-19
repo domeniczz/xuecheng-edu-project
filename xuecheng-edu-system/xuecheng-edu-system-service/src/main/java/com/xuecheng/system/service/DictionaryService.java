@@ -6,7 +6,10 @@ import com.xuecheng.system.model.po.Dictionary;
 import java.util.List;
 
 /**
- * 数据字典 服务类
+ * @author Domenic
+ * @Classname DictionaryService
+ * @Description 数据字典 服务类
+ * @Created by Domenic
  */
 public interface DictionaryService extends IService<Dictionary> {
 

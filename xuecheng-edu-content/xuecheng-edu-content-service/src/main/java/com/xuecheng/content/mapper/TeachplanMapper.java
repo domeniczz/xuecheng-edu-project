@@ -7,7 +7,10 @@ import com.xuecheng.content.model.po.Teachplan;
 import java.util.List;
 
 /**
- * 课程计划 Mapper 接口
+ * @author Domenic
+ * @Classname TeachplanMapper
+ * @Description 课程计划 Mapper 接口
+ * @Created by Domenic
  */
 public interface TeachplanMapper extends BaseMapper<Teachplan> {
 

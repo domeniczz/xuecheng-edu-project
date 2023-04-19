@@ -18,10 +18,20 @@ import lombok.ToString;
 @ToString
 public class PageParams {
 
-    // 类型为 Long 是因为 Mybatis-Plus 接口的分页参数类型也是 Long
+    /**
+     * <p>
+     * 当前页码
+     * 类型为 Long 是因为 Mybatis-Plus 接口的分页参数类型也是 Long
+     * </p>
+     */
     @ApiModelProperty("当前页码")
     private Long pageNo = 1L;
 
+    /**
+     * <p>
+     * 每页最多显示记录数
+     * </p>
+     */
     @ApiModelProperty("每页最多显示记录数")
     private Long pageSize = 10L;
 

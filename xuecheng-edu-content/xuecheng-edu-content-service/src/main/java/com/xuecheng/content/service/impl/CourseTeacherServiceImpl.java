@@ -22,7 +22,7 @@ import java.util.List;
  * @Created by Domenic
  */
 @Service
-@Transactional
+@Transactional(rollbackFor = Exception.class)
 public class CourseTeacherServiceImpl implements CourseTeacherService {
 
     @Autowired

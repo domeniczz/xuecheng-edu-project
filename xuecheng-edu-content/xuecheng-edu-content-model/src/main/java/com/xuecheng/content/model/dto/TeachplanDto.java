@@ -19,10 +19,14 @@ import java.util.List;
 @EqualsAndHashCode(callSuper = false)
 public class TeachplanDto extends Teachplan {
 
-    // 与媒资管理的信息
+    /**
+     * 与媒资管理的信息
+     */
     private TeachplanMedia teachplanMedia;
 
-    // 小章节的 list
+    /**
+     * 小章节的 list
+     */
     private List<TeachplanDto> teachPlanTreeNodes;
 
 }

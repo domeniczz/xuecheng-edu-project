@@ -13,7 +13,7 @@ import org.springframework.transaction.annotation.Transactional;
  * @Created by Domenic
  */
 @Service
-@Transactional
+@Transactional(rollbackFor = Exception.class)
 public class TeachplanMediaServiceImpl implements TeachplanMediaService {
 
     @Autowired
