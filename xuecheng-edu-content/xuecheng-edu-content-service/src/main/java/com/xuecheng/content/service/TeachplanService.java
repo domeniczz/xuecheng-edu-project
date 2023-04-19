@@ -3,6 +3,7 @@ package com.xuecheng.content.service;
 import com.xuecheng.base.model.ResponseResult;
 import com.xuecheng.content.model.dto.SaveTeachplanDto;
 import com.xuecheng.content.model.dto.TeachplanDto;
+import com.xuecheng.content.model.po.Teachplan;
 
 import java.util.List;
 
@@ -19,23 +20,23 @@ public interface TeachplanService {
      * @param courseId 根节点课程 id
      * @return TeachplanDto List
      */
-    public List<TeachplanDto> queryTreeNodes(long courseId);
+    List<TeachplanDto> queryTreeNodes(long courseId);
 
     /**
      * 添加/修改课程计划
      * @param saveTeachplanDto 保存课程计划 dto
      * @return 添加结果
      */
-    public ResponseResult saveTeachplan(SaveTeachplanDto saveTeachplanDto);
+    Teachplan saveTeachplan(SaveTeachplanDto saveTeachplanDto);
 
     /**
      * <p>
      * 删除课程计划和媒资关联信息
-     * 1、删除大章节，大章节下有小章节时不允许删除
-     * 2、删除大章节，大章节下没有小章节时可以正常删除
-     * 3、删除小章节，同时将关联的信息进行删除
+     * 1. 删除大章节，大章节下有小章节时不允许删除
+     * 2. 删除大章节，大章节下没有小章节时可以正常删除
+     * 3. 删除小章节，同时将关联的信息进行删除
      * </p>
-     * @param id id
+     * @param id 教学计划 id
      * @return 删除结果，若有错误则抛出 XueChengException
      */
     ResponseResult deleteTeachplan(long id);
@@ -56,13 +57,13 @@ public interface TeachplanService {
      * @param id 课程计划 id
      * @return 上移结果
      */
-    public ResponseResult moveUp(long id);
+    ResponseResult moveUp(long id);
 
     /**
      * 课程计划下移
      * @param id 课程计划 id
      * @return 下移结果
      */
-    public ResponseResult moveDown(long id);
+    ResponseResult moveDown(long id);
 
 }

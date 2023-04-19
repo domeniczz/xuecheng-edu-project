@@ -30,7 +30,7 @@ public interface CourseBaseInfoService {
      * @param courseId 课程 ID
      * @return CourseBaseInfoDto
      */
-    CourseBaseInfoDto getCourseBaseAndMarketInfoById(long courseId);
+    CourseBaseInfoDto queryCourseBaseAndMarketInfoById(long courseId);
 
     /**
      * <p>

@@ -25,15 +25,21 @@ public class CourseMarketServiceImpl implements CourseMarketService {
     private CourseMarketMapper courseMarketMapper;
 
     @Override
-    public int saveOrUpdateCourseMarket(CourseMarket courseMarket) {
+    public CourseMarket query(long courseId) {
+        return courseMarketMapper.selectById(courseId);
+    }
+
+    @Override
+    public CourseMarket saveCourseMarket(CourseMarket courseMarket) {
         // 参数合法性校验在 controller 层已经做过
 
         // 若课程为收费，但价格没有填写，则抛出异常
         String charge = courseMarket.getCharge();
+        // TODO: 这里 charge 类型不能直接写死，应该要从 System 模块中查询 Dictionary 获取
         if (charge.equals("201001")) {
             if (courseMarket.getPrice() == null || courseMarket.getPrice() <= 0) {
                 XueChengEduException.cast("课程的价格不能为空，且必须大于 0");
-                return -1;
+                return null;
             }
         }
 
@@ -44,12 +50,19 @@ public class CourseMarketServiceImpl implements CourseMarketService {
             // 更新
             BeanUtils.copyProperties(courseMarket, market);
             market.setId(courseMarket.getId());
-            return courseMarketMapper.updateById(courseMarket);
+            courseMarketMapper.updateById(market);
+            return market;
         } else {
             // 新增
-            return courseMarketMapper.insert(courseMarket);
+            courseMarketMapper.insert(courseMarket);
+            return courseMarket;
         }
 
+    }
+
+    @Override
+    public int delete(long courseId) {
+        return courseMarketMapper.deleteById(courseId);
     }
 
 }

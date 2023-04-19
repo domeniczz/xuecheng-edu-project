@@ -7,20 +7,17 @@ import com.xuecheng.base.model.PageParams;
 import com.xuecheng.base.model.PageResult;
 import com.xuecheng.base.model.ResponseResult;
 import com.xuecheng.content.mapper.CourseBaseMapper;
-import com.xuecheng.content.mapper.CourseCategoryMapper;
-import com.xuecheng.content.mapper.CourseMarketMapper;
-import com.xuecheng.content.mapper.CourseTeacherMapper;
-import com.xuecheng.content.model.dto.QueryCourseParamsDto;
 import com.xuecheng.content.model.dto.AddCourseDto;
 import com.xuecheng.content.model.dto.CourseBaseInfoDto;
+import com.xuecheng.content.model.dto.QueryCourseParamsDto;
 import com.xuecheng.content.model.dto.UpdateCourseDto;
 import com.xuecheng.content.model.po.CourseBase;
 import com.xuecheng.content.model.po.CourseMarket;
-import com.xuecheng.content.model.po.CourseTeacher;
 import com.xuecheng.content.service.CourseBaseInfoService;
+import com.xuecheng.content.service.CourseCategoryService;
 import com.xuecheng.content.service.CourseMarketService;
+import com.xuecheng.content.service.CourseTeacherService;
 import com.xuecheng.content.service.TeachplanService;
-
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.BeanUtils;
@@ -46,10 +43,7 @@ public class CourseBaseInfoServiceImpl implements CourseBaseInfoService {
     private CourseBaseMapper courseBaseMapper;
 
     @Autowired
-    private CourseMarketMapper courseMarketMapper;
-
-    @Autowired
-    private CourseCategoryMapper courseCategoryMapper;
+    private CourseCategoryService courseCategoryService;
 
     @Autowired
     private CourseMarketService courseMarketService;
@@ -58,7 +52,7 @@ public class CourseBaseInfoServiceImpl implements CourseBaseInfoService {
     private TeachplanService teachplanService;
 
     @Autowired
-    private CourseTeacherMapper courseTeacherMapper;
+    private CourseTeacherService courseTeacherService;
 
     @Override
     public PageResult<CourseBase> queryCourseBaseList(PageParams pageParams, QueryCourseParamsDto dto) {
@@ -103,7 +97,7 @@ public class CourseBaseInfoServiceImpl implements CourseBaseInfoService {
      * @return 课程基本信息和课程营销信息 DTO
      */
     @Override
-    public CourseBaseInfoDto getCourseBaseAndMarketInfoById(long courseId) {
+    public CourseBaseInfoDto queryCourseBaseAndMarketInfoById(long courseId) {
         // 查询课程基本信息
         CourseBase courseBase = courseBaseMapper.selectById(courseId);
         if (courseBase == null) {
@@ -112,7 +106,7 @@ public class CourseBaseInfoServiceImpl implements CourseBaseInfoService {
         }
 
         // 查询课程营销信息
-        CourseMarket courseMarket = courseMarketMapper.selectById(courseId);
+        CourseMarket courseMarket = courseMarketService.query(courseId);
         if (courseMarket == null) {
             XueChengEduException.cast("课程营销信息不存在");
             return null;
@@ -124,8 +118,8 @@ public class CourseBaseInfoServiceImpl implements CourseBaseInfoService {
         BeanUtils.copyProperties(courseMarket, dto);
 
         // 通过 courseCategoryMapper 查询分类信息，将分类名称放在 courseBaseInfoDto 对象
-        dto.setMtName(courseCategoryMapper.selectById(courseBase.getMt()).getName());
-        dto.setStName(courseCategoryMapper.selectById(courseBase.getSt()).getName());
+        dto.setMtName(courseCategoryService.query(courseBase.getMt()).getName());
+        dto.setStName(courseCategoryService.query(courseBase.getSt()).getName());
 
         return dto;
     }
@@ -161,14 +155,18 @@ public class CourseBaseInfoServiceImpl implements CourseBaseInfoService {
         Long courseId = courseBase.getId();
         // 设置课程 id（主键）
         courseMarket.setId(courseId);
-        int marketRes = courseMarketService.saveOrUpdateCourseMarket(courseMarket);
-        if (marketRes <= 0) {
+        // 创建营销信息
+        CourseMarket marketRes = courseMarketService.saveCourseMarket(courseMarket);
+        if (marketRes == null) {
             log.error(String.format("保存课程 (name: %s) 营销信息失败", courseBase.getName()));
             XueChengEduException.cast("保存课程营销信息失败");
             return null;
         }
 
-        return getCourseBaseAndMarketInfoById(courseId);
+        CourseBaseInfoDto resDto = new CourseBaseInfoDto();
+        BeanUtils.copyProperties(courseBase, resDto);
+        BeanUtils.copyProperties(courseMarket, resDto);
+        return resDto;
     }
 
     @Override
@@ -209,14 +207,18 @@ public class CourseBaseInfoServiceImpl implements CourseBaseInfoService {
 
         // 设置课程 id（主键）
         courseMarket.setId(courseId);
-        int marketRes = courseMarketService.saveOrUpdateCourseMarket(courseMarket);
-        if (marketRes <= 0) {
+        // 更新营销信息
+        CourseMarket marketRes = courseMarketService.saveCourseMarket(courseMarket);
+        if (marketRes == null) {
             log.error(String.format("更新课程 (name: %s) 营销信息失败", courseBase.getName()));
             XueChengEduException.cast("更新课程营销信息失败");
             return null;
         }
 
-        return getCourseBaseAndMarketInfoById(courseId);
+        CourseBaseInfoDto resDto = new CourseBaseInfoDto();
+        BeanUtils.copyProperties(courseBase, resDto);
+        BeanUtils.copyProperties(courseMarket, resDto);
+        return resDto;
     }
 
     @Override
@@ -226,11 +228,11 @@ public class CourseBaseInfoServiceImpl implements CourseBaseInfoService {
             // 删除课程基本信息
             courseBaseMapper.deleteById(courseId);
             // 删除课程营销信息
-            courseMarketMapper.deleteById(courseId);
+            courseMarketService.delete(courseId);
             // 删除课程计划（章节）信息
             teachplanService.deleteAll(courseId);
             // 删除课程教师信息
-            courseTeacherMapper.delete(new LambdaQueryWrapper<CourseTeacher>().eq(CourseTeacher::getCourseId, courseId));
+            courseTeacherService.deleteAll(courseId);
 
             return new ResponseResult(200, "删除课程成功");
         } else {

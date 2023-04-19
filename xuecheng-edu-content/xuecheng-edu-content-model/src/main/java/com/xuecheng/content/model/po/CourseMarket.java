@@ -27,12 +27,12 @@ public class CourseMarket implements Serializable {
     /**
      * 现价
      */
-    private Float price;
+    private Double price;
 
     /**
      * 原价
      */
-    private Float originalPrice;
+    private Double originalPrice;
 
     /**
      * 咨询qq

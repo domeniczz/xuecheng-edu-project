@@ -3,6 +3,7 @@ package com.xuecheng.content.api;
 import com.xuecheng.base.model.ResponseResult;
 import com.xuecheng.content.model.dto.SaveTeachplanDto;
 import com.xuecheng.content.model.dto.TeachplanDto;
+import com.xuecheng.content.model.po.Teachplan;
 import com.xuecheng.content.service.TeachplanService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
@@ -41,7 +42,7 @@ public class TeachplanController {
 
     @PostMapping("")
     @ApiOperation("课程计划创建或修改")
-    public ResponseResult saveTeachplan(@RequestBody SaveTeachplanDto teachplan) {
+    public Teachplan saveTeachplan(@RequestBody SaveTeachplanDto teachplan) {
         return teachplanService.saveTeachplan(teachplan);
     }
 

@@ -65,6 +65,11 @@ public class CourseCategoryServiceImpl implements CourseCategoryService {
         return result;
     }
 
+    @Override
+    public CourseCategory query(String categoryId) {
+        return courseCategoryMapper.selectById(categoryId);
+    }
+
     /**
      * 获取根节点的 ID
      */

@@ -77,4 +77,10 @@ public class CourseTeacherServiceImpl implements CourseTeacherService {
         }
     }
 
+    @Override
+    public ResponseResult deleteAll(long courseId) {
+        courseTeacherMapper.delete(new LambdaQueryWrapper<CourseTeacher>().eq(CourseTeacher::getCourseId, courseId));
+        return new ResponseResult(HttpStatus.OK.value(), "删除课程对应的所有教师信息成功");
+    }
+
 }
