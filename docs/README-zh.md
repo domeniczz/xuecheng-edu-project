@@ -1,23 +1,21 @@
-# xuecheng-edu
+# xuecheng-edu-project
 
-Online Education Platform
+线上教育平台
 
-[English](https://github.com/domeniczz/xuecheng-edu-project#readme) | [中文](https://github.com/domeniczz/xuecheng-edu-project/blob/master/docs/README-zh.md)
+[中文](https://github.com/domeniczz/xuecheng-edu-project/blob/master/docs/README-zh.md) | [English](https://github.com/domeniczz/xuecheng-edu-project#readme)
 
-## Introduction
+## 技术栈
 
-### Tech Stack
+<img src="https://github.com/domeniczz/xuecheng-edu-project/blob/master/doc/assets/project-tech-stack.png" style="border-radius:.4rem" width="650rem" alt="Tech Stack"/>
 
-<img src="https://github.com/domeniczz/xuecheng-edu-project/blob/master/docs/assets/project-tech-stack.png" style="border-radius:.4rem" width="650rem" alt="Tech Stack"/>
-
-### Develop Environment
+## 开发环境
 
 <table style="width:50rem">
     <thead>
         <tr style="text-align:left">
-            <th style="width:35%">Tool</th>
-            <th style="width:35%">Version</th>
-            <th style="width:30%">Install place</th>
+            <th style="width:35%">开发工具</th>
+            <th style="width:35%">版本</th>
+            <th style="width:30%">安装位置</th>
         </tr>
     </thead>
     <tbody>
@@ -28,12 +26,7 @@ Online Education Platform
         </tr>
         <tr>
             <td>IntelliJ IDEA</td>
-            <td>2021.x and newer</td>
-            <td>PC</td>
-        </tr>
-        <tr>
-            <td>Visual Studio Code</td>
-            <td>1.77 and newer</td>
+            <td>2021.x 及以上</td>
             <td>PC</td>
         </tr>
         <tr>
@@ -69,55 +62,52 @@ Online Education Platform
         <tr>
             <td>MySQL</td>
             <td>8.x</td>
-            <td>Docker in VM</td>
+            <td>Docker</td>
         </tr>
         <tr>
             <td>Nacos</td>
             <td>1.4.1</td>
-            <td>Docker in VM</td>
+            <td>Docker</td>
         </tr>
         <tr>
             <td>RabbitMQ</td>
             <td>3.8.34</td>
-            <td>Docker in VM</td>
+            <td>Docker</td>
         </tr>
         <tr>
             <td>Redis</td>
             <td>6.2.7</td>
-            <td>Docker in VM</td>
+            <td>Docker</td>
         </tr>
         <tr>
             <td>XXL-JOB-Admin</td>
             <td>2.3.1</td>
-            <td>Docker in VM</td>
+            <td>Docker</td>
         </tr>
         <tr>
             <td>Minio</td>
             <td>RELEASE.2022-09-07</td>
-            <td>Docker in VM</td>
+            <td>Docker</td>
         </tr>
         <tr>
             <td>Elasticsearch</td>
             <td>7.12.1</td>
-            <td>Docker in VM</td>
+            <td>Docker</td>
         </tr>
         <tr>
             <td>Kibana</td>
             <td>7.12.1</td>
-            <td>Docker in VM</td>
+            <td>Docker</td>
         </tr>
         <tr>
             <td>Gogs</td>
             <td>0.13.0</td>
-            <td>Docker in VM</td>
+            <td>Docker</td>
         </tr>
         <tr>
             <td>Ngnix</td>
             <td>1.12.2</td>
-            <td>Docker in VM</td>
+            <td>Docker</td>
         </tr>
     </tbody>
 </table>
-
-
-

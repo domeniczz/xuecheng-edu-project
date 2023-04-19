@@ -7,7 +7,7 @@ import javax.validation.ConstraintValidatorContext;
 
 /**
  * @author Domenic
- * @Classname QQNumberValidator
+ * @Classname QqNumberValidator
  * @Description QQ 号码校验器
  * @Created by Domenic
  */
