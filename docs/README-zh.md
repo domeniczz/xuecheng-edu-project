@@ -111,3 +111,31 @@
         </tr>
     </tbody>
 </table>
+
+## 使用
+
+在本地运行
+
+1. 将 CentOS 导入 VMware
+
+   前往 编辑 -> 虚拟网络编辑器, 将 VMnet8 的子网 IP 设置为 192.168.101.0，子网掩码设置为 255.255.255.0
+
+   虚拟机推荐配置：8GB 内存, 2 个 4 核心的处理器, 20 ~ 40GB 硬盘空间
+
+   > 虚拟机 IP 地址：192.168.101.65  
+   > 账号: root  
+   > 密码: centos
+
+2. 启动 Docker 容器
+
+   ```bash
+   systemctl start docker
+   sh /data/soft/restart.sh
+   ```
+
+   查询 Docker 中的进程:
+
+   ```bash
+   docker ps
+   ```
+

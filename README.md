@@ -118,6 +118,30 @@ Online Education Platform
         </tr>
     </tbody>
 </table>
+## Usage
 
+run on localhost
 
+1. Import CentOS VM into VMware
+
+   Go to Edit -> virtual network editor, set VMnet8 subnet IP to 192.168.101.0 and subnet mask to 255.255.255.0
+
+   Virtual machine recommend hardware setting: 8GB Memory, 2 Processor with 4 core for each, 20 ~ 40GB Hard Disk
+
+   > VM IP Address: 192.168.101.65  
+   > Account: root  
+   > Password: centos
+
+2. Run Docker
+
+   ```bash
+   systemctl start docker
+   sh /data/soft/restart.sh
+   ```
+
+   Check docker processes:
+
+   ```bash
+   docker ps
+   ```
 
