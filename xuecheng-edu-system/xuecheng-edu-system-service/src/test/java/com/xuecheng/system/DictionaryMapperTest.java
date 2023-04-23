@@ -1,5 +1,6 @@
 package com.xuecheng.system;
 
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.xuecheng.system.mapper.DictionaryMapper;
 import com.xuecheng.system.model.po.Dictionary;
 import org.junit.jupiter.api.Test;
@@ -31,6 +32,24 @@ public class DictionaryMapperTest {
         dictionaryList.forEach(System.out::println);
         System.out.println("===================================\n");
 
+    }
+
+    @Test
+    void testQueryAll() {
+        // 查询全部
+        List<Dictionary> dictionaryList = dictionaryMapper.selectList(null);
+
+        System.out.println("\n===================================");
+        dictionaryList.forEach(System.out::println);
+        System.out.println("===================================\n");
+    }
+
+    @Test
+    void testGetByCode() {
+        Dictionary dictItem = dictionaryMapper.selectOne(new LambdaQueryWrapper<Dictionary>().eq(Dictionary::getCode, "200"));
+        System.out.println("\n===================================================\n"
+                + dictItem
+                + "\n===================================================\n");
     }
 
 }
