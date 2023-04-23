@@ -11,9 +11,9 @@ import org.springframework.scheduling.annotation.EnableScheduling;
  * @Description 系统管理启动类
  * @Created by Domenic
  */
-@EnableScheduling
-@EnableSwagger2Doc
 @SpringBootApplication
+@EnableSwagger2Doc
+@EnableScheduling
 public class SystemApplication {
 
     public static void main(String[] args) {
