@@ -1,6 +1,7 @@
 package com.xuecheng.content.model.po;
 
 import com.baomidou.mybatisplus.annotation.TableName;
+import io.swagger.annotations.ApiModel;
 import lombok.Data;
 
 import java.io.Serializable;
@@ -13,6 +14,7 @@ import java.io.Serializable;
  */
 @Data
 @TableName("course_category")
+@ApiModel(value = "CourseCategory", description = "课程分类信息")
 public class CourseCategory implements Serializable {
 
     private static final long serialVersionUID = 1L;
