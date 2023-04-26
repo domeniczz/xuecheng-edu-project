@@ -1,0 +1,33 @@
+spring:
+  rabbitmq:
+    host: 192.168.101.65
+    port: 5672
+    username: guest
+    password: guest
+    virtual-host: /
+    # correlated 异步回调，定义 ConfirmCallback，MQ 返回结果时会回调这个 ConfirmCallback
+    publisher-confirm-type: correlated
+    # 开启 publish-return 功能，同样是基于 callback 机制，需要定义 ReturnCallback
+    publisher-returns: false
+    template:
+      # 定义消息路由失败时的策略：true 则调用 ReturnCallback；false 则直接丢弃消息
+      mandatory: false
+    listener:
+      simple:
+        # 每次只能获取一条消息，处理完成才能获取下一个消息
+        prefetch: 1
+        # auto：出现异常时返回 unack，消息回滚到 mq；没有异常，则返回 ack
+        # manual：手动控制
+        # none：丢弃消息，不回滚到 mq
+        acknowledge-mode: none
+        retry:
+          # 开启消费者失败重试
+          enabled: true
+          # 初识的失败等待时长为 1 秒
+          initial-interval: 1000ms
+          # 失败的等待时长倍数，下次等待时长 = multiplier * last-interval
+          multiplier: 1
+          # 最大重试次数
+          max-attempts: 3
+          # true 无状态；false 有状态。若业务中包含事务，此处改为 false
+          stateless: true

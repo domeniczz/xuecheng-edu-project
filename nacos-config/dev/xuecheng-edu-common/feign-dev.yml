@@ -1,0 +1,18 @@
+feign:
+  client:
+    config:
+      # default 全局的配置
+      default:
+        # 日志级别，BASIC 就是基本的请求和响应信息
+        loggerLevel: BASIC
+  hystrix:
+    enabled: true
+  circuitbreaker:
+    enabled: true
+  httpclient:
+    # 开启 feign 对 HttpClient 的支持
+    enabled: true
+    # 最大的连接数
+    max-connections: 200
+    # 每个路径的最大连接数
+    max-connections-per-route: 50

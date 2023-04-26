@@ -1,0 +1,11 @@
+server:
+  servlet:
+    # 内容管理接口的请求根路径
+    context-path: /content
+  port: 63040
+
+spring:
+  cloud:
+    config:
+      # 配置文件本地最优先
+      override-none: true

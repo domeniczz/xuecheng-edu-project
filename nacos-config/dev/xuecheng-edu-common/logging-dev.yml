@@ -1,0 +1,8 @@
+logging:
+  # 日志文件配置路径
+  config: classpath:log4j2-dev.xml
+  level:
+    com:
+     alibaba:
+       # 调整 nacos 日志输出级别，防止输出太多
+       nacos: warn

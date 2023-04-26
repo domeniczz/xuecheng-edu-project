@@ -1,0 +1,37 @@
+server:
+  # 网关端口
+  port: 63010
+
+spring:
+  cloud:
+    gateway:
+#      filter:
+#        strip-prefix:
+#          enabled: true
+      # 网关路由配置
+      routes:
+        - id: content-api # 路由 id，自定义，只要唯一即可
+          # 路由的目标地址 http 就是固定地址
+          # uri: http://127.0.0.1:8081
+          # 路由的目标地址 lb 就是负载均衡 load balance，后面跟服务名称
+          uri: lb://content-api
+          # 路由断言，也就是判断请求是否符合路由规则的条件
+          predicates:
+            # 这个是按照路径匹配，只要以 /content/ 开头就符合要求
+            - Path=/content/**
+#          filters:
+#            - StripPrefix=1
+        - id: system-api
+          # uri: http://127.0.0.1:8081
+          uri: lb://system-api
+          predicates:
+            - Path=/system/**
+#          filters:
+#            - StripPrefix=1
+        - id: media-api
+          # uri: http://127.0.0.1:8081
+          uri: lb://media-api
+          predicates:
+            - Path=/media/**
+#          filters:
+#            - StripPrefix=1

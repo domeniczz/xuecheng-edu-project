@@ -1,0 +1,51 @@
+spring:
+   datasource:
+    druid:
+      stat-view-servlet:
+        enabled: true
+        loginUsername: admin
+        loginPassword: 123456
+    dynamic:
+      # 设置默认的数据源或者数据源组，默认值即为 master
+      primary: content
+      # 设置严格模式，默认 false 不启动
+      # 启动后在未匹配到指定数据源时候回抛出异常，不启动会使用默认数据源
+      strict: true
+      druid:
+        initial-size: 3
+        max-active: 5
+        min-idle: 5
+        max-wait: 60000
+        pool-prepared-statements: true
+        max-pool-prepared-statement-per-connection-size: 20
+        time-between-eviction-runs-millis: 60000
+        min-evictable-idle-time-millis: 300000
+        validation-query: SELECT 1 FROM DUAL
+        test-while-idle: true
+        test-on-borrow: false
+        test-on-return: false
+        stat-view-servlet:
+          enabled: true
+          url-pattern: /druid/*
+          #login-username: admin
+          #login-password: admin
+        filter:
+          stat:
+            log-slow-sql: true
+            slow-sql-millis: 1000
+            merge-sql: true
+          wall:
+            config:
+              multi-statement-allow: true
+      datasource:
+        content:
+          driver-class-name: com.mysql.cj.jdbc.Driver
+          url: jdbc:mysql://localhost:3305/xc_edu_content?serverTimezone=UTC&allowMultiQueries=true&useUnicode=true&characterEncoding=UTF-8
+          username: root
+          password: root
+        media:
+          driver-class-name: com.mysql.cj.jdbc.Driver
+          url: jdbc:mysql://localhost:3305/xc_edu_media?serverTimezone=UTC&allowMultiQueries=true&useUnicode=true&characterEncoding=UTF-8
+          username: root
+          password: root
+

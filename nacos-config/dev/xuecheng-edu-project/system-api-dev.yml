@@ -1,0 +1,10 @@
+server:
+  servlet:
+    context-path: /system
+  port: 63110
+
+spring:
+  cloud:
+    config:
+      # 配置文件本地最优先
+      override-none: true
