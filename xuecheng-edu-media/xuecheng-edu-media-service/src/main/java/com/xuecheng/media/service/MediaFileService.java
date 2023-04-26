@@ -6,10 +6,6 @@ import com.xuecheng.media.model.dto.QueryMediaParamsDto;
 import com.xuecheng.media.model.dto.UploadFileParamsDto;
 import com.xuecheng.media.model.dto.UploadFileResultDto;
 import com.xuecheng.media.model.po.MediaFiles;
-import io.minio.UploadObjectArgs;
-import org.springframework.web.bind.annotation.RequestBody;
-
-import java.util.List;
 
 /**
  * @author Domenic
@@ -21,6 +17,7 @@ public interface MediaFileService {
 
     /**
      * 媒资文件查询方法
+     * @param companyId 机构 ID
      * @param pageParams 分页参数
      * @param queryMediaParamsDto 查询条件
      * @return com.xuecheng.base.model.PageResult<com.xuecheng.media.model.po.MediaFiles>
@@ -41,6 +38,8 @@ public interface MediaFileService {
      * @param companyId 机构 ID
      * @param fileMd5 文件 MD5
      * @param uploadFileParamsDto 文件上传参数 DTO
+     * @param bucket 存储桶名
+     * @param objectName 对象名
      * @return MediaFiles 对象
      */
     public MediaFiles addMediaFilesToDb(Long companyId, String fileMd5, UploadFileParamsDto uploadFileParamsDto, String bucket, String objectName);

@@ -7,7 +7,7 @@ import com.spring4all.swagger.EnableSwagger2Doc;
 /**
  * @author Domenic
  * @Classname MediaApplication
- * @Description 媒资管理启动类
+ * @Description 媒资管理服务启动类
  * @Created by Domenic
  */
 @SpringBootApplication
