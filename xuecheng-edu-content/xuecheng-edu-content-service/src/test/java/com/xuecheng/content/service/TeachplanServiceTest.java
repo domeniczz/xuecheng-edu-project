@@ -66,7 +66,7 @@ class TeachplanServiceTest {
 
     @Test
     @Order(2)
-    void testQueryTreeNodes() {
+    void test_queryTreeNodes() {
         List<TeachplanDto> teachplanTreeList = teachplanService.queryTreeNodes(courseId);
         Assertions.assertNotNull(teachplanTreeList);
 
@@ -77,7 +77,7 @@ class TeachplanServiceTest {
 
     @Test
     @Order(1)
-    void testCreateTeachplan() {
+    void test_createTeachplan() {
         dtoParentList.forEach(dto -> {
             Teachplan res = teachplanService.saveTeachplan(dto);
             Assertions.assertNotNull(res);
@@ -101,7 +101,7 @@ class TeachplanServiceTest {
 
     @Test
     @Order(3)
-    void testUpdateTeachplan() {
+    void test_updateTeachplan() {
         // 使用 create 方法创建的课程的 ID
         dtoParentList.forEach(dto -> {
             Teachplan res = teachplanService.saveTeachplan(dto);
@@ -115,7 +115,7 @@ class TeachplanServiceTest {
 
     @Test
     @Order(6)
-    void testDeleteTeachplan() {
+    void test_deleteTeachplan() {
         // 删除子章节
         ResponseResult res1 = teachplanService.deleteTeachplan(dtoChildrenList.get(0).getId());
         Assertions.assertNotNull(res1);
@@ -126,7 +126,7 @@ class TeachplanServiceTest {
 
     @Test
     @Order(7)
-    void testDeleteAll() {
+    void test_deleteAll() {
         // 删除所有章节
         ResponseResult resp = teachplanService.deleteAll(1000000);
         Assertions.assertNotNull(resp);
@@ -134,7 +134,7 @@ class TeachplanServiceTest {
 
     @Test
     @Order(4)
-    void testMoveUp() {
+    void test_moveUp() {
         ResponseResult res1 = teachplanService.moveUp(dtoParentList.get(1).getId());
         Assertions.assertNotNull(res1);
         ResponseResult res2 = teachplanService.moveUp(dtoChildrenList.get(2).getId());
@@ -143,7 +143,7 @@ class TeachplanServiceTest {
 
     @Test
     @Order(5)
-    void testMoveDown() {
+    void test_moveDown() {
         ResponseResult res1 = teachplanService.moveUp(dtoParentList.get(0).getId());
         Assertions.assertNotNull(res1);
         ResponseResult res2 = teachplanService.moveUp(dtoChildrenList.get(1).getId());

@@ -44,7 +44,7 @@ public class CourseTeacherServiceTest {
 
     @Test
     @Order(2)
-    void testQueryTeacherList() {
+    void test_queryTeacherList() {
         List<CourseTeacher> res = courseTeacherService.queryTeacherList(courseId);
         Assertions.assertNotNull(res);
 
@@ -55,7 +55,7 @@ public class CourseTeacherServiceTest {
 
     @Test
     @Order(1)
-    void testCreateTeacher() {
+    void test_createTeacher() {
         CourseTeacher res = courseTeacherService.save(courseTeacher);
         Assertions.assertNotNull(res);
         Assertions.assertEquals(courseId, res.getCourseId());
@@ -67,7 +67,7 @@ public class CourseTeacherServiceTest {
 
     @Test
     @Order(3)
-    void testUpdateTeacher() {
+    void test_updateTeacher() {
         CourseTeacher res = courseTeacherService.save(courseTeacher);
         Assertions.assertNotNull(res);
 
@@ -78,14 +78,14 @@ public class CourseTeacherServiceTest {
 
     @Test
     @Order(4)
-    void testDelete() {
+    void test_delete() {
         ResponseResult res = courseTeacherService.delete(courseId, courseTeacher.getId());
         Assertions.assertNotNull(res);
     }
 
     @Test
     @Order(5)
-    void testDeleteAll() {
+    void test_deleteAll() {
         ResponseResult res = courseTeacherService.deleteAll(courseId);
         Assertions.assertNotNull(res);
     }

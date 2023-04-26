@@ -41,7 +41,7 @@ public class CourseMarketServiceTest {
 
     @Test
     @Order(2)
-    public void testQuery() {
+    public void test_query() {
         CourseMarket courseMarket = courseMarketService.query(courseId);
         Assertions.assertNotNull(courseMarket);
 
@@ -52,7 +52,7 @@ public class CourseMarketServiceTest {
 
     @Test
     @Order(1)
-    public void testCreateCourseMarket() {
+    public void test_createCourseMarket() {
         CourseMarket res = courseMarketService.saveCourseMarket(courseMarket);
         courseId = res.getId();
         Assertions.assertNotNull(res);
@@ -60,7 +60,7 @@ public class CourseMarketServiceTest {
 
     @Test
     @Order(3)
-    public void testUpdateCourseMarket() {
+    public void test_updateCourseMarket() {
         courseMarket.setId(courseId);
         CourseMarket res = courseMarketService.saveCourseMarket(courseMarket);
         Assertions.assertNotNull(res);
@@ -68,7 +68,7 @@ public class CourseMarketServiceTest {
 
     @Test
     @Order(4)
-    public void testDelete() {
+    public void test_delete() {
         int res = courseMarketService.delete(courseId);
         Assertions.assertEquals(1, res);
     }

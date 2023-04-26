@@ -23,7 +23,7 @@ public class DictionaryMapperTest {
     DictionaryMapper dictionaryMapper;
 
     @Test
-    void testDictionaryMapper() {
+    void test_dictionaryMapper() {
 
         // 查询全部
         List<Dictionary> dictionaryList = dictionaryMapper.selectList(null);
@@ -35,7 +35,7 @@ public class DictionaryMapperTest {
     }
 
     @Test
-    void testQueryAll() {
+    void test_queryAll() {
         // 查询全部
         List<Dictionary> dictionaryList = dictionaryMapper.selectList(null);
 
@@ -45,7 +45,7 @@ public class DictionaryMapperTest {
     }
 
     @Test
-    void testGetByCode() {
+    void test_getByCode() {
         Dictionary dictItem = dictionaryMapper.selectOne(new LambdaQueryWrapper<Dictionary>().eq(Dictionary::getCode, "200"));
         System.out.println("\n===================================================\n"
                 + dictItem

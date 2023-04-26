@@ -25,7 +25,7 @@ public class CourseCategoryServiceTest {
     private CourseCategoryService courseCategoryService;
 
     @Test
-    void testQueryTreeNodes() {
+    void test_queryTreeNodes() {
         List<CourseCategoryTreeDto> res = courseCategoryService.queryTreeNodes();
         Assertions.assertNotNull(res);
 
@@ -35,7 +35,7 @@ public class CourseCategoryServiceTest {
     }
 
     @Test
-    void testQuery() {
+    void test_query() {
         String categoryId = "1-1";
         CourseCategory res = courseCategoryService.query(categoryId);
         Assertions.assertNotNull(res);

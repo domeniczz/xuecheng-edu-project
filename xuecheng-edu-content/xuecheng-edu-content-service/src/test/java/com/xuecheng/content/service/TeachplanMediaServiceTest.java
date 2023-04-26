@@ -23,7 +23,7 @@ public class TeachplanMediaServiceTest {
     private TeachplanMediaService teachplanMediaService;
 
     @Test
-    void testDeleteTeachplanMedia() {
+    void test_deleteTeachplanMedia() {
         teachplanMediaService.deleteTeachplanMedia(1000001L);
     }
 

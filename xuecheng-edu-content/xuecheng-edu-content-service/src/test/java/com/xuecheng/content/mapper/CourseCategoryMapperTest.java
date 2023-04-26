@@ -21,7 +21,7 @@ public class CourseCategoryMapperTest {
     private CourseCategoryMapper courseCategoryMapper;
 
     @Test
-    void testCourseCategoryMapper() {
+    void test_courseCategoryMapper() {
         List<CourseCategoryTreeDto> courseCategoryTreeList = courseCategoryMapper.selectTreeNodes("1");
         Assertions.assertNotNull(courseCategoryTreeList);
 

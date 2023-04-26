@@ -64,7 +64,7 @@ public class CourseBaseInfoServiceTest {
 
     @Test
     @Order(1)
-    void testQueryCourseBaseList() {
+    void test_queryCourseBaseList() {
 
         // 分页参数
         PageParams pageParams = new PageParams();
@@ -92,7 +92,7 @@ public class CourseBaseInfoServiceTest {
 
     @Test
     @Order(3)
-    void testQueryCourseBaseAndMarketInfoById() {
+    void test_queryCourseBaseAndMarketInfoById() {
         // 使用 create 方法创建的课程的 ID
         CourseBaseInfoDto res = courseBaseInfoService.queryCourseBaseAndMarketInfoById(addedCourseId);
         Assertions.assertNotNull(res);
@@ -103,7 +103,7 @@ public class CourseBaseInfoServiceTest {
 
     @Test
     @Order(2)
-    void testCreate() {
+    void test_create() {
         CourseBaseInfoDto res = courseBaseInfoService.create(companyId, addCourseDto);
         Assertions.assertNotNull(res);
 
@@ -117,7 +117,7 @@ public class CourseBaseInfoServiceTest {
 
     @Test
     @Order(4)
-    void testUpdate() {
+    void test_update() {
         // 使用 create 方法创建的课程的 ID
         updateCourseDto.setId(addedCourseId);
         CourseBaseInfoDto res = courseBaseInfoService.update(companyId, updateCourseDto);
@@ -130,7 +130,7 @@ public class CourseBaseInfoServiceTest {
 
     @Test
     @Order(5)
-    void testDelete() {
+    void test_delete() {
         // 使用 create 方法创建的课程的 ID
         ResponseResult res = courseBaseInfoService.delete(addedCourseId);
         Assertions.assertNotNull(res);
