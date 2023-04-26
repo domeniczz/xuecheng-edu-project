@@ -1,0 +1,10 @@
+### 查询文件信息
+
+POST {{media_host}}/media/files?pageNo=1&pageSize=2
+Content-Type: application/json
+
+{
+    "auditStatus": "",
+    "fileType": "",
+    "filename": "",
+}
