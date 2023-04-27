@@ -19,6 +19,12 @@
             <version>0.0.1-SNAPSHOT</version>
         </dependency>
 
+        <!-- nacos 配置管理，在微服务内有一个配置客户端，定时从 nacos 拉取配置 -->
+        <dependency>
+            <groupId>com.alibaba.cloud</groupId>
+            <artifactId>spring-cloud-starter-alibaba-nacos-config</artifactId>
+        </dependency>
+
         <!-- MySQL 驱动 -->
         <dependency>
             <groupId>mysql</groupId>

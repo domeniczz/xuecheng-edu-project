@@ -21,65 +21,113 @@ import javax.validation.constraints.Size;
 @ApiModel(value = "AddCourseDto", description = "新增课程基本信息")
 public class AddCourseDto {
 
+    /**
+     * 课程名称
+     */
     @ApiModelProperty(value = "课程名称", required = true)
     @NotEmpty(message = "课程名称不能为空", groups = { ValidationGroups.Insert.class, ValidationGroups.Update.class, ValidationGroups.Delete.class })
     private String name;
 
-    @ApiModelProperty(value = "适用人群", required = true)
+    /**
+     * 课程适用人群
+     */
+    @ApiModelProperty(value = "课程适用人群", required = true)
     @NotEmpty(message = "适用人群不能为空", groups = { ValidationGroups.Insert.class, ValidationGroups.Update.class })
     @Size(message = "适用人群内容过少，至少 5 字", min = 5, groups = { ValidationGroups.Insert.class, ValidationGroups.Update.class })
     private String users;
 
+    /**
+     * 课程标签
+     */
     @ApiModelProperty(value = "课程标签")
     private String tags;
 
-    @ApiModelProperty(value = "大分类", required = true)
+    /**
+     * 课程大分类
+     */
+    @ApiModelProperty(value = "课程大分类", required = true)
     @NotEmpty(message = "课程分类不能为空", groups = { ValidationGroups.Insert.class, ValidationGroups.Update.class })
     private String mt;
 
-    @ApiModelProperty(value = "小分类", required = true)
+    /**
+     * 课程小分类
+     */
+    @ApiModelProperty(value = "课程小分类", required = true)
     @NotEmpty(message = "课程分类不能为空", groups = { ValidationGroups.Insert.class, ValidationGroups.Update.class })
     private String st;
 
+    /**
+     * 课程等级
+     */
     @ApiModelProperty(value = "课程等级", required = true)
     @NotEmpty(message = "课程等级不能为空", groups = { ValidationGroups.Insert.class, ValidationGroups.Update.class })
     private String grade;
 
-    @ApiModelProperty(value = "教学模式（普通，录播，直播等）", required = true)
+    /**
+     * 课程教学模式
+     */
+    @ApiModelProperty(value = "课程教学模式（普通，录播，直播等）", required = true)
     @NotEmpty(message = "教学模式不能为空", groups = { ValidationGroups.Insert.class, ValidationGroups.Update.class })
     private String teachmode;
 
+    /**
+     * 课程介绍
+     */
     @ApiModelProperty(value = "课程介绍")
     @Size(message = "课程介绍内容过少，至少 10 字", min = 10, groups = { ValidationGroups.Insert.class, ValidationGroups.Update.class })
     private String description;
 
+    /**
+     * 课程图片
+     */
     @ApiModelProperty(value = "课程图片", required = true)
     private String pic;
 
+    /**
+     * 课程收费规则
+     */
     @ApiModelProperty(value = "收费规则，对应数据字典", required = true)
     @NotEmpty(message = "收费规则不能为空", groups = { ValidationGroups.Insert.class, ValidationGroups.Update.class })
     private String charge;
 
-    @ApiModelProperty(value = "价格")
+    /**
+     * 课程价格
+     */
+    @ApiModelProperty(value = "课程价格")
     @DecimalMin(value = "0.0", message = "价格不能小于 0", groups = { ValidationGroups.Insert.class, ValidationGroups.Update.class })
     private Double price;
 
-    @ApiModelProperty(value = "原价")
+    /**
+     * 课程原价
+     */
+    @ApiModelProperty(value = "课程原价")
     @DecimalMin(value = "0.0", message = "价格不能小于 0", groups = { ValidationGroups.Insert.class, ValidationGroups.Update.class })
     private Double originalPrice;
 
-    @ApiModelProperty(value = "qq")
+    /**
+     * 咨询 QQ 号码
+     */
+    @ApiModelProperty(value = "咨询 QQ 号码")
     @QqNumberConstraint(message = "QQ 号码不合法", groups = { ValidationGroups.Insert.class, ValidationGroups.Update.class })
     private String qq;
 
-    @ApiModelProperty(value = "微信")
+    /**
+     * 咨询微信 ID
+     */
+    @ApiModelProperty(value = "咨询微信 ID")
     private String wechat;
 
-    @ApiModelProperty(value = "电话")
+    /**
+     * 咨询电话号码
+     */
+    @ApiModelProperty(value = "咨询电话号码")
     @PhoneNumberConstraint(message = "电话号码不合法", groups = { ValidationGroups.Insert.class, ValidationGroups.Update.class })
     private String phone;
 
-    @ApiModelProperty(value = "有效期")
+    /**
+     * 课程有效期
+     */
+    @ApiModelProperty(value = "课程有效期")
     private Integer validDays;
 
 }

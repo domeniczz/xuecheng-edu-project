@@ -5,15 +5,14 @@ import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
-
+import io.swagger.annotations.ApiModel;
 import lombok.Data;
-
-import java.io.Serializable;
-import java.time.LocalDateTime;
 
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.Size;
+import java.io.Serializable;
+import java.time.LocalDateTime;
 
 /**
  * @author Domenic
@@ -23,6 +22,7 @@ import javax.validation.constraints.Size;
  */
 @Data
 @TableName("course_teacher")
+@ApiModel(value = "CourseTeacher", description = "课程-教师关系信息")
 public class CourseTeacher implements Serializable {
 
     private static final long serialVersionUID = 1L;

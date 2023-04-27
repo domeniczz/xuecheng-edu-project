@@ -5,6 +5,7 @@ import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
+import io.swagger.annotations.ApiModel;
 import lombok.Data;
 
 import java.io.Serializable;
@@ -18,6 +19,7 @@ import java.time.LocalDateTime;
  */
 @Data
 @TableName("teachplan_media")
+@ApiModel(value = "TeachplanMedia", description = "课程计划与媒资文件关联信息")
 public class TeachplanMedia implements Serializable {
 
     private static final long serialVersionUID = 1L;

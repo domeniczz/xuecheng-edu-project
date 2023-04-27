@@ -15,9 +15,9 @@ import lombok.Data;
 public class SaveTeachplanDto {
 
     /***
-     * 教学计划 id
+     * 课程教学计划 ID
      */
-    @ApiModelProperty(value = "教学计划 id")
+    @ApiModelProperty(value = "课程教学计划 ID")
     private Long id;
 
     /**
@@ -27,9 +27,9 @@ public class SaveTeachplanDto {
     private String pname;
 
     /**
-     * 课程计划父级 id
+     * 课程计划父级 ID
      */
-    @ApiModelProperty(value = "课程计划父级 id")
+    @ApiModelProperty(value = "课程计划父级 ID")
     private Long parentid;
 
     /**
@@ -39,9 +39,9 @@ public class SaveTeachplanDto {
     private Integer grade;
 
     /**
-     * 课程类型:1视频、2文档
+     * 课程类型：1 视频、2 文档
      */
-    @ApiModelProperty(value = "课程类型:1视频、2文档")
+    @ApiModelProperty(value = "课程类型：1 视频、2 文档")
     private String mediaType;
 
     /**

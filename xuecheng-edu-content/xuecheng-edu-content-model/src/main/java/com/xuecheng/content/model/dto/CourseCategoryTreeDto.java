@@ -1,6 +1,7 @@
 package com.xuecheng.content.model.dto;
 
 import com.xuecheng.content.model.po.CourseCategory;
+import io.swagger.annotations.ApiModel;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
@@ -16,6 +17,7 @@ import java.util.List;
 @Data
 @ToString(callSuper = true)
 @EqualsAndHashCode(callSuper = true)
+@ApiModel(value = "CourseCategoryTreeDto", description = "课程分类")
 public class CourseCategoryTreeDto extends CourseCategory {
 
     private static final long serialVersionUID = 1L;
