@@ -10,14 +10,14 @@ import io.swagger.annotations.ApiModel;
 
 /**
  * @author Domenic
- * @Classname MediaFiles
- * @Description MediaFiles 对象
+ * @Classname MediaFile
+ * @Description MediaFile 对象
  * @Created by Domenic
  */
 @Data
 @TableName("media_files")
-@ApiModel(value = "MediaFiles 对象", description = "媒资信息")
-public class MediaFiles implements Serializable {
+@ApiModel(value = "MediaFile 对象", description = "媒资信息")
+public class MediaFile implements Serializable {
 
     private static final long serialVersionUID = 1L;
 

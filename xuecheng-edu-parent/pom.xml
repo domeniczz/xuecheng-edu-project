@@ -35,6 +35,8 @@
         <okhttp.version>4.8.1</okhttp.version>
         <swagger-spring-boot-starter.version>1.9.0.RELEASE</swagger-spring-boot-starter.version>
         <elasticsearch.version>7.12.1</elasticsearch.version>
+        <guava.version>25.0-jre</guava.version>
+        <p6spy.version>3.9.1</p6spy.version>
     </properties>
 
 
@@ -124,6 +126,13 @@
                 <version>${mybatis-plus-boot-starter.version}</version>
             </dependency>
 
+            <!-- 拦截和记录数据库数据 -->
+            <dependency>
+                <groupId>p6spy</groupId>
+                <artifactId>p6spy</artifactId>
+                <version>${p6spy.version}</version>
+            </dependency>
+
             <!-- 工具类管理 -->
             <dependency>
                 <groupId>commons-lang</groupId>
@@ -140,7 +149,7 @@
             <dependency>
                 <groupId>com.google.guava</groupId>
                 <artifactId>guava</artifactId>
-                <version>25.0-jre</version>
+                <version>${guava.version}</version>
             </dependency>
             <!--分布式任务调度-->
             <dependency>

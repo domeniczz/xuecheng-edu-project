@@ -7,14 +7,14 @@ import lombok.ToString;
 
 /**
  * @author Domenic
- * @Classname UploadFileParamsDto
- * @Description 上传文件请求参数 DTO
+ * @Classname FileParamsDto
+ * @Description 媒资文件操作请求参数 DTO
  * @Created by Domenic
  */
 @Data
 @ToString
-@ApiModel(value = "UploadFileParamsDto", description = "上传文件请求参数")
-public class UploadFileParamsDto {
+@ApiModel(value = "FileParamsDto", description = "媒资文件操作请求参数")
+public class FileParamsDto {
 
     /**
      * 文件名称
