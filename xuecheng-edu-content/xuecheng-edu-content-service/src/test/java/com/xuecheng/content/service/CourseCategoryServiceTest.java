@@ -18,7 +18,7 @@ import java.util.List;
  * @Created by Domenic
  */
 @SpringBootTest
-@Transactional
+// @Transactional(rollbackFor = Exception.class)
 public class CourseCategoryServiceTest {
 
     @Autowired

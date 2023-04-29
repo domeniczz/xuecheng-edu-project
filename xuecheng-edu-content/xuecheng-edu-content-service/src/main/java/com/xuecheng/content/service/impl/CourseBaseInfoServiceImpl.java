@@ -36,7 +36,6 @@ import java.util.List;
  */
 @Slf4j
 @Service
-@Transactional(rollbackFor = Exception.class)
 public class CourseBaseInfoServiceImpl implements CourseBaseInfoService {
 
     @Autowired
@@ -125,6 +124,7 @@ public class CourseBaseInfoServiceImpl implements CourseBaseInfoService {
     }
 
     @Override
+    @Transactional(rollbackFor = Exception.class)
     public CourseBaseInfoDto create(long companyId, AddCourseDto dto) {
         // 参数合法性校验通过 JSR Validation 进行
         // Spring 支持 Hibernate Validator 校验框架
@@ -170,6 +170,7 @@ public class CourseBaseInfoServiceImpl implements CourseBaseInfoService {
     }
 
     @Override
+    @Transactional(rollbackFor = Exception.class)
     public CourseBaseInfoDto update(long companyId, UpdateCourseDto dto) {
         // 参数合法性校验通过 JSR Validation 进行
         // Spring 支持 Hibernate Validator 校验框架
@@ -222,6 +223,7 @@ public class CourseBaseInfoServiceImpl implements CourseBaseInfoService {
     }
 
     @Override
+    @Transactional(rollbackFor = Exception.class)
     public ResponseResult delete(long courseId) {
         boolean ifSubmitForAudit = checkAuditState(courseId);
         if (!ifSubmitForAudit) {

@@ -13,13 +13,13 @@ import org.springframework.transaction.annotation.Transactional;
  * @Created by Domenic
  */
 @Service
-@Transactional(rollbackFor = Exception.class)
 public class TeachplanMediaServiceImpl implements TeachplanMediaService {
 
     @Autowired
     private TeachplanMediaMapper teachplanMediaMapper;
 
     @Override
+    @Transactional(rollbackFor = Exception.class)
     public int deleteTeachplanMedia(long teachplanId) {
         // SQL: DELETE FROM teachplan_media WHERE teachplan_id = #{id}
         return teachplanMediaMapper.deleteById(teachplanId);

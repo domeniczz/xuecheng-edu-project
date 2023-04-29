@@ -22,7 +22,6 @@ import java.util.List;
  * @Created by Domenic
  */
 @Service
-@Transactional(rollbackFor = Exception.class)
 public class CourseTeacherServiceImpl implements CourseTeacherService {
 
     @Autowired
@@ -35,6 +34,7 @@ public class CourseTeacherServiceImpl implements CourseTeacherService {
     }
 
     @Override
+    @Transactional(rollbackFor = Exception.class)
     public CourseTeacher save(CourseTeacher teacher) {
         if (teacher.getId() == null) {
             return create(teacher);
@@ -65,6 +65,7 @@ public class CourseTeacherServiceImpl implements CourseTeacherService {
     }
 
     @Override
+    @Transactional(rollbackFor = Exception.class)
     public ResponseResult delete(long courseId, long teacherId) {
         int res = courseTeacherMapper.delete(new LambdaQueryWrapper<CourseTeacher>()
                 .eq(CourseTeacher::getCourseId, courseId)
@@ -78,6 +79,7 @@ public class CourseTeacherServiceImpl implements CourseTeacherService {
     }
 
     @Override
+    @Transactional(rollbackFor = Exception.class)
     public ResponseResult deleteAll(long courseId) {
         courseTeacherMapper.delete(new LambdaQueryWrapper<CourseTeacher>().eq(CourseTeacher::getCourseId, courseId));
         return new ResponseResult(HttpStatus.OK.value(), "删除课程对应的所有教师信息成功");

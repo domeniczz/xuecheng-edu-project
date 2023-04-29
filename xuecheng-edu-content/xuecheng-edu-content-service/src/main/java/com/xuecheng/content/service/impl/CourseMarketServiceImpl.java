@@ -16,7 +16,6 @@ import org.springframework.transaction.annotation.Transactional;
  * @Created by Domenic
  */
 @Service
-@Transactional(rollbackFor = Exception.class)
 public class CourseMarketServiceImpl implements CourseMarketService {
 
     @Autowired
@@ -28,6 +27,7 @@ public class CourseMarketServiceImpl implements CourseMarketService {
     }
 
     @Override
+    @Transactional(rollbackFor = Exception.class)
     public CourseMarket saveCourseMarket(CourseMarket courseMarket) {
         // 参数合法性校验在 controller 层已经做过
 
@@ -61,6 +61,7 @@ public class CourseMarketServiceImpl implements CourseMarketService {
     }
 
     @Override
+    @Transactional(rollbackFor = Exception.class)
     public int delete(long courseId) {
         return courseMarketMapper.deleteById(courseId);
     }
