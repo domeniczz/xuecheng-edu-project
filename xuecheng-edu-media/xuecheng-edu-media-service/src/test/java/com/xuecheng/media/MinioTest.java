@@ -1,16 +1,8 @@
 package com.xuecheng.media;
 
-import com.j256.simplemagic.ContentInfo;
-import com.j256.simplemagic.ContentInfoUtil;
-import io.minio.BucketExistsArgs;
 import io.minio.GetObjectArgs;
-import io.minio.MakeBucketArgs;
 import io.minio.MinioClient;
-import io.minio.ObjectWriteResponse;
-import io.minio.RemoveBucketArgs;
-import io.minio.RemoveObjectArgs;
 import io.minio.SetBucketPolicyArgs;
-import io.minio.UploadObjectArgs;
 import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.commons.io.IOUtils;
 import org.junit.jupiter.api.BeforeAll;
@@ -20,7 +12,6 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestMethodOrder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.http.MediaType;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -30,7 +21,7 @@ import java.io.FilterInputStream;
 /**
  * @author Domenic
  * @Classname MinioTest
- * @Description 测试 minio 的 SDK
+ * @Description 测试 minio SDK 的基础功能
  * @Created by Domenic
  */
 @SpringBootTest
@@ -40,13 +31,23 @@ public class MinioTest {
     @Autowired
     MinioClient minioClient;
 
+    @Autowired
+    CommonCode commonCode;
+
+    private static String filename;
     private static String bucketName;
     private static String localFileName;
     private static String testDownloadFileName;
     private static String objectName;
 
     @BeforeAll
-    static void init() {
+    static void setUp() {
+        // 测试文件名称
+        filename = "bootstrap.yml";
+
+        // 测试文件路径：target/test-classes，substring 是为了去除 "file:/" 前缀
+        String basePath = Objects.requireNonNull(MinioTest.class.getResource("/")).toString().substring(6);
+
         // minio 中的桶名称
         bucketName = "testbucket" + (int) Math.floor(Math.random() * (100 + 1));
         // 文件在本地的路径

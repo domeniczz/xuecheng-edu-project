@@ -28,7 +28,7 @@ public class CourseMarketServiceTest {
     private static CourseMarket courseMarket;
 
     @BeforeAll
-    static void init() {
+    static void setUp() {
         courseMarket = new CourseMarket();
         courseMarket.setCharge("201001");
         courseMarket.setPrice(299.99);

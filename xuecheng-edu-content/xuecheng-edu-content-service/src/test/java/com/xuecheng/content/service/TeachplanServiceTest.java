@@ -36,7 +36,7 @@ class TeachplanServiceTest {
     private static List<SaveTeachplanDto> dtoChildrenList;
 
     @BeforeAll
-    static void init() {
+    static void setUp() {
         courseId = 1000000L;
 
         dtoParentList = new ArrayList<>();

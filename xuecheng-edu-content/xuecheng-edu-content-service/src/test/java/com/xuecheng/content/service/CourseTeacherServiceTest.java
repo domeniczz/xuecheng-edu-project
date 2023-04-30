@@ -31,7 +31,7 @@ public class CourseTeacherServiceTest {
     private static CourseTeacher courseTeacher;
 
     @BeforeAll
-    static void init() {
+    static void setUp() {
         courseId = 1000001L;
 
         courseTeacher = new CourseTeacher();

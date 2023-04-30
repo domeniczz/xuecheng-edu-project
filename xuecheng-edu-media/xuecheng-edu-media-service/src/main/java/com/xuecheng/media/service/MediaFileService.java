@@ -15,25 +15,25 @@ import com.xuecheng.media.model.po.MediaFiles;
  */
 public interface MediaFileService {
 
-    /**
+     /**
      * 媒资文件查询方法
      * @param companyId 机构 ID
      * @param pageParams 分页参数
      * @param queryMediaParamsDto 查询条件
      * @return com.xuecheng.base.model.PageResult<com.xuecheng.media.model.po.MediaFiles>
-    */
-    public PageResult<MediaFiles> queryMediaFiels(Long companyId, PageParams pageParams, QueryMediaParamsDto queryMediaParamsDto);
+     */
+     public PageResult<MediaFiles> queryMediaFiels(Long companyId, PageParams pageParams, QueryMediaParamsDto queryMediaParamsDto);
 
-    /**
+     /**
      * 上传文件
      * @param companyId 机构 ID
      * @param uploadFileParamsDto 文件信息
      * @param localFilePath 文件本地路径
      * @return UploadFileResultDto
      */
-    public UploadFileResultDto uploadFile(Long companyId, UploadFileParamsDto uploadFileParamsDto, String localFilePath);
+     public UploadFileResultDto uploadFile(Long companyId, UploadFileParamsDto uploadFileParamsDto, String localFilePath);
 
-    /**
+     /**
      * 将文件添加到数据库中
      * @param companyId 机构 ID
      * @param fileMd5 文件 MD5
@@ -42,6 +42,6 @@ public interface MediaFileService {
      * @param objectName 对象名
      * @return MediaFiles 对象
      */
-    public MediaFiles addMediaFilesToDb(Long companyId, String fileMd5, UploadFileParamsDto uploadFileParamsDto, String bucket, String objectName);
+     public MediaFiles addMediaFilesToDb(Long companyId, String fileMd5, UploadFileParamsDto uploadFileParamsDto, String bucket, String objectName);
 
 }

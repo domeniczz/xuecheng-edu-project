@@ -37,7 +37,7 @@ public class CourseBaseInfoServiceTest {
     private static long addedCourseId = -1;
 
     @BeforeAll
-    static void init() {
+    static void setUp() {
         companyId = 10000L;
 
         addCourseDto = new AddCourseDto();
