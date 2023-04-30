@@ -13,6 +13,7 @@ import io.minio.SetBucketPolicyArgs;
 import io.minio.UploadObjectArgs;
 import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.commons.io.IOUtils;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.MethodOrderer;
 import org.junit.jupiter.api.Order;
@@ -166,11 +167,7 @@ public class MinioTest {
         // 通过 MD5 校验文件的完整性
         String srcMD5 = DigestUtils.md5Hex(srcIs);
         String destMD5 = DigestUtils.md5Hex(destIs);
-        if (srcMD5.equals(destMD5)) {
-            System.out.println(" ========== File Downloaded! ========== ");
-        } else {
-            System.out.println(" ========== MD5 Check Failed! ========== ");
-        }
+        Assertions.assertEquals(srcMD5, destMD5, "MD5 校验失败");
 
         is.close();
         os.close();
@@ -179,11 +176,7 @@ public class MinioTest {
 
         // 删除下载的文件
         boolean res = dest.delete();
-        if (res) {
-            System.out.println(" ========== Download File Deleted ==========");
-        } else {
-            System.out.println(" ========== Download File Delete Failed ==========");
-        }
+        Assertions.assertTrue(res, "删除文件失败");
     }
 
     /**
