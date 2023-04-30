@@ -11,7 +11,6 @@ import org.springframework.context.annotation.Configuration;
  * @author Domenic
  * @Classname MybatisPlusConfig
  * @Description Mybatis Plus 配置类
- * @Date 4/7/2023 9:48 PM
  * @Created by Domenic
  */
 @Configuration

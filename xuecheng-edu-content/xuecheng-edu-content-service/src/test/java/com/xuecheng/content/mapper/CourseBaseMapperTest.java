@@ -6,6 +6,7 @@ import com.xuecheng.base.model.PageParams;
 import com.xuecheng.base.model.PageResult;
 import com.xuecheng.content.model.dto.QueryCourseParamsDto;
 import com.xuecheng.content.model.po.CourseBase;
+
 import org.apache.commons.lang3.StringUtils;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -16,7 +17,7 @@ import java.util.List;
 
 /**
  * @author Domenic
- * @Classname CourseBaseMapperTest
+ * @Classname CourseBaseMapper
  * @Description 课程信息服务实现类
  * @Created by Domenic
  */
@@ -27,9 +28,9 @@ public class CourseBaseMapperTest {
     private CourseBaseMapper courseBaseMapper;
 
     @Test
-    void test_courseBaseMapper() {
+    void testCourseBaseMapper() {
         CourseBase courseBase = courseBaseMapper.selectById(74L);
-        Assertions.assertNotNull(courseBase);
+        Assertions.assertNotNull(courseBase, "课程信息 CourseBase 不存在");
 
         // 查询条件
         QueryCourseParamsDto queryCourseParamsDto = new QueryCourseParamsDto();
@@ -56,8 +57,10 @@ public class CourseBaseMapperTest {
 
         // 分页参数
         PageParams pageParams = new PageParams();
-        pageParams.setPageNo(1L); // 当前页码
-        pageParams.setPageSize(3L); // 每页最多记录数
+        // 当前页码
+        pageParams.setPageNo(1L);
+        // 每页最多记录数
+        pageParams.setPageSize(3L);
         Page<CourseBase> page = new Page<>(pageParams.getPageNo(), pageParams.getPageSize());
         Assertions.assertNotNull(page);
 
@@ -72,7 +75,7 @@ public class CourseBaseMapperTest {
 
         // 准备返回数据 List<T> items, long counts, long page, long pageSize
         PageResult<CourseBase> courseBasePageResult = new PageResult<>(items, total, pageParams.getPageNo(), pageParams.getPageSize());
-        Assertions.assertNotNull(courseBasePageResult);
+        Assertions.assertNotNull(courseBasePageResult, "返回信息 PageResult 不存在");
 
         System.out.println("\n===================================================\n"
                 + courseBasePageResult

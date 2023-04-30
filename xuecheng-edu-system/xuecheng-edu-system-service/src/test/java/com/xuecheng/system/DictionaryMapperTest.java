@@ -12,8 +12,7 @@ import java.util.List;
 /**
  * @author Domenic
  * @Classname DictionaryMapperTest
- * @Description TODO
- * @Date 4/10/2023 7:33 PM
+ * @Description DictionaryMapper 测试类
  * @Created by Domenic
  */
 @SpringBootTest

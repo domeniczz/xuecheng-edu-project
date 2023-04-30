@@ -14,7 +14,6 @@ import java.lang.annotation.Target;
  * @author Domenic
  * @Classname QqNumberConstraint
  * @Description QQ 号码校验注解
- * @Date 4/13/2023 8:55 PM
  * @Created by Domenic
  */
 @Documented

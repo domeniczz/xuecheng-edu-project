@@ -261,11 +261,7 @@ public class CourseBaseInfoServiceImpl implements CourseBaseInfoService {
 
         // TODO: 2020/3/16 课程审核状态码，应该通过 System 模块提供的接口获取，获取到后用 CodeValueParser 解析出 Code-Value Map (之后若使用了 Spring Cloud，可以通过 Feign 调用 System 模块的接口)
         String unsubmittedStatus = "202002";
-        if (unsubmittedStatus.equals(auditStatus)) {
-            return false;
-        } else {
-            return true;
-        }
+        return !unsubmittedStatus.equals(auditStatus);
     }
 
 }
