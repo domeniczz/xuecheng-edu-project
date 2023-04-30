@@ -2,10 +2,10 @@ package com.xuecheng.media.service;
 
 import com.xuecheng.base.model.PageParams;
 import com.xuecheng.base.model.PageResult;
+import com.xuecheng.media.model.dto.FileParamsDto;
+import com.xuecheng.media.model.dto.FileResultDto;
 import com.xuecheng.media.model.dto.QueryMediaParamsDto;
-import com.xuecheng.media.model.dto.UploadFileParamsDto;
-import com.xuecheng.media.model.dto.UploadFileResultDto;
-import com.xuecheng.media.model.po.MediaFiles;
+import com.xuecheng.media.model.po.MediaFile;
 
 /**
  * @author Domenic
@@ -15,33 +15,33 @@ import com.xuecheng.media.model.po.MediaFiles;
  */
 public interface MediaFileService {
 
-     /**
+    /**
      * 媒资文件查询方法
      * @param companyId 机构 ID
      * @param pageParams 分页参数
      * @param queryMediaParamsDto 查询条件
-     * @return com.xuecheng.base.model.PageResult<com.xuecheng.media.model.po.MediaFiles>
-     */
-     public PageResult<MediaFiles> queryMediaFiels(Long companyId, PageParams pageParams, QueryMediaParamsDto queryMediaParamsDto);
+     * @return com.xuecheng.base.model.PageResult<com.xuecheng.media.model.po.MediaFile>
+    */
+    public PageResult<MediaFile> queryMediaFileList(Long companyId, PageParams pageParams, QueryMediaParamsDto queryMediaParamsDto);
 
-     /**
-     * 上传文件
+    /**
+     * 上传媒体文件
      * @param companyId 机构 ID
-     * @param uploadFileParamsDto 文件信息
-     * @param localFilePath 文件本地路径
-     * @return UploadFileResultDto
+     * @param fileParamsDto 文件操作 (上传) 参数 DTO
+     * @param tempFilePath 本地临时文件的路径 (上传的文件先临时存储到本地，再上传到文件服务器)
+     * @return FileResultDto 文件上传结果 DTO
      */
-     public UploadFileResultDto uploadFile(Long companyId, UploadFileParamsDto uploadFileParamsDto, String localFilePath);
+    public FileResultDto uploadMediaFile(Long companyId, FileParamsDto fileParamsDto, String tempFilePath);
 
-     /**
-     * 将文件添加到数据库中
+    /**
+     * <p>
+     * 删除媒体文件
+     * 注意：删除数据库中对应的文件信息时，不是根据文件 ID (MD5 值) 删除，而是根据文件其他元信息删除
+     * </p>
      * @param companyId 机构 ID
-     * @param fileMd5 文件 MD5
-     * @param uploadFileParamsDto 文件上传参数 DTO
-     * @param bucket 存储桶名
-     * @param objectName 对象名
-     * @return MediaFiles 对象
+     * @param fileParamsDto 文件操作 (删除) 参数 DTO
+     * @return FileResultDto 文件删除结果 DTO
      */
-     public MediaFiles addMediaFilesToDb(Long companyId, String fileMd5, UploadFileParamsDto uploadFileParamsDto, String bucket, String objectName);
+    public FileResultDto deleteMediaFile(long companyId, FileParamsDto fileParamsDto);
 
 }

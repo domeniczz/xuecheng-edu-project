@@ -6,5 +6,38 @@ Content-Type: application/json
 {
     "auditStatus": "",
     "fileType": "",
-    "filename": "",
+    "filename": ""
+}
+
+
+### 上传文件 (非视频)
+
+# 返回值是 FileResultDto 对象的 JSON 信息
+
+POST {{media_host}}/media/upload/coursefile
+Content-Type: multipart/form-data; boundary=WebAppBoundary
+
+--WebAppBoundary
+Content-Disposition: form-data; name="filedata"; filename="media-test.txt"
+Content-Type: application/octet-stream
+
+< d:/download/media-test.txt
+
+
+### 删除文件 (非视频)
+
+# 请求参数是 FileParamDto 对象的 JSON 信息
+# 返回值是 FileResultDto 对象的 JSON 信息
+
+POST {{media_host}}/media/delete/coursefile
+Content-Type: application/json
+
+{
+  "filename": "media-testd3e75fff0d5d1780eadab1cbf01b965a.txt",
+  "fileType": "001003",
+  "fileSize": 903,
+  "tags": null,
+  "username": null,
+  "changeDate": null,
+  "remark": null
 }

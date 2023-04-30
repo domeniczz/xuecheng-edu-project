@@ -39,7 +39,7 @@ public class MediaFileServiceTest {
     private static FileParamsDto fileParamsDto;
 
     @BeforeAll
-    static void setUp() {
+    static void init() {
         companyId = 100011L;
 
         // 路径：target/test-classes，substring 是为了去除 "file:/" 前缀

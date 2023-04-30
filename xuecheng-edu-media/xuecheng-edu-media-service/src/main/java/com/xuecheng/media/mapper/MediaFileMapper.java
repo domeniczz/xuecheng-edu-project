@@ -1,14 +1,14 @@
 package com.xuecheng.media.mapper;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
-import com.xuecheng.media.model.po.MediaFiles;
+import com.xuecheng.media.model.po.MediaFile;
 
 /**
  * @author Domenic
- * @Classname MediaFilesMapper
+ * @Classname MediaFileMapper
  * @Description 媒资信息 Mapper 接口
  * @Created by Domenic
  */
-public interface MediaFilesMapper extends BaseMapper<MediaFiles> {
+public interface MediaFileMapper extends BaseMapper<MediaFile> {
 
 }

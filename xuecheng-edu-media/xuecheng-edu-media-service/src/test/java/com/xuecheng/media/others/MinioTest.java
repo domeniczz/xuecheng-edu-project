@@ -1,10 +1,11 @@
-package com.xuecheng.media;
+package com.xuecheng.media.others;
 
 import io.minio.GetObjectArgs;
 import io.minio.MinioClient;
 import io.minio.SetBucketPolicyArgs;
 import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.commons.io.IOUtils;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.MethodOrderer;
 import org.junit.jupiter.api.Order;
@@ -17,6 +18,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.FilterInputStream;
+import java.util.Objects;
 
 /**
  * @author Domenic
@@ -36,8 +38,8 @@ public class MinioTest {
 
     private static String filename;
     private static String bucketName;
-    private static String localFileName;
-    private static String testDownloadFileName;
+    private static String localFilePath;
+    private static String testDownloadFilePath;
     private static String objectName;
 
     @BeforeAll
@@ -50,12 +52,15 @@ public class MinioTest {
 
         // minio 中的桶名称
         bucketName = "testbucket" + (int) Math.floor(Math.random() * (100 + 1));
+
+        // // 路径：target/test-classes，substring 是为了去除 "file:/" 前缀
+        String basePath = Objects.requireNonNull(MinioTest.class.getResource("/")).toString().substring(6);
         // 文件在本地的路径
-        localFileName = "D:\\Download\\Laplace Transforms.pdf";
+        localFilePath = basePath + "bootstrap.yml";
         // 文件下载后在本地的保存路径
-        testDownloadFileName = "D:\\Download\\Laplace Transforms TestDownload.pdf";
+        testDownloadFilePath = basePath + "bootstrap-test-download.yml";
         // 文件在 minio 中的保存路径
-        objectName = "test/Laplace Transforms.pdf";
+        objectName = "test/bootstrap.yml";
     }
 
     /**
@@ -63,7 +68,7 @@ public class MinioTest {
     */
     @Test
     @Order(1)
-    public void test_createBucket() throws Exception {
+    void test_createBucket() throws Exception {
         // 检查桶是否存在
         boolean exist = minioClient.bucketExists(BucketExistsArgs.builder().bucket(bucketName).build());
         if (!exist) {
@@ -80,7 +85,7 @@ public class MinioTest {
      */
     @Test
     @Order(2)
-    public void test_setBucketAccessPolicyPublic() throws Exception {
+    void test_setBucketAccessPolicyPublic() throws Exception {
         // 设置桶的访问策略，允许 API 执行增删改查操作
         String policy = "{" +
                 "\"Version\":\"2012-10-17\"," +
@@ -99,7 +104,7 @@ public class MinioTest {
      */
     @Test
     @Order(6)
-    public void test_deleteBucket() throws Exception {
+    void test_deleteBucket() throws Exception {
         minioClient.removeBucket(RemoveBucketArgs.builder().bucket(bucketName).build());
         System.out.println(" ========== Bucket \"" + bucketName + "\" Deleted ========== ");
     }
@@ -109,22 +114,22 @@ public class MinioTest {
      */
     @Test
     @Order(3)
-    public void test_uploadFile() throws Exception {
+    void test_uploadFile() throws Exception {
         // 通过扩展名得到媒体资源类型 mimeType
         // 根据扩展名取出 mimeType
-        ContentInfo extensionMatch = ContentInfoUtil.findExtensionMatch(".mp4");
+        ContentInfo extMatch = ContentInfoUtil.findExtensionMatch(".mp4");
         // 通用 mimeType，字节流
         String mimeType = MediaType.APPLICATION_OCTET_STREAM_VALUE;
-        if (extensionMatch != null) {
-            mimeType = extensionMatch.getMimeType();
+        if (extMatch != null) {
+            mimeType = extMatch.getMimeType();
         }
 
         // 上传文件的参数信息
-        UploadObjectArgs uploadObjectArgs = UploadObjectArgs.builder()
+        UploadObjectArgs args = UploadObjectArgs.builder()
                 // 桶
                 .bucket(bucketName)
                 // 指定本地文件 (路径)
-                .filename(localFileName)
+                .filename(localFilePath)
                 // 对象名 (路径)
                 .object(objectName)
                 // 设置媒体文件类型
@@ -132,7 +137,7 @@ public class MinioTest {
                 .build();
 
         // 上传文件
-        ObjectWriteResponse resp = minioClient.uploadObject(uploadObjectArgs);
+        ObjectWriteResponse resp = minioClient.uploadObject(args);
         System.out.println(resp);
     }
 
@@ -141,17 +146,17 @@ public class MinioTest {
      */
     @Test
     @Order(4)
-    public void test_downloadFile() throws Exception {
-        GetObjectArgs getObjectArgs = GetObjectArgs.builder()
+    void test_downloadFile() throws Exception {
+        GetObjectArgs args = GetObjectArgs.builder()
                 .bucket(bucketName)
                 .object(objectName)
                 .build();
 
-        File src = new File(localFileName);
-        File dest = new File(testDownloadFileName);
+        File src = new File(localFilePath);
+        File dest = new File(testDownloadFilePath);
 
         // 查询远程服务获取到一个流对象
-        FilterInputStream is = minioClient.getObject(getObjectArgs);
+        FilterInputStream is = minioClient.getObject(args);
 
         // 指定输出流
         FileOutputStream os = new FileOutputStream(dest);
@@ -163,16 +168,16 @@ public class MinioTest {
         // 通过 MD5 校验文件的完整性
         String srcMD5 = DigestUtils.md5Hex(srcIs);
         String destMD5 = DigestUtils.md5Hex(destIs);
-        if (srcMD5.equals(destMD5)) {
-            System.out.println(" ========== File Downloaded! ========== ");
-        } else {
-            System.out.println(" ========== MD5 Check Failed! ========== ");
-        }
+        Assertions.assertEquals(srcMD5, destMD5, "MD5 校验失败");
 
+        is.close();
+        os.close();
+        srcIs.close();
+        destIs.close();
+
+        // 删除下载的文件
         boolean res = dest.delete();
-        if (res) {
-            System.out.println(" ========== Download File Deleted ==========");
-        }
+        Assertions.assertTrue(res, "删除文件失败");
     }
 
     /**
@@ -180,14 +185,14 @@ public class MinioTest {
      */
     @Test
     @Order(5)
-    public void test_deleteFile() throws Exception {
-        RemoveObjectArgs removeObjectArgs = RemoveObjectArgs.builder()
+    void test_deleteFile() throws Exception {
+        RemoveObjectArgs args = RemoveObjectArgs.builder()
                 .bucket(bucketName)
                 .object(objectName)
                 .build();
 
         // 删除文件
-        minioClient.removeObject(removeObjectArgs);
+        minioClient.removeObject(args);
     }
 
 }
