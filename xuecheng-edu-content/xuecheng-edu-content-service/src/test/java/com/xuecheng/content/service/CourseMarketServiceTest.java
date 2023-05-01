@@ -45,9 +45,9 @@ public class CourseMarketServiceTest {
         CourseMarket courseMarket = courseMarketService.query(courseId);
         Assertions.assertNotNull(courseMarket);
 
-        System.out.println("\n===================================================");
-        System.out.println(courseMarket);
-        System.out.println("===================================================\n");
+        System.out.println("\n===================================================\n"
+                + courseMarket
+                + "\n===================================================\n");
     }
 
     @Test

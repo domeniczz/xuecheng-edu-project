@@ -60,9 +60,9 @@ public class CourseTeacherServiceTest {
         Assertions.assertNotNull(res);
         Assertions.assertEquals(courseId, res.getCourseId());
 
-        System.out.println("\n===================================================");
-        System.out.println(res);
-        System.out.println("===================================================\n");
+        System.out.println("\n===================================================\n"
+                + res
+                + "\n===================================================\n");
     }
 
     @Test
@@ -71,9 +71,9 @@ public class CourseTeacherServiceTest {
         CourseTeacher res = courseTeacherService.save(courseTeacher);
         Assertions.assertNotNull(res);
 
-        System.out.println("\n===================================================");
-        System.out.println(res);
-        System.out.println("===================================================\n");
+        System.out.println("\n===================================================\n"
+                + res
+                + "\n===================================================\n");
     }
 
     @Test

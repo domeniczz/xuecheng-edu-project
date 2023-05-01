@@ -7,8 +7,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Component;
 
-import java.io.IOException;
-
 import io.minio.BucketExistsArgs;
 import io.minio.MakeBucketArgs;
 import io.minio.MinioClient;
@@ -19,17 +17,17 @@ import io.minio.UploadObjectArgs;
 
 /**
  * @author Domenic
- * @Classname CommonCode
+ * @Classname CommonTestCode
  * @Description MinioTest 和 FileChunkMergeTest 中的公共代码
  * @Created by Domenic
  */
 @Component
-public class CommonCode {
+public class CommonTestCode {
 
     @Autowired
     MinioClient minioClient;
 
-    public void uploadFileToMinio(String bucketName, String localFilePath, String objectName) throws Exception {
+    public ObjectWriteResponse uploadFileToMinio(String bucketName, String localFilePath, String objectName) throws Exception {
         // 通过扩展名得到媒体资源类型 mimeType
         // 根据扩展名取出 mimeType
         ContentInfo extMatch = ContentInfoUtil.findExtensionMatch(".mp4");
@@ -52,12 +50,7 @@ public class CommonCode {
                 .build();
 
         // 上传文件
-        ObjectWriteResponse resp = minioClient.uploadObject(args);
-        System.out.println(resp);
-
-        if (resp == null) {
-            throw new RuntimeException("上传文件失败");
-        }
+        return minioClient.uploadObject(args);
     }
 
     public void createBucket(String bucketName) throws Exception {
@@ -70,9 +63,6 @@ public class CommonCode {
         if (!exist) {
             // 创建桶
             minioClient.makeBucket(MakeBucketArgs.builder().bucket(bucketName).build());
-            System.out.println(" ========== Bucket \"" + bucketName + "\" Created ========== ");
-        } else {
-            System.out.println(" ========== Bucket \"" + bucketName + "\" Already Exists ========== ");
         }
     }
 
@@ -83,10 +73,9 @@ public class CommonCode {
 
         // 删除桶
         minioClient.removeBucket(args);
-        System.out.println(" ========== Bucket \"" + bucketName + "\" Deleted ========== ");
     }
 
-    public void deleteFile(String bucketName, String objectName) throws Exception {
+    public void deleteFileFromMinio(String bucketName, String objectName) throws Exception {
         RemoveObjectArgs args = RemoveObjectArgs.builder()
                 .bucket(bucketName)
                 .object(objectName)
@@ -94,7 +83,6 @@ public class CommonCode {
 
         // 删除对象
         minioClient.removeObject(args);
-        System.out.println(" ========== Object \"" + objectName + "\" Deleted ========== ");
     }
 
 }

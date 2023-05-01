@@ -78,6 +78,7 @@ class TeachplanServiceTest {
     @Test
     @Order(1)
     void test_createTeachplan() {
+        // 创建父章节
         dtoParentList.forEach(dto -> {
             Teachplan res = teachplanService.saveTeachplan(dto);
             Assertions.assertNotNull(res);
@@ -87,6 +88,7 @@ class TeachplanServiceTest {
 
         // 第一个父章节下只有一个子节点，其他的有两个子节点
         double index = 0.5;
+        // 创建子章节
         for (SaveTeachplanDto dto : dtoChildrenList) {
             // 设置父章节的 ID
             dto.setParentid(dtoParentList.get((int) Math.floor(index)).getId());
@@ -94,7 +96,7 @@ class TeachplanServiceTest {
             index += 0.5;
             Teachplan res = teachplanService.saveTeachplan(dto);
             Assertions.assertNotNull(res);
-            // 保存子章节的 ID
+            // 保存子章节的 ID，供其他 test 方法使用
             dto.setId(res.getId());
         }
     }

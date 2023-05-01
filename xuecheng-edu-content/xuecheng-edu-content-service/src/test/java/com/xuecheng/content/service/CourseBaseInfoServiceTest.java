@@ -84,10 +84,11 @@ public class CourseBaseInfoServiceTest {
 
         PageResult<CourseBase> res = courseBaseInfoService.queryCourseBaseList(pageParams, queryCourseParamsDto);
         Assertions.assertNotNull(res);
+        Assertions.assertTrue(res.getItems().size() > 0);
 
-        System.out.println("\n===================================================\n"
-                + res
-                + "\n===================================================\n");
+        System.out.println("\n===================================================");
+        res.getItems().forEach(System.out::println);
+        System.out.println("===================================================\n");
     }
 
     @Test
@@ -96,9 +97,6 @@ public class CourseBaseInfoServiceTest {
         // 使用 create 方法创建的课程的 ID
         CourseBaseInfoDto res = courseBaseInfoService.queryCourseBaseAndMarketInfoById(addedCourseId);
         Assertions.assertNotNull(res);
-        System.out.println("\n===================================================\n"
-                + res
-                + "\n===================================================\n");
     }
 
     @Test
@@ -133,7 +131,7 @@ public class CourseBaseInfoServiceTest {
     void test_delete() {
         // 使用 create 方法创建的课程的 ID
         ResponseResult res = courseBaseInfoService.delete(addedCourseId);
-        Assertions.assertNotNull(res);
+        Assertions.assertEquals(1, res);
     }
 
 }
