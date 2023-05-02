@@ -24,7 +24,7 @@ public class CourseCategoryTreeDto extends CourseCategory {
 
     /**
      * <p>
-     * 子节点的 List
+     * 子节点的 List<br/>
      * CourseCategory 是以树形结构存储的，因此需要存储子节点
      * </p>
      */

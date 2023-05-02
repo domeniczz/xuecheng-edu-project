@@ -37,7 +37,7 @@ public interface CourseTeacherService {
 
     /**
      * <p>
-     * 删除指定课程的所有教师信息
+     * 删除指定课程的所有教师信息<br/>
      * 可能课程没有对应的教师信息，也可能有多个
      * </p>
      * @param courseId 课程 id

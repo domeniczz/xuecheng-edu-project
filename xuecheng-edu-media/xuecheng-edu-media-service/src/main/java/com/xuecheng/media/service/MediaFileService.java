@@ -35,7 +35,7 @@ public interface MediaFileService {
 
     /**
      * <p>
-     * 删除媒体文件
+     * 删除媒体文件<br/>
      * 注意：删除数据库中对应的文件信息时，不是根据文件 ID (MD5 值) 删除，而是根据文件其他元信息删除
      * </p>
      * @param companyId 机构 ID

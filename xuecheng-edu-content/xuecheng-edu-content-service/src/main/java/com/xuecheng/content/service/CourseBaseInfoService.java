@@ -34,7 +34,7 @@ public interface CourseBaseInfoService {
 
     /**
      * <p>
-     * 添加课程基本信息
+     * 添加课程基本信息<br/>
      * 审核状态、发布状态会给默认值
      * </p>
      * @param companyId    教学机构 ID
@@ -53,8 +53,8 @@ public interface CourseBaseInfoService {
 
     /**
      * <p>
-     * 删除课程
-     * 课程的审核状态为未提交时方可删除
+     * 删除课程<br/>
+     * 课程的审核状态为未提交时方可删除<br/>
      * 会删除课程相关的基本信息、营销信息、课程计划、课程教师信息
      * </p>
      * @param courseId 课程 ID

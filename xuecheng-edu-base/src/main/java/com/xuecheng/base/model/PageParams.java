@@ -20,7 +20,7 @@ public class PageParams {
 
     /**
      * <p>
-     * 当前页码
+     * 当前页码<br/>
      * 类型为 Long 是因为 Mybatis-Plus 接口的分页参数类型也是 Long
      * </p>
      */
