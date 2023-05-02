@@ -1,6 +1,6 @@
 package com.xuecheng.content.service;
 
-import com.xuecheng.base.model.ResponseResult;
+import com.xuecheng.base.model.RestResponse;
 import com.xuecheng.content.model.po.CourseTeacher;
 
 import java.util.List;
@@ -33,7 +33,7 @@ public interface CourseTeacherService {
      * @param teacherId 师资 id
      * @return 删除结果
      */
-    ResponseResult delete(long courseId, long teacherId);
+    RestResponse<?> delete(long courseId, long teacherId);
 
     /**
      * <p>
@@ -43,6 +43,6 @@ public interface CourseTeacherService {
      * @param courseId 课程 id
      * @return 删除结果
      */
-    ResponseResult deleteAll(long courseId);
+    RestResponse<?> deleteAll(long courseId);
 
 }

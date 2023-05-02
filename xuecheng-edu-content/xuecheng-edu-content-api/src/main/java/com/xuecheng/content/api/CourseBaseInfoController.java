@@ -2,7 +2,7 @@ package com.xuecheng.content.api;
 
 import com.xuecheng.base.model.PageParams;
 import com.xuecheng.base.model.PageResult;
-import com.xuecheng.base.model.ResponseResult;
+import com.xuecheng.base.model.RestResponse;
 import com.xuecheng.base.validation.ValidationGroups;
 import com.xuecheng.content.model.dto.AddCourseDto;
 import com.xuecheng.content.model.dto.CourseBaseInfoDto;
@@ -75,7 +75,7 @@ public class CourseBaseInfoController {
     @DeleteMapping("/{courseId}")
     @ApiOperation("删除课程")
     @ApiImplicitParam(value = "courseId", name = "课程 id", required = true, dataType = "Long", paramType = "path")
-    public ResponseResult deleteCourseBaseById(@PathVariable Long courseId) {
+    public RestResponse<?> deleteCourseBaseById(@PathVariable Long courseId) {
         return courseBaseInfoService.delete(courseId);
     }
 

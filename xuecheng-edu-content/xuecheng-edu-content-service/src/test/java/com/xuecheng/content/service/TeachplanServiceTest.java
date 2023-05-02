@@ -1,6 +1,6 @@
 package com.xuecheng.content.service;
 
-import com.xuecheng.base.model.ResponseResult;
+import com.xuecheng.base.model.RestResponse;
 import com.xuecheng.content.model.dto.SaveTeachplanDto;
 import com.xuecheng.content.model.dto.TeachplanDto;
 import com.xuecheng.content.model.po.Teachplan;
@@ -119,10 +119,10 @@ class TeachplanServiceTest {
     @Order(6)
     void test_deleteTeachplan() {
         // 删除子章节
-        ResponseResult res1 = teachplanService.deleteTeachplan(dtoChildrenList.get(0).getId());
+        RestResponse<?> res1 = teachplanService.deleteTeachplan(dtoChildrenList.get(0).getId());
         Assertions.assertNotNull(res1);
         // 删除父章节
-        ResponseResult res2 = teachplanService.deleteTeachplan(dtoParentList.get(0).getId());
+        RestResponse<?> res2 = teachplanService.deleteTeachplan(dtoParentList.get(0).getId());
         Assertions.assertNotNull(res2);
     }
 
@@ -130,25 +130,25 @@ class TeachplanServiceTest {
     @Order(7)
     void test_deleteAll() {
         // 删除所有章节
-        ResponseResult resp = teachplanService.deleteAll(1000000);
+        RestResponse<?> resp = teachplanService.deleteAll(1000000);
         Assertions.assertNotNull(resp);
     }
 
     @Test
     @Order(4)
     void test_moveUp() {
-        ResponseResult res1 = teachplanService.moveUp(dtoParentList.get(1).getId());
+        RestResponse<?> res1 = teachplanService.moveUp(dtoParentList.get(1).getId());
         Assertions.assertNotNull(res1);
-        ResponseResult res2 = teachplanService.moveUp(dtoChildrenList.get(2).getId());
+        RestResponse<?> res2 = teachplanService.moveUp(dtoChildrenList.get(2).getId());
         Assertions.assertNotNull(res2);
     }
 
     @Test
     @Order(5)
     void test_moveDown() {
-        ResponseResult res1 = teachplanService.moveUp(dtoParentList.get(0).getId());
+        RestResponse<?> res1 = teachplanService.moveUp(dtoParentList.get(0).getId());
         Assertions.assertNotNull(res1);
-        ResponseResult res2 = teachplanService.moveUp(dtoChildrenList.get(1).getId());
+        RestResponse<?> res2 = teachplanService.moveUp(dtoChildrenList.get(1).getId());
         Assertions.assertNotNull(res2);
     }
 

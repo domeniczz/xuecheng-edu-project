@@ -5,7 +5,7 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.xuecheng.base.exception.XueChengEduException;
 import com.xuecheng.base.model.PageParams;
 import com.xuecheng.base.model.PageResult;
-import com.xuecheng.base.model.ResponseResult;
+import com.xuecheng.base.model.RestResponse;
 import com.xuecheng.content.mapper.CourseBaseMapper;
 import com.xuecheng.content.model.dto.AddCourseDto;
 import com.xuecheng.content.model.dto.CourseBaseInfoDto;
@@ -224,7 +224,7 @@ public class CourseBaseInfoServiceImpl implements CourseBaseInfoService {
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public ResponseResult delete(long courseId) {
+    public RestResponse<?> delete(long courseId) {
         boolean ifSubmitForAudit = checkAuditState(courseId);
         if (!ifSubmitForAudit) {
             // 删除课程基本信息
@@ -236,7 +236,7 @@ public class CourseBaseInfoServiceImpl implements CourseBaseInfoService {
             // 删除课程教师信息
             courseTeacherService.deleteAll(courseId);
 
-            return new ResponseResult(200, "删除课程成功");
+            return RestResponse.success();
         } else {
             XueChengEduException.cast("删除课程失败");
             return null;

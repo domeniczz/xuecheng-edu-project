@@ -4,7 +4,7 @@ import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.xuecheng.base.enums.Direction;
 import com.xuecheng.base.exception.CommonError;
 import com.xuecheng.base.exception.XueChengEduException;
-import com.xuecheng.base.model.ResponseResult;
+import com.xuecheng.base.model.RestResponse;
 import com.xuecheng.content.mapper.TeachplanMapper;
 import com.xuecheng.content.model.dto.SaveTeachplanDto;
 import com.xuecheng.content.model.dto.TeachplanDto;
@@ -14,7 +14,6 @@ import com.xuecheng.content.service.TeachplanService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -57,7 +56,7 @@ public class TeachplanServiceImpl implements TeachplanService {
     }
 
     @Override
-    public ResponseResult deleteTeachplan(long id) {
+    public RestResponse<?> deleteTeachplan(long id) {
         Teachplan teachplanToDelete = teachplanMapper.selectById(id);
         long parentId = getParentId(id);
 
@@ -97,11 +96,11 @@ public class TeachplanServiceImpl implements TeachplanService {
             }
         }
         // 返回操作成功的响应
-        return new ResponseResult(HttpStatus.OK.value(), "删除课程计划成功");
+        return RestResponse.success("删除课程计划成功");
     }
 
     @Override
-    public ResponseResult deleteAll(long courseId) {
+    public RestResponse<?> deleteAll(long courseId) {
         // 先删除课程计划媒资关联表中的数据
         teachplanMapper.selectList(new LambdaQueryWrapper<Teachplan>().eq(Teachplan::getCourseId, courseId))
                 .forEach(teachplan -> {
@@ -115,19 +114,19 @@ public class TeachplanServiceImpl implements TeachplanService {
                 });
         // 再删除课程计划表中的数据
         teachplanMapper.delete(new LambdaQueryWrapper<Teachplan>().eq(Teachplan::getCourseId, courseId));
-        return new ResponseResult(HttpStatus.OK.value(), "删除课程计划成功");
+        return RestResponse.success("删除关联的所有课程计划成功");
     }
 
     @Override
-    public ResponseResult moveUp(long id) {
+    public RestResponse<?> moveUp(long id) {
         move(id, Direction.UP);
-        return new ResponseResult(HttpStatus.OK.value(), "上移课程计划成功");
+        return RestResponse.success("上移课程计划成功");
     }
 
     @Override
-    public ResponseResult moveDown(long id) {
+    public RestResponse<?> moveDown(long id) {
         move(id, Direction.DOWN);
-        return new ResponseResult(HttpStatus.OK.value(), "下移课程计划成功");
+        return RestResponse.success("下移课程计划成功");
     }
 
     private Teachplan createTeachplan(SaveTeachplanDto saveTeachplanDto) {

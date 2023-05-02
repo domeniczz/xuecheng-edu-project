@@ -2,13 +2,12 @@ package com.xuecheng.content.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.xuecheng.base.exception.XueChengEduException;
-import com.xuecheng.base.model.ResponseResult;
+import com.xuecheng.base.model.RestResponse;
 import com.xuecheng.content.mapper.CourseTeacherMapper;
 import com.xuecheng.content.model.po.CourseTeacher;
 import com.xuecheng.content.service.CourseTeacherService;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -66,12 +65,12 @@ public class CourseTeacherServiceImpl implements CourseTeacherService {
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public ResponseResult delete(long courseId, long teacherId) {
+    public RestResponse<?> delete(long courseId, long teacherId) {
         int res = courseTeacherMapper.delete(new LambdaQueryWrapper<CourseTeacher>()
                 .eq(CourseTeacher::getCourseId, courseId)
                 .eq(CourseTeacher::getId, teacherId));
         if (res > 0) {
-            return new ResponseResult(HttpStatus.OK.value(), "删除师资成功");
+            return RestResponse.success("删除师资成功");
         } else {
             XueChengEduException.cast("删除师资失败");
             return null;
@@ -80,9 +79,9 @@ public class CourseTeacherServiceImpl implements CourseTeacherService {
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public ResponseResult deleteAll(long courseId) {
+    public RestResponse<?> deleteAll(long courseId) {
         courseTeacherMapper.delete(new LambdaQueryWrapper<CourseTeacher>().eq(CourseTeacher::getCourseId, courseId));
-        return new ResponseResult(HttpStatus.OK.value(), "删除课程对应的所有教师信息成功");
+        return RestResponse.success("删除课程对应的所有教师信息成功");
     }
 
 }

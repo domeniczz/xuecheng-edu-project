@@ -1,6 +1,6 @@
 package com.xuecheng.content.service;
 
-import com.xuecheng.base.model.ResponseResult;
+import com.xuecheng.base.model.RestResponse;
 import com.xuecheng.content.model.po.CourseTeacher;
 
 import org.junit.jupiter.api.Assertions;
@@ -79,14 +79,14 @@ public class CourseTeacherServiceTest {
     @Test
     @Order(4)
     void test_delete() {
-        ResponseResult res = courseTeacherService.delete(courseId, courseTeacher.getId());
+        RestResponse<?> res = courseTeacherService.delete(courseId, courseTeacher.getId());
         Assertions.assertNotNull(res);
     }
 
     @Test
     @Order(5)
     void test_deleteAll() {
-        ResponseResult res = courseTeacherService.deleteAll(courseId);
+        RestResponse<?> res = courseTeacherService.deleteAll(courseId);
         Assertions.assertNotNull(res);
     }
 

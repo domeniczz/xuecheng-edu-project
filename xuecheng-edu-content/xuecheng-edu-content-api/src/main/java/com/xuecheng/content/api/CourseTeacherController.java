@@ -1,6 +1,6 @@
 package com.xuecheng.content.api;
 
-import com.xuecheng.base.model.ResponseResult;
+import com.xuecheng.base.model.RestResponse;
 import com.xuecheng.content.model.po.CourseTeacher;
 import com.xuecheng.content.service.CourseTeacherService;
 
@@ -50,7 +50,7 @@ public class CourseTeacherController {
     @DeleteMapping("/course/{courseId}/{teacherId}")
     @ApiOperation("删除课程师资")
     @ApiImplicitParam(value = "courseId", name = "课程 id", required = true, dataType = "Long", paramType = "path")
-    public ResponseResult deleteCourseTeacher(@PathVariable Long courseId, @PathVariable Long teacherId) {
+    public RestResponse<?> deleteCourseTeacher(@PathVariable Long courseId, @PathVariable Long teacherId) {
         return courseTeacherService.delete(courseId, teacherId);
     }
 

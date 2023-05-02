@@ -1,6 +1,6 @@
 package com.xuecheng.content.service;
 
-import com.xuecheng.base.model.ResponseResult;
+import com.xuecheng.base.model.RestResponse;
 import com.xuecheng.content.model.dto.SaveTeachplanDto;
 import com.xuecheng.content.model.dto.TeachplanDto;
 import com.xuecheng.content.model.po.Teachplan;
@@ -39,7 +39,7 @@ public interface TeachplanService {
      * @param id 教学计划 id
      * @return 删除结果，若有错误则抛出 XueChengException
      */
-    ResponseResult deleteTeachplan(long id);
+    RestResponse<?> deleteTeachplan(long id);
 
     /**
      * <p>
@@ -50,20 +50,20 @@ public interface TeachplanService {
      * @param courseId 课程 id
      * @return 删除结果
      */
-    ResponseResult deleteAll(long courseId);
+    RestResponse<?> deleteAll(long courseId);
 
     /**
      * 课程计划上移
      * @param id 课程计划 id
      * @return 上移结果
      */
-    ResponseResult moveUp(long id);
+    RestResponse<?> moveUp(long id);
 
     /**
      * 课程计划下移
      * @param id 课程计划 id
      * @return 下移结果
      */
-    ResponseResult moveDown(long id);
+    RestResponse<?> moveDown(long id);
 
 }
