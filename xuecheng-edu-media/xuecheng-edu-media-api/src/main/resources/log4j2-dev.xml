@@ -3,6 +3,7 @@
     <properties>
         <property name="logdir">logs</property>
         <property name="PATTERN">%date{YYYY-MM-dd HH:mm:ss,SSS} %level [%thread][%file:%line] - %msg%n%throwable</property>
+        <property name="ERRPATTERN">%date{YYYY-MM-dd HH:mm:ss,SSS} %highlight{%level [%thread][%file:%line] - %msg%n%throwable}</property>
     </properties>
     <Appenders>
         <Console name="Console" target="SYSTEM_OUT">
@@ -11,7 +12,7 @@
 
         <RollingFile name="ErrorAppender" fileName="${logdir}/error.log"
             filePattern="${logdir}/$${date:yyyy-MM-dd}/error.%d{yyyy-MM-dd-HH}.log" append="true">
-            <PatternLayout pattern="${PATTERN}"/>
+            <PatternLayout pattern="${ERRPATTERN}"/>
             <ThresholdFilter level="ERROR" onMatch="ACCEPT" onMismatch="DENY"/>
             <Policies>
                 <TimeBasedTriggeringPolicy interval="1" modulate="true" />

@@ -2,20 +2,21 @@ package com.xuecheng.media.service;
 
 import com.xuecheng.base.model.PageParams;
 import com.xuecheng.base.model.PageResult;
-import com.xuecheng.media.model.dto.QueryMediaParamsDto;
-import com.xuecheng.media.model.po.MediaFile;
 import com.xuecheng.media.model.dto.FileParamsDto;
 import com.xuecheng.media.model.dto.FileResultDto;
+import com.xuecheng.media.model.dto.QueryMediaParamsDto;
+import com.xuecheng.media.model.po.MediaFile;
 
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.MethodOrderer;
 import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestInstance;
 import org.junit.jupiter.api.TestMethodOrder;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.SpringBootTest;
-
-import java.util.Objects;
 
 /**
  * @author Domenic
@@ -25,41 +26,50 @@ import java.util.Objects;
  */
 @SpringBootTest
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
+@TestInstance(TestInstance.Lifecycle.PER_CLASS)
 public class MediaFileServiceTest {
 
     @Autowired
     private MediaFileService mediaFileService;
 
-    private static Long companyId;
-    private static String filename;
-    private static String fileType;
-    private static String filePath;
-    private static String auditStatus;
-    private static QueryMediaParamsDto queryMediaParamsDto;
-    private static FileParamsDto fileParamsDto;
+    private Long companyId;
+    /**
+     * 测试文件名
+     */
+    @Value("${mediafile.file.name}")
+    private String filename;
+    /**
+     * 测试文件路径
+     */
+    @Value("${mediafile.folder.path}")
+    private String folderPath;
+    private String filePath;
+    private String fileType;
+    private String auditStatus;
+    private FileParamsDto dto;
 
     @BeforeAll
-    static void setUp() {
+    void setUp() {
+
+        // 机构 ID
         companyId = 100011L;
-
-        // 路径：target/test-classes，substring 是为了去除 "file:/" 前缀
-        String basePath = Objects.requireNonNull(MediaFileServiceTest.class.getResource("/")).toString().substring(6);
-
-        filename = "bootstrap.yml";
-        // 文件类型：其他
-        fileType = "001003";
-        // 文件在本地的路径
-        filePath = basePath + filename;
-        // 审核状态：已通过
+        // 文件路径
+        filePath = folderPath + filename;
+        // 文件类型：图片 (图片 001001; 视频 001002; 其他 001003)
+        fileType = "001001";
+        // 审核状态：已通过 (未通过 002001; 未审核 002002; 已通过 002003)
         auditStatus = "002003";
+        // 文件大小 (乱写的)
+        long fileSize = 100L;
 
-        fileParamsDto = new FileParamsDto();
-        fileParamsDto.setFilename(filename);
-        fileParamsDto.setFileType(fileType);
-        fileParamsDto.setFileSize(100L);
-        fileParamsDto.setTags("测试文件 Unit Test");
-        fileParamsDto.setUsername("测试测试");
-        fileParamsDto.setRemark("测试测试");
+        // 设置媒资文件操作请求参数 DTO
+        dto = new FileParamsDto();
+        dto.setFilename(filename);
+        dto.setFileType(fileType);
+        dto.setFileSize(fileSize);
+        dto.setTags("测试文件 Unit Test");
+        dto.setUsername("测试测试");
+        dto.setRemark("测试测试");
     }
 
     @Test
@@ -73,43 +83,38 @@ public class MediaFileServiceTest {
         pageParams.setPageSize(2L);
 
         // 媒资管理请求参数
-        queryMediaParamsDto = new QueryMediaParamsDto();
+        QueryMediaParamsDto queryMediaParamsDto = new QueryMediaParamsDto();
         // 文件名称
-        queryMediaParamsDto.setFilename(filename);
+        queryMediaParamsDto.setFilename(dto.getFilename());
         // 文件类型：图片
         queryMediaParamsDto.setFileType(fileType);
         // 审核状态：已通过
         queryMediaParamsDto.setAuditStatus(auditStatus);
 
         PageResult<MediaFile> res = mediaFileService.queryMediaFileList(companyId, pageParams, queryMediaParamsDto);
+        Assertions.assertNotNull(res, "查询媒资文件列表失败");
+        Assertions.assertTrue(res.getItems().size() > 0, "媒资文件列表为空");
 
         // 更新文件路径 (变为在文件服务器中的路径)
         filePath = res.getItems().get(0).getFilePath();
-
-        System.out.println("\n===================================================");
-        res.getItems().forEach(System.out::println);
-        System.out.println("===================================================\n");
     }
 
     @Test
     @Order(1)
     void test_uploadMediaFile() {
-        FileResultDto resDto = mediaFileService.uploadMediaFile(companyId, fileParamsDto, filePath);
+        FileResultDto resDto = mediaFileService.uploadMediaFile(companyId, dto, filePath);
+        Assertions.assertNotNull(resDto, "媒资文件上传失败");
 
         // 更新文件名
         filename = resDto.getFilename();
-        fileParamsDto.setFilename(filename);
-
-        System.out.println("\n===================================================\n"
-                + resDto
-                + "\n===================================================\n");
+        dto.setFilename(filename);
     }
 
     @Test
     @Order(3)
     void test_deleteMediaFile() {
         // 若测试失败，可能是因为 bucket Access Policy 是 private，需要改为 public
-        mediaFileService.deleteMediaFile(companyId, fileParamsDto);
+        mediaFileService.deleteMediaFile(companyId, dto);
     }
 
 }

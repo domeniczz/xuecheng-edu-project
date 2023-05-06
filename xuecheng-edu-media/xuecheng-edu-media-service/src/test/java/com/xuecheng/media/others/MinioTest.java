@@ -1,10 +1,7 @@
 package com.xuecheng.media.others;
 
-import io.minio.BucketExistsArgs;
-import io.minio.GetObjectArgs;
-import io.minio.MinioClient;
-import io.minio.ObjectWriteResponse;
-import io.minio.SetBucketPolicyArgs;
+import com.xuecheng.media.utils.FileUtils;
+import com.xuecheng.media.utils.MinioUtils;
 
 import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.commons.io.IOUtils;
@@ -13,15 +10,21 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.MethodOrderer;
 import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestInstance;
 import org.junit.jupiter.api.TestMethodOrder;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.SpringBootTest;
 
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.FilterInputStream;
-import java.util.Objects;
+
+import io.minio.BucketExistsArgs;
+import io.minio.MinioClient;
+import io.minio.ObjectWriteResponse;
+import io.minio.SetBucketPolicyArgs;
 
 /**
  * @author Domenic
@@ -31,38 +34,42 @@ import java.util.Objects;
  */
 @SpringBootTest
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
+@TestInstance(TestInstance.Lifecycle.PER_CLASS)
 public class MinioTest {
 
     @Autowired
-    MinioClient minioClient;
+    private MinioClient minioClient;
 
     @Autowired
-    CommonTestCode commonTestCode;
+    private MinioUtils minioUtils;
 
-    private static String filename;
-    private static String bucketName;
-    private static String localFilePath;
-    private static String testDownloadFilePath;
-    private static String objectName;
+    /**
+     * 测试文件名
+     */
+    @Value("${mediafile.file.name}")
+    private String filename;
+    /**
+     * 测试文件路径
+     */
+    @Value("${mediafile.folder.path}")
+    private String localFolderPath;
+
+    private String bucketName;
+    private String localFilePath;
+    private String testDownloadFilePath;
+    private String objectName;
 
     @BeforeAll
-    static void setUp() {
+    void setUp() {
 
-        /* 需要更改的参数 */
-        // 测试文件名称
-        filename = "bootstrap.yml";
-        // 测试文件路径：target/test-classes，substring 是为了去除 "file:/" 前缀
-        String filePath = Objects.requireNonNull(MinioTest.class.getResource("/")).toString().substring(6);
-        /* 以下无需更改 */
-
-        // minio 中的桶名称
+        // minio 中的桶名
         bucketName = "testbucket" + (int) Math.floor(Math.random() * (100 + 1));
 
         // 文件在本地的路径
-        localFilePath = filePath + filename;
+        localFilePath = localFolderPath + filename;
 
-        // 文件下载后在本地的保存路径 (示例：xxx-test-download.xxx)
-        testDownloadFilePath = filePath + File.separator +
+        // 文件下载后在本地的路径 (示例：xxx-test-download.xxx)
+        testDownloadFilePath = localFolderPath + File.separator +
                 filename.substring(0, filename.lastIndexOf(".")) +
                 "-download" + filename.substring(filename.lastIndexOf("."));
 
@@ -77,7 +84,7 @@ public class MinioTest {
     @Order(1)
     void test_createBucket() {
         try {
-            commonTestCode.createBucket(bucketName);
+            minioUtils.createBucket(bucketName);
         } catch (Exception e) {
             Assertions.fail(e.getMessage() + "创建桶 (" + bucketName + ") 失败");
         }
@@ -109,7 +116,7 @@ public class MinioTest {
     @Test
     @Order(6)
     void test_deleteBucket() throws Exception {
-        commonTestCode.deleteBucket(bucketName);
+        minioUtils.deleteBucket(bucketName);
         Assertions.assertFalse(minioClient.bucketExists(BucketExistsArgs.builder().bucket(bucketName).build()));
     }
 
@@ -120,7 +127,9 @@ public class MinioTest {
     @Order(3)
     void test_uploadFile() {
         try {
-            ObjectWriteResponse resp = commonTestCode.uploadFileToMinio(bucketName, localFilePath, objectName);
+            ObjectWriteResponse resp = minioUtils.uploadFile(localFilePath,
+                    FileUtils.getMimeTypeFromExt(filename.substring(filename.lastIndexOf("."))),
+                    bucketName, objectName);
             Assertions.assertNotNull(resp, "上传文件失败");
             Assertions.assertEquals(resp.object(), objectName, "上传文件失败, 文件名称不一致");
         } catch (Exception e) {
@@ -134,33 +143,24 @@ public class MinioTest {
     @Test
     @Order(4)
     void test_downloadFile() throws Exception {
-        GetObjectArgs args = GetObjectArgs.builder()
-                .bucket(bucketName)
-                .object(objectName)
-                .build();
-
         File src = new File(localFilePath);
         File dest = new File(testDownloadFilePath);
 
-        // 查询远程服务获取到一个流对象
-        FilterInputStream is = minioClient.getObject(args);
+        try (FilterInputStream is = minioUtils.queryFile(bucketName, objectName);
+                FileOutputStream os = new FileOutputStream(dest)) {
 
-        // 指定输出流
-        FileOutputStream os = new FileOutputStream(dest);
-        IOUtils.copy(is, os);
+            try (FileInputStream srcIs = new FileInputStream(src);
+                    FileInputStream destIs = new FileInputStream(dest)) {
 
-        FileInputStream srcIs = new FileInputStream(src);
-        FileInputStream destIs = new FileInputStream(dest);
+                // 将下载的数据流写入到目标文件
+                IOUtils.copy(is, os);
 
-        // 通过 MD5 校验文件的完整性
-        String srcMD5 = DigestUtils.md5Hex(srcIs);
-        String destMD5 = DigestUtils.md5Hex(destIs);
-        Assertions.assertEquals(srcMD5, destMD5, "MD5 校验失败");
-
-        is.close();
-        os.close();
-        srcIs.close();
-        destIs.close();
+                // 通过 MD5 校验文件的完整性
+                String srcMD5 = DigestUtils.md5Hex(srcIs);
+                String destMD5 = DigestUtils.md5Hex(destIs);
+                Assertions.assertEquals(srcMD5, destMD5, "MD5 校验失败");
+            }
+        }
 
         // 删除下载的文件
         boolean res = dest.delete();
@@ -173,7 +173,7 @@ public class MinioTest {
     @Test
     @Order(5)
     void test_deleteFile() throws Exception {
-        commonTestCode.deleteFileFromMinio(bucketName, objectName);
+        minioUtils.deleteFile(bucketName, objectName);
     }
 
 }

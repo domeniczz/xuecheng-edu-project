@@ -2,6 +2,7 @@ package com.xuecheng;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.context.annotation.PropertySource;
 
 /**
  * @author Domenic
@@ -10,6 +11,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
  * @Created by Domenic
  */
 @SpringBootApplication
+@PropertySource("classpath:test-config.properties")
 public class TestApplication {
 
     public static void main(String[] args) {
