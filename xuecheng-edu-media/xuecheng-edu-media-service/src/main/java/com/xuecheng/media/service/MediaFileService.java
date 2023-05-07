@@ -10,7 +10,7 @@ import com.xuecheng.media.model.po.MediaFile;
 /**
  * @author Domenic
  * @Classname MediaFileService
- * @Description 媒资文件管理业务类
+ * @Description 媒资文件管理业务类 (小文件，不分片上传)
  * @Created by Domenic
  */
 public interface MediaFileService {
@@ -20,7 +20,7 @@ public interface MediaFileService {
      * @param companyId 机构 ID
      * @param pageParams 分页参数
      * @param queryMediaParamsDto 查询条件
-     * @return com.xuecheng.base.model.PageResult<com.xuecheng.media.model.po.MediaFile>
+     * @return {@link PageResult}&lt;{@link MediaFile}&gt;
     */
     public PageResult<MediaFile> queryMediaFileList(Long companyId, PageParams pageParams, QueryMediaParamsDto queryMediaParamsDto);
 
@@ -29,7 +29,7 @@ public interface MediaFileService {
      * @param companyId 机构 ID
      * @param fileParamsDto 文件操作 (上传) 参数 DTO
      * @param tempFilePath 本地临时文件的路径 (上传的文件先临时存储到本地，再上传到文件服务器)
-     * @return FileResultDto 文件上传结果 DTO
+     * @return {@link FileResultDto} 文件上传结果 DTO
      */
     public FileResultDto uploadMediaFile(Long companyId, FileParamsDto fileParamsDto, String tempFilePath);
 
@@ -40,7 +40,7 @@ public interface MediaFileService {
      * </p>
      * @param companyId 机构 ID
      * @param fileParamsDto 文件操作 (删除) 参数 DTO
-     * @return FileResultDto 文件删除结果 DTO
+     * @return {@link FileResultDto} 文件删除结果 DTO
      */
     public FileResultDto deleteMediaFile(long companyId, FileParamsDto fileParamsDto);
 

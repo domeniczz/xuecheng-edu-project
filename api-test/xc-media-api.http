@@ -21,7 +21,8 @@ Content-Type: multipart/form-data; boundary=WebAppBoundary
 Content-Disposition: form-data; name="filedata"; filename="media-test.txt"
 Content-Type: application/octet-stream
 
-< d:/download/media-test.txt
+< D:/Download/media-test.txt
+--WebAppBoundary
 
 
 ### 删除文件 (非视频)
@@ -41,3 +42,31 @@ Content-Type: application/json
   "changeDate": null,
   "remark": null
 }
+
+
+### 上传文件前，检查文件是否已存在
+
+POST {{media_host}}/media/upload/checkfile?fileMd5=40afb8ec563d4978b98da9222ccb1970
+
+
+### 上传分块文件前，检查文件是否已存在
+
+POST {{media_host}}/media/upload/checkchunk?fileMd5=40afb8ec563d4978b98da9222ccb1970&chunk=0
+
+
+### 上传分块文件
+
+POST {{media_host}}/media/upload/uploadchunk?fileMd5=40afb8ec563d4978b98da9222ccb1970&chunk=0
+Content-Type: multipart/form-data; boundary=WebAppBoundary
+
+--WebAppBoundary
+Content-Disposition: form-data; name="file"; filename="0"
+Content-Type: application/octet-stream
+
+< D:/Download/Video/chunk/0
+--WebAppBoundary
+
+
+### 合并分块文件
+
+POST {{media_host}}/media/upload/mergechunks?fileMd5=40afb8ec563d4978b98da9222ccb1970&filename=test.mp4&chunkTotal=2
