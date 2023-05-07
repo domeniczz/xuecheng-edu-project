@@ -143,7 +143,7 @@ public class CourseBaseInfoServiceImpl implements CourseBaseInfoService {
 
         int baseRes = courseBaseMapper.insert(courseBase);
         if (baseRes <= 0) {
-            log.error(String.format("创建课程 (name: %s) 失败", courseBase.getName()));
+            log.error(String.format("创建课程 (name: %s) 出错", courseBase.getName()));
             XueChengEduException.cast("创建课程失败");
             return null;
         }
@@ -158,7 +158,7 @@ public class CourseBaseInfoServiceImpl implements CourseBaseInfoService {
         // 创建营销信息
         CourseMarket marketRes = courseMarketService.saveCourseMarket(courseMarket);
         if (marketRes == null) {
-            log.error(String.format("保存课程 (name: %s) 营销信息失败", courseBase.getName()));
+            log.error(String.format("保存课程 (name: %s) 营销信息出错", courseBase.getName()));
             XueChengEduException.cast("保存课程营销信息失败");
             return null;
         }
@@ -197,7 +197,7 @@ public class CourseBaseInfoServiceImpl implements CourseBaseInfoService {
 
         int baseRes = courseBaseMapper.updateById(courseBase);
         if (baseRes <= 0) {
-            log.error(String.format("修改课程 (name: %s) 失败", courseBase.getName()));
+            log.error(String.format("修改课程 (name: %s) 出错", courseBase.getName()));
             XueChengEduException.cast("修改课程失败");
             return null;
         }
@@ -211,7 +211,7 @@ public class CourseBaseInfoServiceImpl implements CourseBaseInfoService {
         // 更新营销信息
         CourseMarket marketRes = courseMarketService.saveCourseMarket(courseMarket);
         if (marketRes == null) {
-            log.error(String.format("更新课程 (name: %s) 营销信息失败", courseBase.getName()));
+            log.error(String.format("更新课程 (name: %s) 营销信息出错", courseBase.getName()));
             XueChengEduException.cast("更新课程营销信息失败");
             return null;
         }

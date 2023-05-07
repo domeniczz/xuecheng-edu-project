@@ -21,7 +21,7 @@ import java.util.List;
 public class DictionaryMapperTest {
 
     @Autowired
-    DictionaryMapper dictionaryMapper;
+    private DictionaryMapper dictionaryMapper;
 
     @Test
     void test_queryAll() {

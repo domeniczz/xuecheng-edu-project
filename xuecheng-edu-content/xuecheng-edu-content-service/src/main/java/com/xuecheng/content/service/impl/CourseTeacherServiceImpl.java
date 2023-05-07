@@ -24,7 +24,7 @@ import java.util.List;
 public class CourseTeacherServiceImpl implements CourseTeacherService {
 
     @Autowired
-    CourseTeacherMapper courseTeacherMapper;
+    private CourseTeacherMapper courseTeacherMapper;
 
     @Override
     public List<CourseTeacher> queryTeacherList(long courseId) {

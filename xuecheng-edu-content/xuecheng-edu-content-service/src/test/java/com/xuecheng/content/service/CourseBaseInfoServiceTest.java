@@ -131,7 +131,7 @@ public class CourseBaseInfoServiceTest {
     void test_delete() {
         // 使用 create 方法创建的课程的 ID
         RestResponse<?> res = courseBaseInfoService.delete(addedCourseId);
-        Assertions.assertEquals(1, res);
+        Assertions.assertEquals(0, res.getCode());
     }
 
 }

@@ -32,7 +32,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 public class CourseTeacherController {
 
     @Autowired
-    CourseTeacherService courseTeacherService;
+    private CourseTeacherService courseTeacherService;
 
     @GetMapping("list/{courseId}")
     @ApiOperation("查询课程师资列表")

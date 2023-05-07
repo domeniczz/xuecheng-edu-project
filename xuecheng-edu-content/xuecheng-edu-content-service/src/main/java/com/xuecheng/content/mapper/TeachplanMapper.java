@@ -21,7 +21,7 @@ public interface TeachplanMapper extends BaseMapper<Teachplan> {
      * 因此采用递归，查询时需提供根节点的 id 值
      * </p>
      * @param courseId 根课程的 id 值
-     * @return com.xuecheng.content.model.dto.TeachplanDto
+     * @return {@link TeachplanDto}
      */
     public List<TeachplanDto> selectTreeNodes(long courseId);
 

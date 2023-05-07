@@ -1,0 +1,26 @@
+{
+    "environments": {
+		"$default": {
+			"access_token": "",
+            "gateway_host": "http://localhost:63010",
+            "content_host": "http://localhost:63040",
+            "system_host": "http://localhost:63110",
+            "media_host": "http://localhost:63050",
+            "search_host": "http://localhost:63080",
+            "auth_host": "http://localhost:63070",
+            "checkcode_host": "http://localhost:63075",
+            "learning_host": "http://localhost:63020"
+		},
+		"dev": {
+			"access_token": "",
+            "gateway_host": "http://localhost:63010",
+            "content_host": "http://localhost:63040",
+            "system_host": "http://localhost:63110",
+            "media_host": "http://localhost:63050",
+            "search_host": "http://localhost:63080",
+            "auth_host": "http://localhost:63070",
+            "checkcode_host": "http://localhost:63075",
+            "learning_host": "http://localhost:63020"
+		}
+	}
+}

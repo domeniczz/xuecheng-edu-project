@@ -18,7 +18,7 @@ public interface TeachplanService {
     /**
      * 获取课程计划的树形结构
      * @param courseId 根节点课程 id
-     * @return TeachplanDto List
+     * @return {@link List}&lt;{@link TeachplanDto}&gt;
      */
     List<TeachplanDto> queryTreeNodes(long courseId);
 
@@ -37,7 +37,7 @@ public interface TeachplanService {
      * 3. 删除小章节，同时将关联的信息进行删除
      * </p>
      * @param id 教学计划 id
-     * @return 删除结果，若有错误则抛出 XueChengException
+     * @return 删除结果，若有错误则抛出 {@link XueChengException}
      */
     RestResponse<?> deleteTeachplan(long id);
 

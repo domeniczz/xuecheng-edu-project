@@ -15,7 +15,7 @@ public interface CourseCategoryService {
 
     /**
      * 获取课程分类的树形结构
-     * @return CourseCategoryTreeDto List
+     * @return {@link List}&lt;{@link CourseCategoryTreeDto}&gt;
      */
     List<CourseCategoryTreeDto> queryTreeNodes();
 

@@ -38,7 +38,7 @@ public class DictionaryServiceImpl extends ServiceImpl<DictionaryMapper, Diction
         Dictionary dictionary = this.getOne(queryWrapper);
 
         if (dictionary == null) {
-            log.error("根据code查询数据字典失败, code: {}", code);
+            log.error("根据code查询数据字典出错, code: {}", code);
             XueChengEduException.cast(String.format("code: %s 查询字典失败", code));
         }
 

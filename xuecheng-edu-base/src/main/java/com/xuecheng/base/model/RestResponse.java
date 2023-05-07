@@ -46,7 +46,7 @@ public class RestResponse<T> {
     /**
      * 错误的响应
      * @param msg 响应信息
-     * @return RestResponse
+     * @return {@link RestResponse}
      */
     public static <T> RestResponse<T> fail(String msg) {
         RestResponse<T> resp = new RestResponse<T>();
@@ -59,7 +59,7 @@ public class RestResponse<T> {
      * 错误响应信息
      * @param data 响应内容 (泛型)
      * @param msg 响应信息
-     * @return RestResponse
+     * @return {@link RestResponse}
      */
     public static <T> RestResponse<T> fail(T data, String msg) {
         RestResponse<T> resp = new RestResponse<T>();
@@ -72,7 +72,7 @@ public class RestResponse<T> {
     /**
      * 成功的响应 (包含响应数据)
      * @param data 响应内容
-     * @return RestResponse
+     * @return {@link RestResponse}
      */
     public static <T> RestResponse<T> success(T data) {
         RestResponse<T> resp = new RestResponse<T>();
@@ -84,7 +84,7 @@ public class RestResponse<T> {
      * 成功的响应 (包含响应数据)
      * @param data 响应内容
      * @param msg 响应信息
-     * @return RestResponse
+     * @return {@link RestResponse}
      */
     public static <T> RestResponse<T> success(T data, String msg) {
         RestResponse<T> resp = new RestResponse<T>();
@@ -95,7 +95,7 @@ public class RestResponse<T> {
 
     /**
      * 成功的响应 (不包含响应内容)
-     * @return RestResponse
+     * @return {@link RestResponse}
      */
     public static <T> RestResponse<T> success() {
         return new RestResponse<T>();
@@ -104,7 +104,7 @@ public class RestResponse<T> {
     /**
      * 成功的响应 (不包含响应数据)
      * @param msg 响应信息
-     * @return RestResponse
+     * @return {@link RestResponse}
      */
     public static <T> RestResponse<T> success(String msg) {
         RestResponse<T> resp = new RestResponse<T>();
@@ -114,7 +114,7 @@ public class RestResponse<T> {
 
     /**
      * 判断是否成功
-     * @return true 为成功，false 为错误
+     * @return {@code true} 为成功，{@code false} 为错误
      */
     public boolean isSuccess() {
         return this.code == 0;

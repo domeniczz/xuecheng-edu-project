@@ -21,14 +21,14 @@ public interface CourseBaseInfoService {
      * 课程分页查询
      * @param pageParams           分页查询参数
      * @param queryCourseParamsDto 课程查询条件
-     * @return PageResult&lt;CourseBase&gt;
+     * @return {@link PageResult}&lt;{@link CourseBase}&gt;
      */
     PageResult<CourseBase> queryCourseBaseList(PageParams pageParams, QueryCourseParamsDto queryCourseParamsDto);
 
     /**
      * 根据课程 ID 查询课程信息
      * @param courseId 课程 ID
-     * @return CourseBaseInfoDto
+     * @return {@link CourseBaseInfoDto}
      */
     CourseBaseInfoDto queryCourseBaseAndMarketInfoById(long courseId);
 
@@ -39,7 +39,7 @@ public interface CourseBaseInfoService {
      * </p>
      * @param companyId    教学机构 ID
      * @param addCourseDto 课程信息
-     * @return CourseBaseInfoDto
+     * @return {@link CourseBaseInfoDto}
      */
     CourseBaseInfoDto create(long companyId, AddCourseDto addCourseDto);
 
@@ -47,7 +47,7 @@ public interface CourseBaseInfoService {
      * 更新课程基本信息
      * @param companyId       教学机构 ID
      * @param updateCourseDto 课程信息
-     * @return CourseBaseInfoDto
+     * @return {@link CourseBaseInfoDto}
      */
     CourseBaseInfoDto update(long companyId, UpdateCourseDto updateCourseDto);
 

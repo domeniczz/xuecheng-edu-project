@@ -218,12 +218,12 @@ Content-Type: application/json
 }
 
 
-### 课程计划查询
+### 查询课程计划
 
 GET {{content_host}}/content/teachplan/127/tree-nodes
 
 
-### 课程计划新增
+### 新增课程计划
 
 POST {{content_host}}/content/teachplan
 Content-Type: application/json
@@ -236,7 +236,7 @@ Content-Type: application/json
 }
 
 
-### 课程计划修改
+### 修改课程计划
 
 POST {{content_host}}/content/teachplan
 Content-Type: application/json
@@ -250,16 +250,16 @@ Content-Type: application/json
 }
 
 
-### 课程计划删除
+### 删除课程计划
 
 DELETE {{content_host}}/content/teachplan/297
 
 
-### 课程计划上移
+### 上移课程计划
 
 POST {{content_host}}/content/teachplan/move-up/296
 
 
-### 课程计划下移
+### 下移课程计划
 
 POST {{content_host}}/content/teachplan/move-down/296

@@ -4,6 +4,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.http.HttpStatus;
 import org.springframework.validation.BindingResult;
+import org.springframework.web.HttpRequestMethodNotSupportedException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
@@ -24,8 +25,8 @@ public class GlobalExceptionHandler {
 
     /**
      * 自定义异常
-     * @param e XueChengEduException
-     * @return RestErrorResponse
+     * @param e {@link XueChengEduException}
+     * @return {@link RestErrorResponse}
      */
     @ExceptionHandler(XueChengEduException.class)
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
@@ -36,8 +37,8 @@ public class GlobalExceptionHandler {
 
     /**
      * 自定义异常
-     * @param e MethodArgumentNotValidException
-     * @return RestErrorResponse
+     * @param e {@link MethodArgumentNotValidException}
+     * @return {@link RestErrorResponse}
      */
     @ExceptionHandler(MethodArgumentNotValidException.class)
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
@@ -55,20 +56,32 @@ public class GlobalExceptionHandler {
         });
 
         String errMessage = StringUtils.join(errors, ", ");
-        log.error("系统异常：{}", e.getMessage(), errMessage);
+        log.error("系统异常：{}", e.getMessage());
         return new RestErrorResponse(errMessage);
     }
 
     /**
+     * HTTP 请求方法不支持
+     * @param e {@link HttpRequestMethodNotSupportedException}
+     * @return {@link RestErrorResponse}
+     */
+    @ExceptionHandler(HttpRequestMethodNotSupportedException.class)
+    @ResponseStatus(HttpStatus.METHOD_NOT_ALLOWED)
+    public RestErrorResponse httpRequestMethodNotSupportedException(HttpRequestMethodNotSupportedException e) {
+        return new RestErrorResponse(e.getMessage());
+    }
+
+    /**
      * 其他异常
-     * @param e Exception
-     * @return RestErrorResponse
+     * @param e {@link Exception}
+     * @return {@link RestErrorResponse}
      */
     @ExceptionHandler(Exception.class)
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
     public RestErrorResponse exception(Exception e) {
         log.error("系统异常：{}", e.getMessage(), e);
-        return new RestErrorResponse(CommonError.UNKOWN_ERROR.getErrMessage());
+        // return new RestErrorResponse(CommonError.UNKOWN_ERROR.getErrMessage());
+        return new RestErrorResponse(e.getMessage());
     }
 
 }
