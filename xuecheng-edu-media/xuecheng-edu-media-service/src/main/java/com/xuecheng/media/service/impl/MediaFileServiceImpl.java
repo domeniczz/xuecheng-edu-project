@@ -82,7 +82,7 @@ public class MediaFileServiceImpl implements MediaFileService {
         List<MediaFile> list = pageResult.getRecords();
 
         // 获取数据总数
-        long total = pageResult.getTotal();
+        Long total = pageResult.getTotal();
 
         log.debug("查询媒资文件列表成功, 数据总数={}, 匹配条件 - 文件名称={}; 文件类型={}; 文件审核状态={};", total, dto.getFilename(), dto.getFileType(), dto.getAuditStatus());
 
@@ -132,7 +132,7 @@ public class MediaFileServiceImpl implements MediaFileService {
     }
 
     @Override
-    public FileResultDto deleteMediaFile(long companyId, FileParamsDto dto) {
+    public FileResultDto deleteMediaFile(Long companyId, FileParamsDto dto) {
 
         // 从数据库中获取文件信息
         List<MediaFile> fileList = fileDbUtils.getListFileInfo(companyId, dto, bucket, null);

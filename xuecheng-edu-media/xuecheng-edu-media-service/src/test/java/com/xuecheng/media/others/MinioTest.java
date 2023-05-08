@@ -3,7 +3,6 @@ package com.xuecheng.media.others;
 import com.xuecheng.media.utils.FileUtils;
 import com.xuecheng.media.utils.MinioUtils;
 
-import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.commons.io.IOUtils;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
@@ -17,7 +16,6 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.SpringBootTest;
 
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.FilterInputStream;
 
@@ -148,19 +146,14 @@ public class MinioTest {
 
         try (FilterInputStream is = minioUtils.queryFile(bucketName, objectName);
                 FileOutputStream os = new FileOutputStream(dest)) {
-
-            try (FileInputStream srcIs = new FileInputStream(src);
-                    FileInputStream destIs = new FileInputStream(dest)) {
-
-                // 将下载的数据流写入到目标文件
-                IOUtils.copy(is, os);
-
-                // 通过 MD5 校验文件的完整性
-                String srcMD5 = DigestUtils.md5Hex(srcIs);
-                String destMD5 = DigestUtils.md5Hex(destIs);
-                Assertions.assertEquals(srcMD5, destMD5, "MD5 校验失败");
-            }
+            // 将下载的数据流写入到目标文件
+            IOUtils.copy(is, os);
         }
+
+        // 通过 MD5 校验文件的完整性
+        String srcMD5 = FileUtils.getFileMd5(src);
+        String destMD5 = FileUtils.getFileMd5(dest);
+        Assertions.assertEquals(srcMD5, destMD5, "MD5 校验失败");
 
         // 删除下载的文件
         boolean res = dest.delete();

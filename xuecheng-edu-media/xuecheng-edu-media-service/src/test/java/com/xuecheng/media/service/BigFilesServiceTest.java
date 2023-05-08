@@ -4,7 +4,6 @@ import com.xuecheng.base.model.RestResponse;
 import com.xuecheng.media.model.dto.FileParamsDto;
 import com.xuecheng.media.utils.FileUtils;
 
-import org.apache.commons.codec.digest.DigestUtils;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.MethodOrderer;
@@ -17,7 +16,6 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.SpringBootTest;
 
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.RandomAccessFile;
 import java.nio.file.Files;
@@ -32,7 +30,7 @@ public class BigFilesServiceTest {
     @Autowired
     private BigFilesService bigFilesService;
 
-    private Long companyId;
+    private long companyId;
     /**
      * 文件分块大小，minio 规定分块大小需要大于等于 5MB
      */
@@ -76,9 +74,7 @@ public class BigFilesServiceTest {
 
         // 文件 MD5
         File file = new File(folderPath + filename);
-        try (FileInputStream fis = new FileInputStream(file)) {
-            fileMd5 = DigestUtils.md5Hex(fis);
-        }
+        fileMd5 = FileUtils.getFileMd5(file);
 
         // 分块文件夹
         chunkFolderPath = folderPath + "chunk" + File.separator;
@@ -106,22 +102,22 @@ public class BigFilesServiceTest {
     }
 
     @Test
-    @Order(3)
-    void test_checkChunk() {
-        // 检查分块文件是否存在
-        for (int i = 0; i < chunkTotalNum; ++i) {
-            RestResponse<Boolean> res = bigFilesService.checkChunk(fileMd5, i);
-            Assertions.assertTrue(res.getData(), "分块文件 " + i + " 不存在");
-        }
-    }
-
-    @Test
     @Order(2)
     void test_uploadChunk() {
         // 将分块文件上传到 minio
         for (int i = 0; i < chunkTotalNum; ++i) {
             RestResponse<Boolean> res = bigFilesService.uploadChunk(fileMd5, i, chunkFolderPath + i);
             Assertions.assertTrue(res.getData(), "分块文件" + i + "上传失败");
+        }
+    }
+
+    @Test
+    @Order(3)
+    void test_checkChunk_pre() {
+        // 检查分块文件是否存在
+        for (int i = 0; i < chunkTotalNum; ++i) {
+            RestResponse<Boolean> res = bigFilesService.checkChunk(fileMd5, i);
+            Assertions.assertTrue(res.getData(), "分块文件 " + i + " 不存在");
         }
     }
 

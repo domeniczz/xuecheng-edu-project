@@ -3,16 +3,18 @@ package com.xuecheng.media.utils;
 import com.j256.simplemagic.ContentInfo;
 import com.j256.simplemagic.ContentInfoUtil;
 
-import org.apache.commons.codec.digest.DigestUtils;
 import org.springframework.http.MediaType;
 
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.InputStream;
+import java.math.BigInteger;
 import java.nio.file.DirectoryStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.security.MessageDigest;
 import java.util.Comparator;
 import java.util.UUID;
 import java.util.stream.Stream;
@@ -174,8 +176,14 @@ public class FileUtils {
      * @return MD5 字符串
      */
     public static String getFileMd5(File file) {
-        try (FileInputStream fis = new FileInputStream(file)) {
-            return DigestUtils.md5Hex(fis);
+        try (InputStream is = new FileInputStream(file)) {
+            MessageDigest md = MessageDigest.getInstance("MD5");
+            byte[] buffer = new byte[4096];
+            int read;
+            while ((read = is.read(buffer)) != -1) {
+                md.update(buffer, 0, read);
+            }
+            return new BigInteger(1, md.digest()).toString(16);
         } catch (Exception e) {
             log.error("获取文件 \"" + file.getName() + "\" MD5 出错!", e);
             return null;

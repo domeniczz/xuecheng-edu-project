@@ -42,6 +42,6 @@ public interface MediaFileService {
      * @param fileParamsDto 文件操作 (删除) 参数 DTO
      * @return {@link FileResultDto} 文件删除结果 DTO
      */
-    public FileResultDto deleteMediaFile(long companyId, FileParamsDto fileParamsDto);
+    public FileResultDto deleteMediaFile(Long companyId, FileParamsDto fileParamsDto);
 
 }

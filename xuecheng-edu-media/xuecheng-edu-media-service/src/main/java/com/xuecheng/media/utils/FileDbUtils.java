@@ -84,7 +84,25 @@ public class FileDbUtils {
      */
     @Transactional(rollbackFor = Exception.class)
     public boolean deleteFileInfo(MediaFile file) {
-        int res = mediaFileMapper.deleteById(file.getId());
+        int res = mediaFileMapper.delete(new LambdaQueryWrapper<MediaFile>()
+                // 机构 ID
+                .eq(file.getCompanyId() != null, MediaFile::getCompanyId, file.getCompanyId())
+                // 文件名
+                .eq(StringUtils.isNotEmpty(file.getFilename()), MediaFile::getFilename, file.getFilename())
+                // 文件类型
+                .eq(StringUtils.isNotEmpty(file.getFileType()), MediaFile::getFileType, file.getFileType())
+                // 文件存储路径
+                .eq(StringUtils.isNotEmpty(file.getFilePath()), MediaFile::getFilePath, file.getFilePath())
+                // 文件所在桶名
+                .eq(StringUtils.isNotEmpty(file.getBucket()), MediaFile::getBucket, file.getBucket())
+                // 文件大小
+                .eq(file.getFileSize() != null, MediaFile::getFileSize, file.getFileSize())
+                // 文件标签
+                .eq(StringUtils.isNotEmpty(file.getTags()), MediaFile::getTags, file.getTags())
+                // 文件上传人名称
+                .eq(StringUtils.isNotEmpty(file.getUsername()), MediaFile::getUsername, file.getUsername())
+                // 文件备注
+                .eq(StringUtils.isNotEmpty(file.getRemark()), MediaFile::getRemark, file.getRemark()));
 
         if (res > 0) {
             log.debug("媒资文件删除成功, objectName={}", file.getFilePath());
@@ -104,10 +122,10 @@ public class FileDbUtils {
      * @param objectName 对象名 (文件在 minio 中的路径)
      * @return 媒体/视频 文件信息的 {@link List}
      */
-    public List<MediaFile> getListFileInfo(long companyId, FileParamsDto dto, String bucket, String objectName) {
+    public List<MediaFile> getListFileInfo(Long companyId, FileParamsDto dto, String bucket, String objectName) {
         return mediaFileMapper.selectList(new LambdaQueryWrapper<MediaFile>()
                 // 机构 ID
-                .eq(MediaFile::getCompanyId, companyId)
+                .eq(companyId != null, MediaFile::getCompanyId, companyId)
                 // 文件名
                 .eq(StringUtils.isNotEmpty(dto.getFilename()), MediaFile::getFilename, dto.getFilename())
                 // 文件类型
@@ -117,7 +135,7 @@ public class FileDbUtils {
                 // 文件访问 url
                 .eq(objectName != null, MediaFile::getUrl, "/" + bucket + "/" + objectName)
                 // 文件大小
-                .eq(dto.getFileSize() >= 0, MediaFile::getFileSize, dto.getFileSize())
+                .eq(dto.getFileSize() != null, MediaFile::getFileSize, dto.getFileSize())
                 // 文件标签
                 .eq(StringUtils.isNotEmpty(dto.getTags()), MediaFile::getTags, dto.getTags())
                 // 文件上传人名称

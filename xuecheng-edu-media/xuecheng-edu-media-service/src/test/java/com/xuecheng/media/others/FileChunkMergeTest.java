@@ -3,7 +3,6 @@ package com.xuecheng.media.others;
 import com.xuecheng.media.utils.FileUtils;
 import com.xuecheng.media.utils.MinioUtils;
 
-import org.apache.commons.codec.digest.DigestUtils;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
@@ -17,7 +16,6 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.SpringBootTest;
 
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.RandomAccessFile;
 import java.nio.file.Files;
@@ -133,7 +131,6 @@ public class FileChunkMergeTest {
                 // 分块文件名称示例：test-1.chunk
                 File chunkedFile = new File(chunkFolderPath + sourceFilenameWithoutExt + "-" + i + ".chunk");
 
-                // TODO: 更改分块，可能是这里有 bug
                 // 向分块文件中写入数据
                 try (RandomAccessFile raf_w = new RandomAccessFile(chunkedFile, "rw")) {
                     int len = -1;
@@ -208,12 +205,9 @@ public class FileChunkMergeTest {
         Assertions.assertEquals(mergedFile.getName(), mergedFilename);
 
         // 合并文件完成后，对合并的文件 MD5 校验
-        try (FileInputStream src_fis = new FileInputStream(sourceFolder + File.separator + sourceFilename);
-                FileInputStream merge_fis = new FileInputStream(mergedFile)) {
-            String sourceMD5 = DigestUtils.md5Hex(src_fis);
-            String mergeMD5 = DigestUtils.md5Hex(merge_fis);
-            Assertions.assertEquals(sourceMD5, mergeMD5, "MD5 校验失败");
-        }
+        String sourceMD5 = FileUtils.getFileMd5(new File(sourceFolder + File.separator + sourceFilename));
+        String mergeMD5 = FileUtils.getFileMd5(mergedFile);
+        Assertions.assertEquals(sourceMD5, mergeMD5, "MD5 校验失败");
     }
 
     /**

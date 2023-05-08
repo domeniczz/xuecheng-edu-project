@@ -109,7 +109,7 @@ public class MinioUtils {
      * 将 媒体/视频 文件上传到 minio
      * @param localFilePath 文件本地路径
      * @param mimeType 媒体类型
-     * @param bucket 桶
+     * @param bucket 桶名
      * @param objectName 对象名 (文件在 minio 中的路径)
      * @return {@link ObjectWriteResponse}
      */
@@ -142,7 +142,7 @@ public class MinioUtils {
      * <p>
      * 从 minio 下载文件，保存为临时文件
      * </p>
-     * @param bucket 桶
+     * @param bucket 桶名
      * @param objectName 对象名 (文件在 minio 中的路径)
      * @return 下载后的文件 {@link File}
      */
@@ -155,14 +155,49 @@ public class MinioUtils {
 
         try (InputStream downloadstream = minioClient.getObject(args)) {
             // 创建临时文件，示例命名：down-minio-6c2293.mp4
-            File minioFile = File.createTempFile("down-minio-" + FileUtils.getUuid(), objectName.substring(objectName.lastIndexOf(".")));
-            FileOutputStream outputStream = new FileOutputStream(minioFile);
+            File file = File.createTempFile("down-minio-" + FileUtils.getUuid(), objectName.substring(objectName.lastIndexOf(".")));
+            FileOutputStream outputStream = new FileOutputStream(file);
 
             IOUtils.copy(downloadstream, outputStream);
-            log.debug("从 minio 下载文件成功, bucket={}, objectName={}, 保存目录={}", bucket, objectName, System.getProperty("java.io.tmpdir"));
-            return minioFile;
+            log.debug("从 minio 下载文件成功, bucket={}, objectName={}, saveDir={}", bucket, objectName, System.getProperty("java.io.tmpdir"));
+
+            return file;
         } catch (Exception e) {
             log.error("从 minio 下载文件出错, bucket={}, objectName={}", bucket, objectName);
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    /**
+     * 下载文件的部分内容
+     * @param bucket 桶名
+     * @param objectName 对象名 (文件在 minio 中的路径)
+     * @param offset 偏移量 (下载文件的多少量)
+     * @param length 下载的长度
+     * @return 下载的文件内容 {@link File}
+     */
+    public File downloadFileParts(String bucket, String objectName, long offset, long length) {
+
+        GetObjectArgs args = GetObjectArgs.builder()
+                .bucket(bucket)
+                .object(objectName)
+                .offset(offset)
+                .length(length)
+                .build();
+
+        try (InputStream downloadstream = minioClient.getObject(args)) {
+            // 创建临时文件，示例命名：down-part-minio-6c2293.mp4
+            File file = File.createTempFile("down-part-minio-" + FileUtils.getUuid(), objectName.substring(objectName.lastIndexOf(".")));
+            FileOutputStream outputStream = new FileOutputStream(file);
+
+            IOUtils.copy(downloadstream, outputStream);
+            log.debug("从 minio 下载部分的文件成功, downloadSize={}, bucket={}, objectName={}, saveDir={}",
+                    file.length(), bucket, objectName, System.getProperty("java.io.tmpdir"));
+
+            return file;
+        } catch (Exception e) {
+            log.error("从 minio 下载部分发文件出错, bucket={}, objectName={}", bucket, objectName);
             e.printStackTrace();
         }
         return null;
@@ -186,7 +221,7 @@ public class MinioUtils {
             log.debug("从 minio 删除文件成功, bucket={}, objectName={}", bucket, objectName);
             return true;
         } catch (Exception e) {
-            log.error("从 minio 删除文件出错, bucket={}, objectName={}, error message={}", bucket, objectName, e.getMessage());
+            log.error("从 minio 删除文件出错, bucket={}, objectName={}, errorMsg={}", bucket, objectName, e.getMessage());
             e.printStackTrace();
             XueChengEduException.cast("删除文件失败");
             return false;
@@ -217,7 +252,7 @@ public class MinioUtils {
         try {
             return minioClient.composeObject(composeObjectArgs);
         } catch (Exception e) {
-            log.error("合并文件出错, bucket={}, objectName={}, 错误信息={}", bucketName, objectName, e.getMessage());
+            log.error("合并文件出错, bucket={}, objectName={}, errorMsg={}", bucketName, objectName, e.getMessage());
             e.printStackTrace();
             return null;
         }
@@ -267,9 +302,9 @@ public class MinioUtils {
 
     /**
      * 递归地删除文件夹
-     * @param bucketName
-     * @param folderName
-     * @return
+     * @param bucketName 桶名
+     * @param folderName 文件夹路径
+     * @return {@link Boolean} {@code true} 成功, {@code false} 失败
      */
     public boolean deleteFolderRecursively(String bucketName, String folderName) {
         try {
