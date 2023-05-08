@@ -1,6 +1,5 @@
 package com.xuecheng.media.service.impl;
 
-import com.xuecheng.base.exception.XueChengEduException;
 import com.xuecheng.base.model.RestResponse;
 import com.xuecheng.media.mapper.MediaFileMapper;
 import com.xuecheng.media.model.dto.FileParamsDto;
@@ -10,13 +9,11 @@ import com.xuecheng.media.utils.FileDbUtils;
 import com.xuecheng.media.utils.FileUtils;
 import com.xuecheng.media.utils.MinioUtils;
 
-import org.apache.commons.codec.digest.DigestUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.io.File;
-import java.io.FileInputStream;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -65,12 +62,11 @@ public class BigFilesServiceImpl implements BigFilesService {
                     // 文件已存在
                     return RestResponse.success(true);
                 } else {
-                    // 数据库中存在文件信息，但 minio 中不存在该文件，抛出异常，并将数据库中的异常文件信息删除
+                    // 数据库中存在文件信息，但 minio 中不存在该文件，则删除数据库中的异常文件信息，返回文件不存在
                     log.error("数据库中存在文件信息, 但 minio 中不存在该文件, fileMd5={}, bucket={}, filePath={}",
                             fileMd5, mediaFile.getBucket(), mediaFile.getFilePath());
                     // 删除数据库中的异常文件信息
                     fileDbUtils.deleteFileInfo(mediaFile);
-                    XueChengEduException.cast("上传文件失败，请稍后重试");
                 }
             } catch (Exception e) {
                 log.error("查询文件出错, FilterInputStream 出错, errorMsg={}", e.getMessage());
@@ -169,6 +165,7 @@ public class BigFilesServiceImpl implements BigFilesService {
         } catch (Exception e) {
             log.error("获取文件大小出错, bucket={}, objectName={}, errorMsg={}", bucket, objectName, e.getMessage());
         }
+
         // 将文件信息入库
         MediaFile mediaFiles = fileDbUtils.addFileInfo(companyId, fileMd5, dto, bucket, filename, objectName);
         if (mediaFiles == null) {
@@ -185,14 +182,26 @@ public class BigFilesServiceImpl implements BigFilesService {
 
     @Override
     public RestResponse<Boolean> deleteFile(String objectName) {
+        // 先删除 minio 中的文件
         if (minioUtils.deleteFile(bucket, objectName)) {
-            return RestResponse.success(true);
+            MediaFile file = new MediaFile();
+            file.setBucket(bucket);
+            file.setFilePath(objectName);
+            // 再删除数据库中的文件信息
+            if (fileDbUtils.deleteFileInfo(file)) {
+                return RestResponse.success(true);
+            } else {
+                log.error("删除文件的数据库信息出错, bucket={}, objectName={}", bucket, objectName);
+            }
+        } else {
+            log.error("删除 minio 中的文件出错, bucket={}, objectName={}", bucket, objectName);
         }
         return RestResponse.success(false, "删除文件失败");
     }
 
     /**
      * <p>
+     * 校验文件的一致性<br/>
      * 将 Minio 中的文件下载下来，计算 MD5 值，再和本地文件的 MD5 值进行比较<br/>
      * 缺点：需要下载文件，对于大文件会比较耗时
      * </p>
@@ -203,16 +212,17 @@ public class BigFilesServiceImpl implements BigFilesService {
      */
     private boolean checkFileConsistencyByDownload(String fileMd5, String objectName) throws Exception {
         File mergedFile = minioUtils.downloadFile(bucket, objectName);
-        try (FileInputStream fis = new FileInputStream(mergedFile)) {
-            // 计算合并后文件的 MD5
-            String mergeFileMd5 = DigestUtils.md5Hex(fis);
-            // 比较原始和合并后文件的 MD5
-            if (fileMd5.equals(mergeFileMd5)) {
-                return true;
-            } else {
-                log.error("校验合并文件 MD5 值不一致, 原始文件={}, 合并文件={}", fileMd5, mergeFileMd5);
-            }
+
+        // 计算合并后文件的 MD5
+        String mergeFileMd5 = FileUtils.getFileMd5(mergedFile);
+
+        // 比较原始和合并后文件的 MD5
+        if (fileMd5.equals(mergeFileMd5)) {
+            return true;
+        } else {
+            log.error("校验合并文件 MD5 值不一致, 原始文件={}, 合并文件={}", fileMd5, mergeFileMd5);
         }
+
         return false;
     }
 

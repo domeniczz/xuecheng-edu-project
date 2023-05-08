@@ -32,7 +32,7 @@ public class MediaFileServiceTest {
     @Autowired
     private MediaFileService mediaFileService;
 
-    private Long companyId;
+    private long companyId;
     /**
      * 测试文件名
      */

@@ -14,7 +14,7 @@ public interface BigFilesService {
     /**
      * <p>
      * 检查文件是否已经存在 (数据库和 minio 中都存在)<br/>
-     * 若在数据库中存在文件信息，而在 minio 中不存在则抛出异常，并删除数据库中的异常文件信息
+     * 若在数据库中存在文件信息，而在 minio 中不存在，则删除数据库中的异常文件信息，返回文件不存在
      * </p>
      * @param fileMd5 文件的 MD5
      * @return {@link RestResponse}&lt;{@link Boolean}&gt;，{@code false} 不存在，{@code true} 存在
