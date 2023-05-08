@@ -3,11 +3,12 @@ package com.xuecheng.system.model.po;
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
+
+import java.io.Serializable;
+
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
-
-import java.io.Serializable;
 
 /**
  * @author Domenic
@@ -23,7 +24,10 @@ public class Dictionary implements Serializable {
     private static final long serialVersionUID = 1L;
 
     /**
+     * <p>
      * ID 标识
+     * </p>
+     * <!-- 不要改为基本类型，维持包装类 Long -->
      */
     @TableId(value = "id", type = IdType.AUTO)
     @ApiModelProperty("ID 标识")

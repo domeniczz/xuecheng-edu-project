@@ -28,7 +28,10 @@ public class MediaFile implements Serializable {
     private String id;
 
     /**
-     * 机构ID
+     * <p>
+     * 机构 ID
+     * </p>
+     * <!-- 不要改为基本类型，维持包装类 Long -->
      */
     private Long companyId;
 
@@ -90,7 +93,7 @@ public class MediaFile implements Serializable {
     private LocalDateTime changeDate;
 
     /**
-     * 状态,1:未处理，视频处理完成更新为2
+     * 状态：1 未处理，2 视频处理完成
      */
     private String status;
 
@@ -110,7 +113,10 @@ public class MediaFile implements Serializable {
     private String auditMind;
 
     /**
+     * <p>
      * 文件大小
+     * </p>
+     * <!-- 不要改为基本类型，维持包装类 Long -->
      */
     private Long fileSize;
 

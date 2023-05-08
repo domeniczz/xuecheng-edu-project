@@ -130,7 +130,7 @@ class TeachplanServiceTest {
     @Order(7)
     void test_deleteAll() {
         // 删除所有章节
-        RestResponse<?> resp = teachplanService.deleteAll(1000000);
+        RestResponse<?> resp = teachplanService.deleteAll(1000000L);
         Assertions.assertNotNull(resp);
     }
 

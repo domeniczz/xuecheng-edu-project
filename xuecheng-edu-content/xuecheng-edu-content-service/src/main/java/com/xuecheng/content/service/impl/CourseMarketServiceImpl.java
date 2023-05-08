@@ -22,7 +22,7 @@ public class CourseMarketServiceImpl implements CourseMarketService {
     private CourseMarketMapper courseMarketMapper;
 
     @Override
-    public CourseMarket query(long courseId) {
+    public CourseMarket query(Long courseId) {
         return courseMarketMapper.selectById(courseId);
     }
 
@@ -62,7 +62,7 @@ public class CourseMarketServiceImpl implements CourseMarketService {
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public int delete(long courseId) {
+    public int delete(Long courseId) {
         return courseMarketMapper.deleteById(courseId);
     }
 

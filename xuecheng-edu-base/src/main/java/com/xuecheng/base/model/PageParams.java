@@ -20,9 +20,9 @@ public class PageParams {
 
     /**
      * <p>
-     * 当前页码<br/>
-     * 类型为 Long 是因为 Mybatis-Plus 接口的分页参数类型也是 Long
+     * 当前页码
      * </p>
+     * <!-- 不要改为基本类型，维持包装类 Long -->
      */
     @ApiModelProperty("当前页码")
     private Long pageNo = 1L;
@@ -31,6 +31,7 @@ public class PageParams {
      * <p>
      * 每页最多显示记录数
      * </p>
+     * <!-- 不要改为基本类型，维持包装类 Long -->
      */
     @ApiModelProperty("每页最多显示记录数")
     private Long pageSize = 10L;

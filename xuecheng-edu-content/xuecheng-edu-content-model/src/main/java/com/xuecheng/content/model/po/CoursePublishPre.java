@@ -23,12 +23,18 @@ public class CoursePublishPre implements Serializable {
     private static final long serialVersionUID = 1L;
 
     /**
+     * <p>
      * 主键
+     * </p>
+     * <!-- 不要改为基本类型，维持包装类 Long -->
      */
     private Long id;
 
     /**
-     * 机构ID
+     * <p>
+     * 机构 ID
+     * </p>
+     * <!-- 不要改为基本类型，维持包装类 Long -->
      */
     private Long companyId;
 
@@ -144,12 +150,18 @@ public class CoursePublishPre implements Serializable {
     private Double price;
 
     /**
+     * <p>
      * 原价
+     * </p>
+     * <!-- 不要改为基本类型，维持包装类 Double -->
      */
     private Double originalPrice;
 
     /**
+     * <p>
      * 课程有效期天数
+     * </p>
+     * <!-- 不要改为基本类型，维持包装类 Integer -->
      */
     private Integer validDays;
 

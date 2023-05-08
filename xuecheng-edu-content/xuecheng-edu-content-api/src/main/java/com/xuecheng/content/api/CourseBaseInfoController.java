@@ -58,7 +58,7 @@ public class CourseBaseInfoController {
         // 通过单点登录系统，获取到用户所属机构的 ID
         // 为了方便测试，这里先写死
         // TODO: 4/7/2023 5:09 PM 通过单点登录系统，获取到用户所属机构的 ID
-        Long companyId = 1232141425L;
+        long companyId = 1232141425L;
         return courseBaseInfoService.create(companyId, addCourseDto);
     }
 
@@ -68,7 +68,7 @@ public class CourseBaseInfoController {
         // 通过单点登录系统，获取到用户所属机构的 ID
         // 为了方便测试，这里先写死
         // TODO: 4/7/2023 5:09 PM 通过单点登录系统，获取到用户所属机构的 ID
-        Long companyId = 1232141425L;
+        long companyId = 1232141425L;
         return courseBaseInfoService.update(companyId, updateCourseDto);
     }
 

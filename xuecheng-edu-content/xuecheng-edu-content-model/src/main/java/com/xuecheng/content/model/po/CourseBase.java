@@ -25,13 +25,19 @@ public class CourseBase implements Serializable {
     private static final long serialVersionUID = 1L;
 
     /**
+     * <p>
      * 主键
+     * </p>
+     * <!-- 不要改为基本类型，维持包装类 Long -->
      */
     @TableId(value = "id", type = IdType.AUTO)
     private Long id;
 
     /**
-     * 机构ID
+     * <p>
+     * 机构 ID
+     * </p>
+     * <!-- 不要改为基本类型，维持包装类 Long -->
      */
     private Long companyId;
 
@@ -71,7 +77,7 @@ public class CourseBase implements Serializable {
     private String grade;
 
     /**
-     * 教育模式(common普通，record 录播，live直播等）
+     * 教育模式 (common 普通，record 录播，live 直播等）
      */
     private String teachmode;
 
@@ -113,7 +119,7 @@ public class CourseBase implements Serializable {
     private String auditStatus;
 
     /**
-     * 课程发布状态 未发布  已发布 下线
+     * 课程发布状态: 未发布 已发布 下线
      */
     private String status;
 

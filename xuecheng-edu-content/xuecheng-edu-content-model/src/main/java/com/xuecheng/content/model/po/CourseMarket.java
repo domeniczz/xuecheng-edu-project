@@ -20,7 +20,10 @@ public class CourseMarket implements Serializable {
     private static final long serialVersionUID = 1L;
 
     /**
+     * <p>
      * 主键，课程id
+     * </p>
+     * <!-- 不要改为基本类型，维持包装类 Long -->
      */
     private Long id;
 

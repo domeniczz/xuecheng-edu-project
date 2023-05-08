@@ -20,7 +20,7 @@ public interface TeachplanService {
      * @param courseId 根节点课程 id
      * @return {@link List}&lt;{@link TeachplanDto}&gt;
      */
-    List<TeachplanDto> queryTreeNodes(long courseId);
+    List<TeachplanDto> queryTreeNodes(Long courseId);
 
     /**
      * 添加/修改课程计划
@@ -39,7 +39,7 @@ public interface TeachplanService {
      * @param id 教学计划 id
      * @return 删除结果，若有错误则抛出 {@link XueChengException}
      */
-    RestResponse<?> deleteTeachplan(long id);
+    RestResponse<?> deleteTeachplan(Long id);
 
     /**
      * <p>
@@ -50,20 +50,20 @@ public interface TeachplanService {
      * @param courseId 课程 id
      * @return 删除结果
      */
-    RestResponse<?> deleteAll(long courseId);
+    RestResponse<?> deleteAll(Long courseId);
 
     /**
      * 课程计划上移
      * @param id 课程计划 id
      * @return 上移结果
      */
-    RestResponse<?> moveUp(long id);
+    RestResponse<?> moveUp(Long id);
 
     /**
      * 课程计划下移
      * @param id 课程计划 id
      * @return 下移结果
      */
-    RestResponse<?> moveDown(long id);
+    RestResponse<?> moveDown(Long id);
 
 }

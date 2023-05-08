@@ -29,7 +29,10 @@ public class FileParamsDto {
     private String fileType;
 
     /**
+     * <p>
      * 文件大小
+     * </p>
+     * <!-- 不要改为基本类型，维持包装类 Long -->
      */
     @ApiModelProperty("文件大小")
     private Long fileSize;

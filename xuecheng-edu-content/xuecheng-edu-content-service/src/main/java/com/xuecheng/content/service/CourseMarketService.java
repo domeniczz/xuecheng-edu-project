@@ -15,7 +15,7 @@ public interface CourseMarketService {
      * @param courseId 课程 id
      * @return 课程营销信息
      */
-    CourseMarket query(long courseId);
+    CourseMarket query(Long courseId);
 
     /**
      * 保存课程营销信息（有则更新，无则添加）
@@ -29,6 +29,6 @@ public interface CourseMarketService {
      * @param courseId 课程id
      * @return 1：删除成功 0：删除失败
      */
-    int delete(long courseId);
+    int delete(Long courseId);
 
 }

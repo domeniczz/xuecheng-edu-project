@@ -26,18 +26,27 @@ public class PageResult<T> implements Serializable {
     private List<T> items;
 
     /**
+     * <p>
      * 总记录数
+     * </p>
+     * <!-- 不要改为基本类型，维持包装类 Long -->
      */
-    private long counts;
+    private Long counts;
 
     /**
+     * <p>
      * 当前页码
+     * </p>
+     * <!-- 不要改为基本类型，维持包装类 Long -->
      */
-    private long page;
+    private Long page;
 
     /**
+     * <p>
      * 每页记录数
+     * </p>
+     * <!-- 不要改为基本类型，维持包装类 Long -->
      */
-    private long pageSize;
+    private Long pageSize;
 
 }

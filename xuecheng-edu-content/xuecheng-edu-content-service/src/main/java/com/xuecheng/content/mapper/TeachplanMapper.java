@@ -23,6 +23,6 @@ public interface TeachplanMapper extends BaseMapper<Teachplan> {
      * @param courseId 根课程的 id 值
      * @return {@link TeachplanDto}
      */
-    public List<TeachplanDto> selectTreeNodes(long courseId);
+    public List<TeachplanDto> selectTreeNodes(Long courseId);
 
 }

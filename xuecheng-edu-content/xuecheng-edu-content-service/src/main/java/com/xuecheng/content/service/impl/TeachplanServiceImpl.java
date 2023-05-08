@@ -38,7 +38,7 @@ public class TeachplanServiceImpl implements TeachplanService {
     private TeachplanMediaService teachplanMediaService;
 
     @Override
-    public List<TeachplanDto> queryTreeNodes(long courseId) {
+    public List<TeachplanDto> queryTreeNodes(Long courseId) {
         return teachplanMapper.selectTreeNodes(courseId);
     }
 
@@ -56,9 +56,9 @@ public class TeachplanServiceImpl implements TeachplanService {
     }
 
     @Override
-    public RestResponse<?> deleteTeachplan(long id) {
+    public RestResponse<?> deleteTeachplan(Long id) {
         Teachplan teachplanToDelete = teachplanMapper.selectById(id);
-        long parentId = getParentId(id);
+        Long parentId = getParentId(id);
 
         // 删除大章节 (大章节没有媒资关联信息)
         if (parentId == 0) {
@@ -100,7 +100,7 @@ public class TeachplanServiceImpl implements TeachplanService {
     }
 
     @Override
-    public RestResponse<?> deleteAll(long courseId) {
+    public RestResponse<?> deleteAll(Long courseId) {
         // 先删除课程计划媒资关联表中的数据
         teachplanMapper.selectList(new LambdaQueryWrapper<Teachplan>().eq(Teachplan::getCourseId, courseId))
                 .forEach(teachplan -> {
@@ -118,13 +118,13 @@ public class TeachplanServiceImpl implements TeachplanService {
     }
 
     @Override
-    public RestResponse<?> moveUp(long id) {
+    public RestResponse<?> moveUp(Long id) {
         move(id, Direction.UP);
         return RestResponse.success("上移课程计划成功");
     }
 
     @Override
-    public RestResponse<?> moveDown(long id) {
+    public RestResponse<?> moveDown(Long id) {
         move(id, Direction.DOWN);
         return RestResponse.success("下移课程计划成功");
     }
@@ -138,6 +138,7 @@ public class TeachplanServiceImpl implements TeachplanService {
 
         Long parentid = saveTeachplanDto.getParentid();
         Long courseId = saveTeachplanDto.getCourseId();
+
         int teachplanCount = getChildrenCount(courseId, parentid);
         // 自动设置，排序在最后
         teachplan.setOrderby(teachplanCount + 1);
@@ -152,7 +153,7 @@ public class TeachplanServiceImpl implements TeachplanService {
         }
     }
 
-    private Teachplan updateTeachplan(SaveTeachplanDto saveTeachplanDto, long id) {
+    private Teachplan updateTeachplan(SaveTeachplanDto saveTeachplanDto, Long id) {
         Teachplan teachplan = teachplanMapper.selectById(id);
         BeanUtils.copyProperties(saveTeachplanDto, teachplan);
 
@@ -196,7 +197,7 @@ public class TeachplanServiceImpl implements TeachplanService {
      * @param parentId 父级 id
      * @return 课程计划数量
      */
-    private int getChildrenCount(long courseId, long parentId) {
+    private int getChildrenCount(Long courseId, Long parentId) {
         // SQL: SELECT COUNT(id) FROM teachplan WHERE course_id = #{courseId} AND parentid = #{parentId}
         LambdaQueryWrapper<Teachplan> queryWrapper = new LambdaQueryWrapper<>();
         queryWrapper = queryWrapper.eq(Teachplan::getCourseId, courseId).eq(Teachplan::getParentid, parentId);
@@ -208,7 +209,7 @@ public class TeachplanServiceImpl implements TeachplanService {
      * @param id id
      * @return 子级节点数量
      */
-    private int getChildrenCount(long id) {
+    private int getChildrenCount(Long id) {
         // SQL: SELECT COUNT(id) FROM teachplan WHERE parentid = #{id}
         LambdaQueryWrapper<Teachplan> queryWrapper = new LambdaQueryWrapper<>();
         queryWrapper = queryWrapper.eq(Teachplan::getParentid, id);
@@ -220,7 +221,7 @@ public class TeachplanServiceImpl implements TeachplanService {
      * @param id id
      * @return 父级节点 id
      */
-    private long getParentId(long id) {
+    private long getParentId(Long id) {
         // SQL: SELECT parentid FROM teachplan WHERE parentid = #{id}
         LambdaQueryWrapper<Teachplan> queryWrapper = new LambdaQueryWrapper<>();
         queryWrapper = queryWrapper.select(Teachplan::getParentid).eq(Teachplan::getId, id);
@@ -233,7 +234,7 @@ public class TeachplanServiceImpl implements TeachplanService {
      * @param id 待移动的课程计划的 id
      * @param direction 移动方向
      */
-    public void move(long id, Direction direction) {
+    public void move(Long id, Direction direction) {
         Teachplan teachPlan = teachplanMapper.selectById(id);
         Long parentid = teachPlan.getParentid();
 
@@ -298,7 +299,7 @@ public class TeachplanServiceImpl implements TeachplanService {
      * @param nearByOrderby 前一个/后一个 排序字段
      * @return 查找到的章节
      */
-    private Teachplan findNearByPlan(long parentid, long courseId, int nearByOrderby) {
+    private Teachplan findNearByPlan(Long parentid, Long courseId, int nearByOrderby) {
         Teachplan nearByTeachPlan;
 
         if (parentid != 0) {

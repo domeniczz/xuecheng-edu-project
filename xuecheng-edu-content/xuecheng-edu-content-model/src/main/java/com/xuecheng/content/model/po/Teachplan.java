@@ -24,6 +24,9 @@ public class Teachplan implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
+    /**
+     * <!-- 不要改为基本类型，维持包装类 Long -->
+     */
     @TableId(value = "id", type = IdType.AUTO)
     private Long id;
 
@@ -33,17 +36,23 @@ public class Teachplan implements Serializable {
     private String pname;
 
     /**
-     * 课程计划父级Id
+     * <p>
+     * 课程计划父级 ID
+     * </p>
+     * <!-- 不要改为基本类型，维持包装类 Long -->
      */
     private Long parentid;
 
     /**
-     * 层级，分为1、2、3级
+     * <p>
+     * 层级，分为 1、2、3 级
+     * </p>
+     * <!-- 不要改为基本类型，维持包装类 Long -->
      */
     private Integer grade;
 
     /**
-     * 课程类型:1视频、2文档
+     * 课程类型: 1 视频, 2 文档
      */
     private String mediaType;
 
@@ -68,22 +77,34 @@ public class Teachplan implements Serializable {
     private String timelength;
 
     /**
+     * <p>
      * 排序字段
+     * </p>
+     * <!-- 不要改为基本类型，维持包装类 Integer -->
      */
     private Integer orderby;
 
     /**
+     * <p>
      * 课程标识
+     * </p>
+     * <!-- 不要改为基本类型，维持包装类 Long -->
      */
     private Long courseId;
 
     /**
+     * <p>
      * 课程发布标识
+     * </p>
+     * <!-- 不要改为基本类型，维持包装类 Long -->
      */
     private Long coursePubId;
 
     /**
-     * 状态（1正常  0删除）
+     * <p>
+     * 状态: 1 正常, 0 删除
+     * </p>
+     * <!-- 不要改为基本类型，维持包装类 Integer -->
      */
     private Integer status;
 

@@ -13,6 +13,6 @@ public interface TeachplanMediaService {
      * @param teachplanId 课程计划 id
      * @return 删除结果
      */
-    int deleteTeachplanMedia(long teachplanId);
+    int deleteTeachplanMedia(Long teachplanId);
 
 }

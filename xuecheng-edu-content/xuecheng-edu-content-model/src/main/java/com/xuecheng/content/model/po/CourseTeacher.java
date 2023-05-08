@@ -28,14 +28,20 @@ public class CourseTeacher implements Serializable {
     private static final long serialVersionUID = 1L;
 
     /**
+     * <p>
      * 主键
+     * </p>
+     * <!-- 不要改为基本类型，维持包装类 Long -->
      */
     @TableId(value = "id", type = IdType.AUTO)
     @Min(value = 0L, message = "主键 ID 不能小于 0")
     private Long id;
 
     /**
+     * <p>
      * 课程标识
+     * </p>
+     * <!-- 不要改为基本类型，维持包装类 Long -->
      */
     @Min(value = 0L, message = "课程 ID 不能小于 0")
     private Long courseId;

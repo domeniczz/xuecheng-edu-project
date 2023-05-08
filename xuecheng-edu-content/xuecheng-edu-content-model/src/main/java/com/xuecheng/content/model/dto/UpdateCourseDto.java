@@ -22,7 +22,10 @@ import javax.validation.constraints.Min;
 public class UpdateCourseDto extends AddCourseDto {
 
     /**
+     * <p>
      * 课程 ID
+     * </p>
+     * <!-- 不要改为基本类型，维持包装类 Long -->
      */
     @ApiModelProperty(value = "课程 ID", required = true)
     @Min(value = 0L, message = "课程 ID 不能小于 0", groups = { ValidationGroups.Update.class, ValidationGroups.Delete.class })

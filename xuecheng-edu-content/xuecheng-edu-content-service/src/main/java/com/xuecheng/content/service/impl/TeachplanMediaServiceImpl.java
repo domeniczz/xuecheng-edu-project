@@ -20,7 +20,7 @@ public class TeachplanMediaServiceImpl implements TeachplanMediaService {
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public int deleteTeachplanMedia(long teachplanId) {
+    public int deleteTeachplanMedia(Long teachplanId) {
         // SQL: DELETE FROM teachplan_media WHERE teachplan_id = #{id}
         return teachplanMediaMapper.deleteById(teachplanId);
     }

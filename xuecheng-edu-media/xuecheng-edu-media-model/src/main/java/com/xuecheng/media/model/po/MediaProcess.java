@@ -20,6 +20,9 @@ public class MediaProcess implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
+    /**
+     * <!-- 不要改为基本类型，维持包装类 Long -->
+     */
     @TableId(value = "id", type = IdType.AUTO)
     private Long id;
 
@@ -70,8 +73,11 @@ public class MediaProcess implements Serializable {
     private String errormsg;
 
     /**
+     * <p>
      * 失败次数
+     * </p>
+     * <!-- 不要改为基本类型，维持包装类 Integer -->
      */
-    private int failCount;
+    private Integer failCount;
 
 }

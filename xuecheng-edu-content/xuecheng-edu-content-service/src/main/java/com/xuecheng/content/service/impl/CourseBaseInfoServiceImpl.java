@@ -84,9 +84,9 @@ public class CourseBaseInfoServiceImpl implements CourseBaseInfoService {
         // 数据
         List<CourseBase> items = pageResult.getRecords();
         // 总记录数
-        long total = pageResult.getTotal();
+        Long total = pageResult.getTotal();
 
-        // 准备返回数据 List<T> items, long counts, long page, long pageSize
+        // 准备返回数据 List<T> items, long counts, Long page, Long pageSize
         return new PageResult<>(items, total, pageParams.getPageNo(), pageParams.getPageSize());
     }
 
@@ -96,7 +96,7 @@ public class CourseBaseInfoServiceImpl implements CourseBaseInfoService {
      * @return 课程基本信息和课程营销信息 DTO
      */
     @Override
-    public CourseBaseInfoDto queryCourseBaseAndMarketInfoById(long courseId) {
+    public CourseBaseInfoDto queryCourseBaseAndMarketInfoById(Long courseId) {
         // 查询课程基本信息
         CourseBase courseBase = courseBaseMapper.selectById(courseId);
         if (courseBase == null) {
@@ -125,7 +125,7 @@ public class CourseBaseInfoServiceImpl implements CourseBaseInfoService {
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public CourseBaseInfoDto create(long companyId, AddCourseDto dto) {
+    public CourseBaseInfoDto create(Long companyId, AddCourseDto dto) {
         // 参数合法性校验通过 JSR Validation 进行
         // Spring 支持 Hibernate Validator 校验框架
 
@@ -171,11 +171,11 @@ public class CourseBaseInfoServiceImpl implements CourseBaseInfoService {
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public CourseBaseInfoDto update(long companyId, UpdateCourseDto dto) {
+    public CourseBaseInfoDto update(Long companyId, UpdateCourseDto dto) {
         // 参数合法性校验通过 JSR Validation 进行
         // Spring 支持 Hibernate Validator 校验框架
 
-        long courseId = dto.getId();
+        Long courseId = dto.getId();
 
         // 检查课程是否存在
         CourseBase courseBase = courseBaseMapper.selectById(courseId);
@@ -224,7 +224,7 @@ public class CourseBaseInfoServiceImpl implements CourseBaseInfoService {
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public RestResponse<?> delete(long courseId) {
+    public RestResponse<?> delete(Long courseId) {
         boolean ifSubmitForAudit = checkAuditState(courseId);
         if (!ifSubmitForAudit) {
             // 删除课程基本信息

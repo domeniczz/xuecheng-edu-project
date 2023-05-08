@@ -15,7 +15,10 @@ import lombok.Data;
 public class SaveTeachplanDto {
 
     /***
+     * <p>
      * 课程教学计划 ID
+     * </p>
+     * <!-- 不要改为基本类型，维持包装类 Long -->
      */
     @ApiModelProperty(value = "课程教学计划 ID")
     private Long id;
@@ -27,13 +30,19 @@ public class SaveTeachplanDto {
     private String pname;
 
     /**
+     * <p>
      * 课程计划父级 ID
+     * </p>
+     * <!-- 不要改为基本类型，维持包装类 Long -->
      */
     @ApiModelProperty(value = "课程计划父级 ID")
     private Long parentid;
 
     /**
+     * <p>
      * 层级，分为 1、2、3 级
+     * </p>
+     * <!-- 不要改为基本类型，维持包装类 Integer -->
      */
     @ApiModelProperty(value = "层级，分为 1、2、3 级")
     private Integer grade;
@@ -45,13 +54,19 @@ public class SaveTeachplanDto {
     private String mediaType;
 
     /**
+     * <p>
      * 课程标识
+     * </p>
+     * <!-- 不要改为基本类型，维持包装类 Long -->
      */
     @ApiModelProperty(value = "课程标识")
     private Long courseId;
 
     /**
+     * <p>
      * 课程发布标识
+     * </p>
+     * <!-- 不要改为基本类型，维持包装类 Long -->
      */
     @ApiModelProperty(value = "课程发布标识")
     private Long coursePubId;

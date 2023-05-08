@@ -30,7 +30,7 @@ public interface CourseBaseInfoService {
      * @param courseId 课程 ID
      * @return {@link CourseBaseInfoDto}
      */
-    CourseBaseInfoDto queryCourseBaseAndMarketInfoById(long courseId);
+    CourseBaseInfoDto queryCourseBaseAndMarketInfoById(Long courseId);
 
     /**
      * <p>
@@ -41,7 +41,7 @@ public interface CourseBaseInfoService {
      * @param addCourseDto 课程信息
      * @return {@link CourseBaseInfoDto}
      */
-    CourseBaseInfoDto create(long companyId, AddCourseDto addCourseDto);
+    CourseBaseInfoDto create(Long companyId, AddCourseDto addCourseDto);
 
     /**
      * 更新课程基本信息
@@ -49,7 +49,7 @@ public interface CourseBaseInfoService {
      * @param updateCourseDto 课程信息
      * @return {@link CourseBaseInfoDto}
      */
-    CourseBaseInfoDto update(long companyId, UpdateCourseDto updateCourseDto);
+    CourseBaseInfoDto update(Long companyId, UpdateCourseDto updateCourseDto);
 
     /**
      * <p>
@@ -60,6 +60,6 @@ public interface CourseBaseInfoService {
      * @param courseId 课程 ID
      * @return 操作结果
      */
-    RestResponse<?> delete(long courseId);
+    RestResponse<?> delete(Long courseId);
 
 }
