@@ -29,7 +29,7 @@ public class RestResponse<T> {
     /**
      * 响应数据
      */
-    private T data;
+    private T result;
 
     /**
      * 默认构造成功的响应信息
@@ -57,39 +57,39 @@ public class RestResponse<T> {
 
     /**
      * 错误响应信息
-     * @param data 响应内容 (泛型)
+     * @param result 响应内容 (泛型)
      * @param msg 响应信息
      * @return {@link RestResponse}
      */
-    public static <T> RestResponse<T> fail(T data, String msg) {
+    public static <T> RestResponse<T> fail(T result, String msg) {
         RestResponse<T> resp = new RestResponse<T>();
         resp.setCode(-1);
         resp.setMsg(msg);
-        resp.setData(data);
+        resp.setResult(result);
         return resp;
     }
 
     /**
      * 成功的响应 (包含响应数据)
-     * @param data 响应内容
+     * @param result 响应内容
      * @return {@link RestResponse}
      */
-    public static <T> RestResponse<T> success(T data) {
+    public static <T> RestResponse<T> success(T result) {
         RestResponse<T> resp = new RestResponse<T>();
-        resp.setData(data);
+        resp.setResult(result);
         return resp;
     }
 
     /**
      * 成功的响应 (包含响应数据)
-     * @param data 响应内容
+     * @param result 响应内容
      * @param msg 响应信息
      * @return {@link RestResponse}
      */
-    public static <T> RestResponse<T> success(T data, String msg) {
+    public static <T> RestResponse<T> success(T result, String msg) {
         RestResponse<T> resp = new RestResponse<T>();
         resp.setMsg(msg);
-        resp.setData(data);
+        resp.setResult(result);
         return resp;
     }
 

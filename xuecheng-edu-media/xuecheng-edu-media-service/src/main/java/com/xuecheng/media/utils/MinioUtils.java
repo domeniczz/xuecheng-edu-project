@@ -230,7 +230,7 @@ public class MinioUtils {
 
     /**
      * <p>
-     * 在 Minio 中合并分块<br/>
+     * 在 minio 中合并分块<br/>
      * 注意：minio 默认的分块文件大小为 5MB，且分块文件大小不能小于 5MB
      * </p>
      * @param bucketName 桶名
@@ -259,7 +259,7 @@ public class MinioUtils {
     }
 
     /**
-     * 清除分块文件 (要求分块文件的命名是序号 0,1,2...)
+     * 清除 minio 上的分块文件 (要求分块文件的命名是序号 0,1,2...)
      * @param chunkFileFolderPath 分块文件夹路径
      * @param chunkTotalNum 分块文件总数
      */
@@ -347,7 +347,11 @@ public class MinioUtils {
     }
 
     /**
-     * 获取文件 MD5 (其实就是 minio 中文件的 etag 值)
+     * <p>
+     * 获取文件 MD5 (其实就是 minio 中文件的 etag 值)<br/>
+     * minio 中的 etag 和本地计算的 MD5 值可能不一样
+     * </p>
+     * <a href="https://docs.aws.amazon.com/AmazonS3/latest/API/API_Object.html">AWS S3 Object Doc</a>
      * @param bucketName 桶名
      * @param objectName 对象名 (文件的路径)
      * @return MD5 字符串
@@ -401,12 +405,12 @@ public class MinioUtils {
             }
             // 文件不存在
             if (statusCode == HttpStatus.SC_NOT_FOUND) {
-                log.error("获取文件信息出错, 文件不存在, bucket={}, objectName={}, errorMsg={}", bucketName, objectName, e.getMessage());
+                log.error("文件不存在, bucket={}, objectName={}, errorMsg={}", bucketName, objectName, e.getMessage());
                 return null;
             }
             // 访问被拒绝
             else if (statusCode == HttpStatus.SC_FORBIDDEN) {
-                log.error("获取文件信息出错, 访问被拒绝, bucket={}, objectName={}, errorMsg={}", bucketName, objectName, e.getMessage());
+                log.error("访问文件被拒绝, bucket={}, objectName={}, errorMsg={}", bucketName, objectName, e.getMessage());
                 throw e;
             } else {
                 throw e;

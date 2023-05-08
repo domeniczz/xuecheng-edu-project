@@ -4,7 +4,7 @@ import com.xuecheng.base.exception.XueChengEduException;
 import com.xuecheng.base.model.RestResponse;
 import com.xuecheng.media.model.dto.FileParamsDto;
 import com.xuecheng.media.service.BigFilesService;
-import com.xuecheng.media.utils.FileUtils;
+import com.xuecheng.media.utils.TempFileUtils;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -48,7 +48,7 @@ public class BigFilesController {
             @RequestParam("chunk") int chunk) throws Exception {
 
         // 将数据转存为本地临时文件
-        String tempFilePath = FileUtils.storeAsTempFile(file);
+        String tempFilePath = TempFileUtils.storeAsTempFile(file);
 
         try {
             // 调用 service 上传分块文件
@@ -58,7 +58,7 @@ public class BigFilesController {
             return null;
         } finally {
             // 删除临时文件
-            FileUtils.deleteTempFile(tempFilePath);
+            TempFileUtils.deleteTempFile(tempFilePath);
         }
     }
 

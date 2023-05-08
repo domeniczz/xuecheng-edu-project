@@ -98,7 +98,7 @@ public class BigFilesServiceTest {
     @Order(1)
     void test_checkFile_pre() {
         RestResponse<Boolean> res = bigFilesService.checkFile(fileMd5);
-        Assertions.assertFalse(res.getData(), "文件不应该存在");
+        Assertions.assertFalse(res.getResult(), "文件不应该存在");
     }
 
     @Test
@@ -107,7 +107,7 @@ public class BigFilesServiceTest {
         // 将分块文件上传到 minio
         for (int i = 0; i < chunkTotalNum; ++i) {
             RestResponse<Boolean> res = bigFilesService.uploadChunk(fileMd5, i, chunkFolderPath + i);
-            Assertions.assertTrue(res.getData(), "分块文件" + i + "上传失败");
+            Assertions.assertTrue(res.getResult(), "分块文件" + i + "上传失败");
         }
     }
 
@@ -117,7 +117,7 @@ public class BigFilesServiceTest {
         // 检查分块文件是否存在
         for (int i = 0; i < chunkTotalNum; ++i) {
             RestResponse<Boolean> res = bigFilesService.checkChunk(fileMd5, i);
-            Assertions.assertTrue(res.getData(), "分块文件 " + i + " 不存在");
+            Assertions.assertTrue(res.getResult(), "分块文件 " + i + " 不存在");
         }
     }
 
@@ -125,7 +125,7 @@ public class BigFilesServiceTest {
     @Order(4)
     void test_mergeChunks() {
         RestResponse<Boolean> res = bigFilesService.mergeChunksAndSave(companyId, fileMd5, chunkTotalNum, dto);
-        Assertions.assertTrue(res.getData(), "分块文件合并失败");
+        Assertions.assertTrue(res.getResult(), "分块文件合并失败");
     }
 
     @Test
@@ -133,7 +133,7 @@ public class BigFilesServiceTest {
     void test_checkChunk_post() {
         for (int i = 0; i < chunkTotalNum; ++i) {
             RestResponse<Boolean> res = bigFilesService.checkChunk(fileMd5, i);
-            Assertions.assertFalse(res.getData(), "分块文件 " + i + " 未被删除");
+            Assertions.assertFalse(res.getResult(), "分块文件 " + i + " 未被删除");
         }
     }
 
@@ -141,14 +141,14 @@ public class BigFilesServiceTest {
     @Order(6)
     void test_checkFile_post() {
         RestResponse<Boolean> res = bigFilesService.checkFile(fileMd5);
-        Assertions.assertTrue(res.getData(), "文件不存在");
+        Assertions.assertTrue(res.getResult(), "文件不存在");
     }
 
     @Test
     @Order(7)
     void test_deleteFile() {
         RestResponse<Boolean> res = bigFilesService.deleteFile(getMergedFileObjectName());
-        Assertions.assertTrue(res.getData(), "文件删除失败");
+        Assertions.assertTrue(res.getResult(), "文件删除失败");
     }
 
     /**

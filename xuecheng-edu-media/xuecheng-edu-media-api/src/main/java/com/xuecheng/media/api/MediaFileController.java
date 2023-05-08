@@ -8,7 +8,7 @@ import com.xuecheng.media.model.dto.FileResultDto;
 import com.xuecheng.media.model.dto.QueryMediaParamsDto;
 import com.xuecheng.media.model.po.MediaFile;
 import com.xuecheng.media.service.MediaFileService;
-import com.xuecheng.media.utils.FileUtils;
+import com.xuecheng.media.utils.TempFileUtils;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
@@ -62,12 +62,12 @@ public class MediaFileController {
         // 文件大小
         dto.setFileSize(file.getSize());
         // 文件类型：图片
-        dto.setFileType(FileUtils.getFileType(file));
+        dto.setFileType(TempFileUtils.getFileType(file));
         // 上传人
         // dto.setUsername("");
 
         // 将数据转存为本地临时文件
-        String tempFilePath = FileUtils.storeAsTempFile(file);
+        String tempFilePath = TempFileUtils.storeAsTempFile(file);
 
         try {
             // 调用 service 上传文件
@@ -77,7 +77,7 @@ public class MediaFileController {
             return null;
         } finally {
             // 删除临时文件
-            FileUtils.deleteTempFile(tempFilePath);
+            TempFileUtils.deleteTempFile(tempFilePath);
         }
     }
 

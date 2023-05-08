@@ -8,7 +8,10 @@ import com.xuecheng.media.service.BigFilesService;
 import com.xuecheng.media.utils.FileDbUtils;
 import com.xuecheng.media.utils.FileUtils;
 import com.xuecheng.media.utils.MinioUtils;
-
+import io.minio.ComposeSource;
+import io.minio.ObjectWriteResponse;
+import io.minio.StatObjectResponse;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -17,11 +20,6 @@ import java.io.File;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
-
-import io.minio.ComposeSource;
-import io.minio.ObjectWriteResponse;
-import io.minio.StatObjectResponse;
-import lombok.extern.slf4j.Slf4j;
 
 /**
  * @author Domenic
@@ -113,7 +111,7 @@ public class BigFilesServiceImpl implements BigFilesService {
             return RestResponse.success(true);
         }
         // 上传失败
-        log.error("分块文件 {} 上传失败, bucket={}, fileMd5={}, errorMsg={}", chunkIndex, bucket, fileMd5);
+        log.error("分块文件 {} 上传失败, bucket={}, fileMd5={}", chunkIndex, bucket, fileMd5);
         return RestResponse.fail(false, "分块文件上传失败");
     }
 

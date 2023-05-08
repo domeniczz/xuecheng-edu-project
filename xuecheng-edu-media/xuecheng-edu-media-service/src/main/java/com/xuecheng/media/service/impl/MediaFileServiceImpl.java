@@ -60,7 +60,7 @@ public class MediaFileServiceImpl implements MediaFileService {
         LambdaQueryWrapper<MediaFile> queryWrapper = new LambdaQueryWrapper<>();
 
         // 匹配文件名称
-        queryWrapper.eq(StringUtils.isNotEmpty(dto.getFilename()),
+        queryWrapper.like(StringUtils.isNotEmpty(dto.getFilename()),
                 MediaFile::getFilename,
                 dto.getFilename());
 

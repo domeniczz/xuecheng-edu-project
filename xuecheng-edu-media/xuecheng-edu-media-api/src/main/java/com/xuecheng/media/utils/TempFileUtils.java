@@ -1,21 +1,20 @@
 package com.xuecheng.media.utils;
 
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
 import java.io.IOException;
 import java.util.UUID;
 
-import lombok.extern.slf4j.Slf4j;
-
 /**
  * @author Domenic
- * @Classname FileUtils
+ * @Classname TempFileUtils
  * @Description 文件操作的工具类
  * @Created by Domenic
  */
 @Slf4j
-public class FileUtils {
+public class TempFileUtils {
 
     /**
     * 将给定的 MultipartFile 文件存储为临时文件，并返回临时文件的绝对路径
