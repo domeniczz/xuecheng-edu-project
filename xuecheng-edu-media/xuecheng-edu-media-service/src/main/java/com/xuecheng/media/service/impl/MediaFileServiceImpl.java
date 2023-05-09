@@ -32,7 +32,7 @@ import lombok.extern.slf4j.Slf4j;
 /**
  * @author Domenic
  * @Classname MediaFileServiceImpl
- * @Description 媒资文件管理业务实现类 (小文件，不分片上传)
+ * @Description 媒资文件管理接口实现类 (小文件，不分片上传)
  * @Created by Domenic
  */
 @Slf4j

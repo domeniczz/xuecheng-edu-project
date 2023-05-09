@@ -21,18 +21,12 @@ import java.io.RandomAccessFile;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Stream;
 
-import io.minio.ComposeSource;
-import io.minio.ListObjectsArgs;
-import io.minio.MinioClient;
 import io.minio.ObjectWriteResponse;
-import io.minio.Result;
-import io.minio.messages.Item;
 
 /**
  * @author Domenic
@@ -44,9 +38,6 @@ import io.minio.messages.Item;
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 public class FileChunkMergeTest {
-
-    @Autowired
-    private MinioClient minioClient;
 
     @Autowired
     private MinioUtils minioUtils;
@@ -128,8 +119,8 @@ public class FileChunkMergeTest {
 
             // 逐一向各个分块中写入数据
             for (int i = 0; i < chunkTotalNum; ++i) {
-                // 分块文件名称示例：test-1.chunk
-                File chunkedFile = new File(chunkFolderPath + sourceFilenameWithoutExt + "-" + i + ".chunk");
+                // 分块文件名称为分块序号
+                File chunkedFile = new File(chunkFolderPath + i);
 
                 // 向分块文件中写入数据
                 try (RandomAccessFile raf_w = new RandomAccessFile(chunkedFile, "rw")) {
@@ -171,15 +162,11 @@ public class FileChunkMergeTest {
         Assertions.assertNotNull(files, "分块文件列表为空");
         List<File> fileList = Arrays.asList(files);
 
-        // 对分块文件夹下的文件，进行排序 (分块文件名称示例：test-1.chunk)
-        int start = sourceFilenameWithoutExt.length() + 1;
+        // 对分块文件夹下的文件，进行排序 (分块文件名称为分块序号)
         fileList.sort(new Comparator<File>() {
             @Override
             public int compare(File f1, File f2) {
-                String name1 = f1.getName();
-                String name2 = f2.getName();
-                return Integer.parseInt(name1.substring(start, name1.lastIndexOf(".")))
-                        - Integer.parseInt(name2.substring(start, name2.lastIndexOf(".")));
+                return Integer.parseInt(f1.getName()) - Integer.parseInt(f2.getName());
             }
         });
 
@@ -222,7 +209,7 @@ public class FileChunkMergeTest {
                 try {
                     String objectName = objectFolderPathMinio + file.getFileName().toString();
                     ObjectWriteResponse resp = minioUtils.uploadFile(file.toAbsolutePath().toString(),
-                            FileUtils.getMimeTypeFromExt(sourceFilename.substring(sourceFilename.lastIndexOf("."))),
+                            FileUtils.getMimeTypeFromExt(""),
                             bucketName, objectName);
                     Assertions.assertNotNull(resp, "上传文件失败");
                     Assertions.assertEquals(resp.object(), objectName, "上传文件失败, 文件名称不一致");
@@ -239,31 +226,8 @@ public class FileChunkMergeTest {
     @Test
     @Order(4)
     void test_mergeChunksOnMinio() throws Exception {
-        // 初始化用来保存 ComposeSource 的 List
-        List<ComposeSource> sources = new ArrayList<>();
-
-        // 列出 minio 中的分块文件
-        Iterable<Result<Item>> minioFiles = minioClient.listObjects(ListObjectsArgs.builder()
-                .bucket(bucketName)
-                .prefix(objectFolderPathMinio)
-                .recursive(false)
-                .build());
-
-        // 遍历所有分块文件，为每个分块文件创建 ComposeSource 对象，并保存到 List 中
-        for (Result<Item> object : minioFiles) {
-            Item item = object.get();
-            // 获取分块文件的 minio 路径
-            String chunkFileObjectName = item.objectName();
-
-            // 根据分块文件，创建出 ComposeSource 对象，保存到 List 中
-            sources.add(ComposeSource.builder()
-                    .bucket(bucketName)
-                    .object(chunkFileObjectName)
-                    .build());
-        }
-
         // 合并文件
-        ObjectWriteResponse resp = minioUtils.mergeChunks(bucketName, mergedFilenameMinio, sources);
+        ObjectWriteResponse resp = minioUtils.mergeChunks(bucketName, mergedFilenameMinio, objectFolderPathMinio, chunkTotalNum);
         Assertions.assertNotNull(resp, "合并文件失败");
         Assertions.assertEquals(resp.object(), mergedFilenameMinio);
     }
@@ -282,7 +246,7 @@ public class FileChunkMergeTest {
         /* 删除 Minio 中测试产生的文件 */
 
         // 删除分块文件夹
-        minioUtils.deleteFolderRecursively(bucketName, objectFolderPathMinio);
+        minioUtils.clearChunkFiles(bucketName, objectFolderPathMinio, chunkTotalNum);
 
         // 删除和合并后的文件
         minioUtils.deleteFile(bucketName, mergedFilenameMinio);

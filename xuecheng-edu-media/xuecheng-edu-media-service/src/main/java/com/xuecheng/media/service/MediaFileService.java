@@ -10,7 +10,7 @@ import com.xuecheng.media.model.po.MediaFile;
 /**
  * @author Domenic
  * @Classname MediaFileService
- * @Description 媒资文件管理业务类 (小文件，不分片上传)
+ * @Description 媒资文件管理接口 (小文件，不分片上传)
  * @Created by Domenic
  */
 public interface MediaFileService {

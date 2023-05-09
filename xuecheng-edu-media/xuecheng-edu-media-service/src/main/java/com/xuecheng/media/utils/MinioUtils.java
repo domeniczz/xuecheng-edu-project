@@ -230,7 +230,7 @@ public class MinioUtils {
 
     /**
      * <p>
-     * 在 minio 中合并分块<br/>
+     * 在 minio 中合并分块 (要求分块文件的命名是其序号 0,1,2...)<br/>
      * 注意：minio 默认的分块文件大小为 5MB，且分块文件大小不能小于 5MB
      * </p>
      * @param bucketName 桶名
@@ -238,7 +238,15 @@ public class MinioUtils {
      * @param sources {@link List}&lt;{@link ComposeSource}&gt; 源文件列表 (分块文件)
      * @return {@link ObjectWriteResponse}
      */
-    public ObjectWriteResponse mergeChunks(String bucketName, String objectName, List<ComposeSource> sources) {
+    public ObjectWriteResponse mergeChunks(String bucketName, String objectName, String chunkFolderPath, int chunkTotalNum) {
+
+        // 列出所有的分块文件
+        List<ComposeSource> sources = Stream.iterate(0, i -> ++i).limit(chunkTotalNum)
+                .map(i -> ComposeSource.builder()
+                        .bucket(bucketName)
+                        .object(chunkFolderPath + i)
+                        .build())
+                .collect(Collectors.toList());
 
         ComposeObjectArgs composeObjectArgs = ComposeObjectArgs.builder()
                 .bucket(bucketName)
@@ -259,7 +267,7 @@ public class MinioUtils {
     }
 
     /**
-     * 清除 minio 上的分块文件 (要求分块文件的命名是序号 0,1,2...)
+     * 清除 minio 上指定文件的分块文件 (要求分块文件的命名是其序号 0,1,2...)
      * @param chunkFileFolderPath 分块文件夹路径
      * @param chunkTotalNum 分块文件总数
      */
@@ -282,10 +290,10 @@ public class MinioUtils {
             return false;
         }
 
-        // 遍历文件删除的结果，并检查在此过程中是否出现任何错误
-        for (Result<DeleteError> res : results) {
+        // 遍历文件删除的结果，并检查在此过程中是否出现任何错误 (要经过遍历之后，才真正删除分块文件)
+        for (Result<DeleteError> result : results) {
             try {
-                res.get();
+                result.get();
             } catch (Exception e) {
                 String failedObjectName = "";
                 if (e instanceof ErrorResponseException) {
@@ -308,8 +316,6 @@ public class MinioUtils {
      */
     public boolean deleteFolderRecursively(String bucketName, String folderName) {
         try {
-            List<RemoveObjectArgs> objectsToDelete = new LinkedList<>();
-
             // 获取文件夹下的所有文件
             Iterable<Result<Item>> results = minioClient.listObjects(ListObjectsArgs.builder()
                     .bucket(bucketName)
@@ -317,7 +323,8 @@ public class MinioUtils {
                     .recursive(true)
                     .build());
 
-            // 封装删除文件的参数对象 RemoveObjectArgs
+            // 封装删除文件的参数对象 RemoveObjectArgs 到 List 集合中
+            List<RemoveObjectArgs> objectsToDelete = new LinkedList<>();
             for (Result<Item> result : results) {
                 Item item = result.get();
                 objectsToDelete.add(RemoveObjectArgs.builder()
@@ -348,7 +355,7 @@ public class MinioUtils {
 
     /**
      * <p>
-     * 获取文件 MD5 (其实就是 minio 中文件的 etag 值)<br/>
+     * 获取文件 ETag 值<br/>
      * minio 中的 etag 和本地计算的 MD5 值可能不一样
      * </p>
      * <a href="https://docs.aws.amazon.com/AmazonS3/latest/API/API_Object.html">AWS S3 Object Doc</a>
@@ -357,7 +364,7 @@ public class MinioUtils {
      * @return MD5 字符串
      * @throws Exception 异常 (除了 {@link MinioException} 异常)
      */
-    public String getFileMd5(String bucketName, String objectName) throws Exception {
+    public String getFileEtag(String bucketName, String objectName) throws Exception {
         try {
             // 返回 MD5 (minio 中的 etag 属性就是 MD5)
             return getFileInfo(bucketName, objectName).etag();
@@ -375,11 +382,14 @@ public class MinioUtils {
      * @return 文件大小
      * @throws Exception 异常 (除了 {@link MinioException} 异常)
      */
-    public long getFileSize(String bucketName, String objectName) throws Exception {
+    public long getFileSize(String bucketName, String objectName) {
         try {
             return getFileInfo(bucketName, objectName).size();
         } catch (MinioException e) {
             log.error("获取文件大小出错, bucket={}, objectName={}, errorMsg={}\nhttpTrace={}", bucketName, objectName, e.getMessage(), e.httpTrace());
+            e.printStackTrace();
+        } catch (Exception e) {
+            log.error("获取文件大小出错, bucket={}, objectName={}, errorMsg={}", bucketName, objectName, e.getMessage());
             e.printStackTrace();
         }
         return -1;

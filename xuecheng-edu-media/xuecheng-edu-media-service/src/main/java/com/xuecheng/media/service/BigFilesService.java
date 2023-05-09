@@ -40,9 +40,10 @@ public interface BigFilesService {
 
     /**
      * <p>
-     * 合并分块
-     * 并将文件信息保存到数据库中
-     * 并删除 minio 中的分块文件
+     * 合并分块<br/>
+     * 并将文件信息保存到数据库中<br/>
+     * 并删除 minio 中的分块文件<br/>
+     * 若合并后校验出错，则删除校验失败的合并后文件
      * </p>
      * @param companyId 机构 ID
      * @param fileMd5 文件 MD5

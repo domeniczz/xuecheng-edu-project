@@ -8,18 +8,17 @@ import com.xuecheng.media.service.BigFilesService;
 import com.xuecheng.media.utils.FileDbUtils;
 import com.xuecheng.media.utils.FileUtils;
 import com.xuecheng.media.utils.MinioUtils;
-import io.minio.ComposeSource;
-import io.minio.ObjectWriteResponse;
-import io.minio.StatObjectResponse;
-import lombok.extern.slf4j.Slf4j;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.io.File;
-import java.util.List;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
+import java.io.IOException;
+
+import io.minio.ObjectWriteResponse;
+import io.minio.StatObjectResponse;
+import lombok.extern.slf4j.Slf4j;
 
 /**
  * @author Domenic
@@ -120,14 +119,6 @@ public class BigFilesServiceImpl implements BigFilesService {
         // 分块文件所在目录
         String chunkFolderPath = getChunkFileFolderPath(fileMd5);
 
-        // 列出所有的分块文件
-        List<ComposeSource> sources = Stream.iterate(0, i -> ++i).limit(chunkTotalNum)
-                .map(i -> ComposeSource.builder()
-                        .bucket(bucket)
-                        .object(chunkFolderPath + i)
-                        .build())
-                .collect(Collectors.toList());
-
         // 源文件名称
         String filename = dto.getFilename();
         // 文件扩展名
@@ -137,32 +128,33 @@ public class BigFilesServiceImpl implements BigFilesService {
 
         // ========== 合并文件 ==========
 
-        ObjectWriteResponse resp = minioUtils.mergeChunks(bucket, objectName, sources);
+        ObjectWriteResponse resp = minioUtils.mergeChunks(bucket, objectName, chunkFolderPath, chunkTotalNum);
         if (resp == null) {
             return RestResponse.fail(false, "合并文件异常");
         }
 
         // ========== 校验合并后的文件与源文件是否一致 ==========
 
+        long fileSize = -1;
         try {
-            if (!checkFileConsistencyByDownload(fileMd5, objectName)) {
-                log.error("合并后的文件与源文件不一致");
-                return RestResponse.fail(false, "合并后的文件与源文件不一致");
-            }
-            log.debug("校验通过，合并后的文件与源文件一致");
+            // 获取合并后文件的大小
+            fileSize = minioUtils.getFileSize(bucket, objectName);
         } catch (Exception e) {
-            log.error("文件上传后, 校验出错, errorMsg={}", e.getMessage());
-            return RestResponse.fail(false, "文件上传后，校验出错");
+            log.error("获取文件大小出错, bucket={}, objectName={}, errorMsg={}", bucket, objectName, e.getMessage());
         }
+
+        if (!checkFileConsistency(fileMd5, fileSize, objectName)) {
+            log.error("合并后的文件与源文件不一致");
+            // 删除校验失败的合并后文件
+            deleteFile(objectName);
+            return RestResponse.fail(false, "合并后的文件与源文件不一致");
+        }
+        log.debug("校验通过，合并后的文件与源文件一致");
 
         // ========== 将文件信息入库 ==========
 
         // 设置文件大小的信息
-        try {
-            dto.setFileSize(minioUtils.getFileSize(bucket, objectName));
-        } catch (Exception e) {
-            log.error("获取文件大小出错, bucket={}, objectName={}, errorMsg={}", bucket, objectName, e.getMessage());
-        }
+        dto.setFileSize(fileSize);
 
         // 将文件信息入库
         MediaFile mediaFiles = fileDbUtils.addFileInfo(companyId, fileMd5, dto, bucket, filename, objectName);
@@ -203,22 +195,35 @@ public class BigFilesServiceImpl implements BigFilesService {
      * 将 Minio 中的文件下载下来，计算 MD5 值，再和本地文件的 MD5 值进行比较<br/>
      * 缺点：需要下载文件，对于大文件会比较耗时
      * </p>
-     * @param fileMd5
-     * @param objectName
-     * @return
-     * @throws Exception
+     * @param fileMd5 文件的 MD5 值
+     * @param objectName 对象名 (文件在 minio 中的路径)
+     * @return {@link Boolean} {@code true} 校验通过, {@code false} 校验不通过
      */
-    private boolean checkFileConsistencyByDownload(String fileMd5, String objectName) throws Exception {
-        File mergedFile = minioUtils.downloadFile(bucket, objectName);
+    private boolean checkFileConsistency(String fileMd5, long fileSize, String objectName) {
+        long mergedSize = minioUtils.getFileSize(bucket, objectName);
+        // 若文件大小一致，再进行 MD5 校验
+        if (fileSize == mergedSize) {
+            // 下载合并后的文件
+            File downloadMergedFile = minioUtils.downloadFile(bucket, objectName);
 
-        // 计算合并后文件的 MD5
-        String mergeFileMd5 = FileUtils.getFileMd5(mergedFile);
+            // 计算合并后文件的 MD5
+            String mergeFileMd5 = FileUtils.getFileMd5(downloadMergedFile);
 
-        // 比较原始和合并后文件的 MD5
-        if (fileMd5.equals(mergeFileMd5)) {
-            return true;
+            // 比较原始和合并后文件的 MD5
+            if (fileMd5.equals(mergeFileMd5)) {
+                return true;
+            } else {
+                log.error("校验合并文件 MD5 值不一致, 原始文件={}, 合并文件={}", fileMd5, mergeFileMd5);
+            }
+
+            try {
+                // 校验后，删除下载的临时文件
+                FileUtils.deleteLocalFile(downloadMergedFile.getAbsolutePath());
+            } catch (IOException e) {
+                log.error("校验后, 删除临时文件失败, tempFilePath={}, errorMsg={}", downloadMergedFile.getAbsolutePath(), e.getMessage());
+            }
         } else {
-            log.error("校验合并文件 MD5 值不一致, 原始文件={}, 合并文件={}", fileMd5, mergeFileMd5);
+            log.error("校验文件大小不一致, 原始文件大小={}, 合并文件大小={}", fileSize, mergedSize);
         }
 
         return false;
