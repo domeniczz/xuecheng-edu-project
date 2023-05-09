@@ -11,7 +11,7 @@ import com.xuecheng.content.model.dto.TeachplanDto;
 import com.xuecheng.content.model.po.Teachplan;
 import com.xuecheng.content.service.TeachplanMediaService;
 import com.xuecheng.content.service.TeachplanService;
-import lombok.extern.slf4j.Slf4j;
+
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -19,6 +19,8 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.List;
+
+import lombok.extern.slf4j.Slf4j;
 
 /**
  * @author Domenic
@@ -89,7 +91,7 @@ public class TeachplanServiceImpl implements TeachplanService {
                 // 删除小章节后，还要删除在课程计划媒资关联表中的数据
                 int resMedia = teachplanMediaService.deleteTeachplanMedia(id);
                 if (resMedia <= 0) {
-                    log.info("课程计划 (id: " + id + ") 没有在媒资关联表中关联的数据");
+                    log.debug("课程计划 (id: " + id + ") 没有在媒资关联表中关联的数据");
                 }
                 // 删除小章节后，将小章节进行重新排序
                 resetPeerOrderby(teachplanToDelete);
@@ -108,7 +110,7 @@ public class TeachplanServiceImpl implements TeachplanService {
                     if (teachplan.getParentid() != 0) {
                         int res = teachplanMediaService.deleteTeachplanMedia(teachplan.getId());
                         if (res <= 0) {
-                            log.info("课程计划 (id: " + teachplan.getId() + ") 没有在媒资关联表中关联的数据");
+                            log.debug("课程计划 (id: " + teachplan.getId() + ") 没有在媒资关联表中关联的数据");
                         }
                     }
                 });
