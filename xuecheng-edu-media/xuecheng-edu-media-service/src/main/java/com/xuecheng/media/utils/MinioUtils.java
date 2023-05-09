@@ -11,6 +11,8 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.FilterInputStream;
 import java.io.InputStream;
+import java.time.LocalDate;
+import java.time.ZoneId;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -306,6 +308,62 @@ public class MinioUtils {
         }
 
         return true;
+    }
+
+    /**
+     * 清理桶中残留的分块文件
+     * @param bucketName 桶名称
+     */
+    public void clearResidualChunkFiles(String bucketName) {
+        try {
+            LocalDate today = LocalDate.now();
+
+            ListObjectsArgs args = ListObjectsArgs.builder()
+                    .bucket(bucketName)
+                    .recursive(true)
+                    .build();
+
+            // results 是所有文件的列表
+            Iterable<Result<Item>> results = minioClient.listObjects(args);
+
+            String lastMd5Path = "";
+            int leftoverChunkFileCount = 0;
+            int leftoverChunkFolderCount = 0;
+
+            // 遍历所有文件，查找残留的分块文件
+            for (Result<Item> result : results) {
+                Item item = result.get();
+                String itemObjectName = item.objectName();
+                String[] pathParts = itemObjectName.split("/");
+
+                // 因为循环的 item 是文件，因此 length - 2 获取的就是该文件所在的文件夹名
+                // 若文件夹名为 "chunk"，则表示该文件是分块文件
+                String folderName = pathParts[pathParts.length - 2];
+                if (pathParts.length > 1 && "chunk".equals(folderName)) {
+                    // 判断是否切换到了另一个源文件的残留分块文件
+                    if (folderName != lastMd5Path) {
+                        lastMd5Path = folderName;
+                        leftoverChunkFolderCount++;
+                    }
+
+                    LocalDate lastModified = item.lastModified().toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
+                    // 若最后修改日期不是今天，则对分块文件进行删除
+                    if (!lastModified.isEqual(today)) {
+                        minioClient.removeObject(RemoveObjectArgs.builder().bucket(bucketName).object(itemObjectName).build());
+                        leftoverChunkFileCount++;
+                        log.debug("删除残留的分块文件: " + itemObjectName);
+                        System.out.println("删除残留的分块文件: " + itemObjectName);
+                    }
+                }
+            }
+
+            log.debug("总共清理了 {} 个残留的分块夹, {} 个残留的分块文件", leftoverChunkFolderCount, leftoverChunkFileCount);
+        } catch (MinioException e) {
+            System.out.println("Error: " + e);
+            log.error("删除残留的 chunk 文件夹出错, bucket={}, errorMsg={}\nhttpTrace={}", bucketName, e.getMessage(), e.httpTrace());
+        } catch (Exception e) {
+            log.error("删除残留的 chunk 文件夹出错, bucket={}, errorMsg={}", bucketName, e.getMessage());
+        }
     }
 
     /**
