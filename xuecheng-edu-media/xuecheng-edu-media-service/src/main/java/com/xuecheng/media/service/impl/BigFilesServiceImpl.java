@@ -196,7 +196,7 @@ public class BigFilesServiceImpl implements BigFilesService {
      * 缺点：需要下载文件，对于大文件会比较耗时
      * </p>
      * @param fileMd5 文件的 MD5 值
-     * @param objectName 对象名 (文件在 minio 中的路径)
+     * @param objectName 对象名 (文件的路径)
      * @return {@link Boolean} {@code true} 校验通过, {@code false} 校验不通过
      */
     private boolean checkFileConsistency(String fileMd5, long fileSize, String objectName) {

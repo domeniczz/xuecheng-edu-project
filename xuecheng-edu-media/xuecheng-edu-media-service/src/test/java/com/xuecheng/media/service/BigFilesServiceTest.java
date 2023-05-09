@@ -200,7 +200,7 @@ public class BigFilesServiceTest {
     }
 
     /**
-     * 获取合并后的文件在 minio 中的路径 (objectName)
+     * 获取合并后的文件的路径 (objectName)
      * @return 文件路径
      */
     private String getMergedFileObjectName() {

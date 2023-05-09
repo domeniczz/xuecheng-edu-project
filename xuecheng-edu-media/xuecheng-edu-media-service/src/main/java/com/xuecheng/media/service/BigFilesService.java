@@ -55,7 +55,7 @@ public interface BigFilesService {
 
     /**
      * 删除 minio 中的文件
-     * @param objectName 对象名 (文件在 minio 中的路径)
+     * @param objectName 对象名 (文件的路径)
      * @return {@link RestResponse}&lt;{@link Boolean}&gt; {@code false} 删除失败，{@code true} 删除成功
      */
     public RestResponse<Boolean> deleteFile(String objectName);

@@ -86,9 +86,9 @@ public class MinioUtils {
     }
 
     /**
-     * 向 minio 查询文件
+     * 查询文件
      * @param bucket 桶名
-     * @param filePath 文件在 minio 中的路径
+     * @param filePath 文件的路径
      * @return 输入流 {@link FilterInputStream}
      */
     public FilterInputStream queryFile(String bucket, String filePath) {
@@ -108,11 +108,11 @@ public class MinioUtils {
     }
 
     /**
-     * 将 媒体/视频 文件上传到 minio
+     * 上传 媒体/视频 文件
      * @param localFilePath 文件本地路径
      * @param mimeType 媒体类型
      * @param bucket 桶名
-     * @param objectName 对象名 (文件在 minio 中的路径)
+     * @param objectName 对象名 (文件的路径)
      * @return {@link ObjectWriteResponse}
      */
     public ObjectWriteResponse uploadFile(String localFilePath, String mimeType, String bucket, String objectName) {
@@ -141,11 +141,9 @@ public class MinioUtils {
     }
 
     /**
-     * <p>
-     * 从 minio 下载文件，保存为临时文件
-     * </p>
+     * 下载文件，保存为临时文件
      * @param bucket 桶名
-     * @param objectName 对象名 (文件在 minio 中的路径)
+     * @param objectName 对象名 (文件的路径)
      * @return 下载后的文件 {@link File}
      */
     public File downloadFile(String bucket, String objectName) {
@@ -174,7 +172,7 @@ public class MinioUtils {
     /**
      * 下载文件的部分内容
      * @param bucket 桶名
-     * @param objectName 对象名 (文件在 minio 中的路径)
+     * @param objectName 对象名 (文件的路径)
      * @param offset 偏移量 (下载文件的多少量)
      * @param length 下载的长度
      * @return 下载的文件内容 {@link File}
@@ -206,9 +204,9 @@ public class MinioUtils {
     }
 
     /**
-     * 将 媒体/视频 文件从 minio 中删除
+     * 删除 媒体/视频 文件
      * @param bucket 桶名
-     * @param objectName 对象名 (文件在 minio 中的路径)
+     * @param objectName 对象名 (文件的路径)
      */
     public boolean deleteFile(String bucket, String objectName) {
 
@@ -232,7 +230,7 @@ public class MinioUtils {
 
     /**
      * <p>
-     * 在 minio 中合并分块 (要求分块文件的命名是其序号 0,1,2...)<br/>
+     * 合并分块 (要求分块文件的命名是其序号 0,1,2...)<br/>
      * 注意：minio 默认的分块文件大小为 5MB，且分块文件大小不能小于 5MB
      * </p>
      * @param bucketName 桶名
@@ -269,7 +267,7 @@ public class MinioUtils {
     }
 
     /**
-     * 清除 minio 上指定文件的分块文件 (要求分块文件的命名是其序号 0,1,2...)
+     * 清除指定文件的分块文件 (要求分块文件的命名是其序号 0,1,2...)
      * @param chunkFileFolderPath 分块文件夹路径
      * @param chunkTotalNum 分块文件总数
      */
@@ -414,7 +412,7 @@ public class MinioUtils {
     /**
      * <p>
      * 获取文件 ETag 值<br/>
-     * minio 中的 etag 和本地计算的 MD5 值可能不一样
+     * 文件的 etag 值和本地计算的文件 MD5 值可能不一样
      * </p>
      * <a href="https://docs.aws.amazon.com/AmazonS3/latest/API/API_Object.html">AWS S3 Object Doc</a>
      * @param bucketName 桶名
@@ -454,7 +452,7 @@ public class MinioUtils {
     }
 
     /**
-     * 从 minio 获取文件的信息
+     * 获取文件信息
      * @param bucketName 桶名
      * @param objectName 对象名 (文件的路径)
      * @return {@link StatObjectResponse}

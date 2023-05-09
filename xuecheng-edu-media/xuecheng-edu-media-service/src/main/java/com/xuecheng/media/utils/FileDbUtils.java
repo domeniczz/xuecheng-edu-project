@@ -37,7 +37,7 @@ public class FileDbUtils {
      * @param dto 文件操作 (上传) 参数 DTO
      * @param bucket 存储桶名
      * @param filename 文件名
-     * @param objectName 对象名 (文件在 minio 中的路径)
+     * @param objectName 对象名 (文件的路径)
      * @return 添加的 {@link MediaFile} 对象
      */
     @Transactional(rollbackFor = Exception.class)
@@ -60,7 +60,7 @@ public class FileDbUtils {
      * @param dto 文件操作 (上传) 参数 DTO
      * @param bucket 存储桶名
      * @param filename 文件名
-     * @param objectName 对象名 (文件在 minio 中的路径)
+     * @param objectName 对象名 (文件的路径)
      * @return 更新后的 {@link MediaFile} 对象
      */
     @Transactional(rollbackFor = Exception.class)
@@ -119,7 +119,7 @@ public class FileDbUtils {
      * @param companyId 机构 ID
      * @param dto 文件操作 (查询) 参数 DTO
      * @param bucket 存储桶名
-     * @param objectName 对象名 (文件在 minio 中的路径)
+     * @param objectName 对象名 (文件的路径)
      * @return 媒体/视频 文件信息的 {@link List}
      */
     public List<MediaFile> getListFileInfo(Long companyId, FileParamsDto dto, String bucket, String objectName) {
