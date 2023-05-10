@@ -14,7 +14,6 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.io.File;
-import java.io.IOException;
 
 import io.minio.ObjectWriteResponse;
 import io.minio.StatObjectResponse;
@@ -100,15 +99,20 @@ public class BigFilesServiceImpl implements BigFilesService {
         // 获取分块文件的路径
         String chunkFilePath = getChunkFileFolderPath(fileMd5) + chunkIndex;
 
+        String chunkMd5 = FileUtils.getFileMd5(new File(localChunkFilePath));
+
         // 获取文件的 mimeType (传入值为 null 或 空 表示没有扩展名)
         String mimeType = FileUtils.getMimeTypeFromExt("");
 
         // 将分块文件上传到 minio
-        if (minioUtils.uploadFile(localChunkFilePath, mimeType, bucket, chunkFilePath) != null) {
+        ObjectWriteResponse resp = minioUtils.uploadFile(localChunkFilePath, mimeType, bucket, chunkFilePath);
+        // 校验分块的 MD5 和 ETag 值是否一致，来判断分块文件一致性是否受损
+        if (resp != null && chunkMd5.equals(resp.etag())) {
             // 上传成功
             log.debug("分块文件 {} 上传成功, bucket={}, fileMd5={}", chunkIndex, bucket, fileMd5);
             return RestResponse.success(true);
         }
+
         // 上传失败
         log.error("分块文件 {} 上传失败, bucket={}, fileMd5={}", chunkIndex, bucket, fileMd5);
         return RestResponse.fail(false, "分块文件上传失败");
@@ -190,11 +194,16 @@ public class BigFilesServiceImpl implements BigFilesService {
     }
 
     /**
-     * <p>
-     * 校验文件的一致性<br/>
-     * 将 Minio 中的文件下载下来，计算 MD5 值，再和本地文件的 MD5 值进行比较<br/>
-     * 缺点：需要下载文件，对于大文件会比较耗时
-     * </p>
+     * 校验文件的一致性
+     * 
+     * <!--
+     * 原本采用的校验方法，是将合成后的文件下载下来，计算 MD5 值并与源文件的 MD5 进行比较，若相等则校验通过
+     * 缺点：对于大文件，此方法太耗时
+     * 
+     * 现在，因为在上传分块时，对每一个分块，都校验了 MD5 值和上传后的 ETag 值的一致性
+     * 因此，分块一致性校验通过，那只需保证合并后文件的大小与源文件一致，即可认为合并后的文件应该没有受损
+     * 优点：对大文件友好，省去上传后再下载的时间
+     * -->
      * @param fileMd5 文件的 MD5 值
      * @param objectName 对象名 (文件的路径)
      * @return {@link Boolean} {@code true} 校验通过, {@code false} 校验不通过
@@ -203,25 +212,26 @@ public class BigFilesServiceImpl implements BigFilesService {
         long mergedSize = minioUtils.getFileSize(bucket, objectName);
         // 若文件大小一致，再进行 MD5 校验
         if (fileSize == mergedSize) {
-            // 下载合并后的文件
+            return true;
+            /* // 下载合并后的文件
             File downloadMergedFile = minioUtils.downloadFile(bucket, objectName);
-
+            
             // 计算合并后文件的 MD5
             String mergeFileMd5 = FileUtils.getFileMd5(downloadMergedFile);
-
+            
             // 比较原始和合并后文件的 MD5
             if (fileMd5.equals(mergeFileMd5)) {
                 return true;
             } else {
                 log.error("校验合并文件 MD5 值不一致, 原始文件={}, 合并文件={}", fileMd5, mergeFileMd5);
             }
-
+            
             try {
                 // 校验后，删除下载的临时文件
-                FileUtils.deleteLocalFile(downloadMergedFile.getAbsolutePath());
+                FileUtils.deleteFile(downloadMergedFile.getAbsolutePath());
             } catch (IOException e) {
                 log.error("校验后, 删除临时文件失败, tempFilePath={}, errorMsg={}", downloadMergedFile.getAbsolutePath(), e.getMessage());
-            }
+            } */
         } else {
             log.error("校验文件大小不一致, 原始文件大小={}, 合并文件大小={}", fileSize, mergedSize);
         }

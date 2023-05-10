@@ -18,7 +18,7 @@ import lombok.extern.slf4j.Slf4j;
  */
 @Component
 @Slf4j
-public class TaskScheduler {
+public class CustomTaskScheduler {
 
     @Autowired
     private ScheduledTaskService scheduledTaskService;

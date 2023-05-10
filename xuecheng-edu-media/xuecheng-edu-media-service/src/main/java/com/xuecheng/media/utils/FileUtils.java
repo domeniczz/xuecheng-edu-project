@@ -211,29 +211,6 @@ public class FileUtils {
     }
 
     /**
-     * 获取文件夹下文件的 MD5 值，将其保存到指定文件中
-     * @param directoryPath 文件所在的目录
-     * @param outputFilePath 输出文件的路径
-     * @throws IOException IO 异常
-     */
-    // public static void getFileMd5AndPersistToFile(String directoryPath, String outputFilePath) throws IOException {
-    //     Path outputPath = Paths.get(outputFilePath);
-    //     try (BufferedWriter writer = Files.newBufferedWriter(outputPath)) {
-    //         Files.list(Paths.get(directoryPath)).forEach(file -> {
-    //             if (Files.isRegularFile(file)) {
-    //                 String md5 = getFileMd5(file.toFile());
-    //                 try {
-    //                     writer.write(file.getFileName() + ": " + md5);
-    //                     writer.newLine();
-    //                 } catch (IOException e) {
-    //                     log.error("将文件 \"{}\" 的 MD5 值写入 \"{}\" 出错", directoryPath, file.toFile().getAbsolutePath());
-    //                 }
-    //             }
-    //         });
-    //     }
-    // }
-
-    /**
      * 将 item 的值写入 txt 文件 (文件保存在临时目录中)
      * @param items {@link T}
      * @param outputFileName 输出文件的名称
