@@ -241,7 +241,7 @@ public class FileChunkMergeTest {
         FileUtils.deleteFolder(chunkFolderPath);
 
         // 删除合并文件
-        FileUtils.deleteLocalFile(sourceFolderPath + mergedFilename);
+        FileUtils.deleteFile(sourceFolderPath + mergedFilename);
 
         /* 删除 Minio 中测试产生的文件 */
 

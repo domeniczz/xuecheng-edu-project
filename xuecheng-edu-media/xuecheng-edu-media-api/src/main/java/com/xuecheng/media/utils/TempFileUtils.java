@@ -1,11 +1,12 @@
 package com.xuecheng.media.utils;
 
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
 import java.io.IOException;
 import java.util.UUID;
+
+import lombok.extern.slf4j.Slf4j;
 
 /**
  * @author Domenic

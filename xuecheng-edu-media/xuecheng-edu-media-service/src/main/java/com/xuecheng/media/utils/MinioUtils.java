@@ -410,6 +410,39 @@ public class MinioUtils {
     }
 
     /**
+     * 获取文件信息
+     * @param bucketName 桶名
+     * @param objectName 对象名 (文件的路径)
+     * @return {@link StatObjectResponse}
+     * @throws Exception 异常
+     */
+    public StatObjectResponse getFileInfo(String bucketName, String objectName) throws Exception {
+        try {
+            StatObjectArgs args = StatObjectArgs.builder().bucket(bucketName).object(objectName).build();
+            // 从 minio 中获取文件信息
+            return minioClient.statObject(args);
+        } catch (MinioException e) {
+            int statusCode = -1;
+            if (e instanceof ErrorResponseException) {
+                // 获取响应状态码
+                statusCode = ((ErrorResponseException) e).response().code();
+            }
+            // 文件不存在
+            if (statusCode == HttpStatus.SC_NOT_FOUND) {
+                log.error("文件不存在, bucket={}, objectName={}, errorMsg={}", bucketName, objectName, e.getMessage());
+                return null;
+            }
+            // 访问被拒绝
+            else if (statusCode == HttpStatus.SC_FORBIDDEN) {
+                log.error("访问文件被拒绝, bucket={}, objectName={}, errorMsg={}", bucketName, objectName, e.getMessage());
+                throw e;
+            } else {
+                throw e;
+            }
+        }
+    }
+
+    /**
      * <p>
      * 获取文件 ETag 值<br/>
      * 文件的 etag 值和本地计算的文件 MD5 值可能不一样
@@ -449,39 +482,6 @@ public class MinioUtils {
             e.printStackTrace();
         }
         return -1;
-    }
-
-    /**
-     * 获取文件信息
-     * @param bucketName 桶名
-     * @param objectName 对象名 (文件的路径)
-     * @return {@link StatObjectResponse}
-     * @throws Exception 异常
-     */
-    public StatObjectResponse getFileInfo(String bucketName, String objectName) throws Exception {
-        try {
-            StatObjectArgs args = StatObjectArgs.builder().bucket(bucketName).object(objectName).build();
-            // 从 minio 中获取文件信息
-            return minioClient.statObject(args);
-        } catch (MinioException e) {
-            int statusCode = -1;
-            if (e instanceof ErrorResponseException) {
-                // 获取响应状态码
-                statusCode = ((ErrorResponseException) e).response().code();
-            }
-            // 文件不存在
-            if (statusCode == HttpStatus.SC_NOT_FOUND) {
-                log.error("文件不存在, bucket={}, objectName={}, errorMsg={}", bucketName, objectName, e.getMessage());
-                return null;
-            }
-            // 访问被拒绝
-            else if (statusCode == HttpStatus.SC_FORBIDDEN) {
-                log.error("访问文件被拒绝, bucket={}, objectName={}, errorMsg={}", bucketName, objectName, e.getMessage());
-                throw e;
-            } else {
-                throw e;
-            }
-        }
     }
 
 }

@@ -5,6 +5,7 @@ import com.j256.simplemagic.ContentInfoUtil;
 
 import org.springframework.http.MediaType;
 
+import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -16,6 +17,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.security.MessageDigest;
 import java.util.Comparator;
+import java.util.List;
 import java.util.UUID;
 import java.util.stream.Stream;
 
@@ -31,11 +33,29 @@ import lombok.extern.slf4j.Slf4j;
 public class FileUtils {
 
     /**
+     * 创建临时文件
+     * @param fileName 文件名
+     * @param fileExt 文件扩展名
+     * @return {@link Path}
+     * @throws IOException IO 异常
+     */
+    public static Path createTempFileIfNotExist(String fileName, String fileExt) throws IOException {
+        String tempDirectoryPath = System.getProperty("java.io.tmpdir");
+        Path filePath = Paths.get(tempDirectoryPath, fileName + fileExt);
+
+        if (Files.notExists(filePath)) {
+            Files.createFile(filePath);
+        }
+
+        return filePath;
+    }
+
+    /**
      * 删除文件
      * @param filePath 文件路径 (路径 + 文件名)
      * @throws IOException IO 异常
      */
-    public static void deleteLocalFile(String filePath) throws IOException {
+    public static void deleteFile(String filePath) throws IOException {
         Path path = Paths.get(filePath);
         if (Files.exists(path) && Files.isRegularFile(path)) {
             Files.delete(path);
@@ -185,8 +205,71 @@ public class FileUtils {
             }
             return new BigInteger(1, md.digest()).toString(16);
         } catch (Exception e) {
-            log.error("获取文件 \"" + file.getName() + "\" MD5 出错!", e);
+            log.error("获取文件 \"{}\" MD5 出错, errorMag={}", file.getName(), e.getMessage());
             return null;
+        }
+    }
+
+    /**
+     * 获取文件夹下文件的 MD5 值，将其保存到指定文件中
+     * @param directoryPath 文件所在的目录
+     * @param outputFilePath 输出文件的路径
+     * @throws IOException IO 异常
+     */
+    // public static void getFileMd5AndPersistToFile(String directoryPath, String outputFilePath) throws IOException {
+    //     Path outputPath = Paths.get(outputFilePath);
+    //     try (BufferedWriter writer = Files.newBufferedWriter(outputPath)) {
+    //         Files.list(Paths.get(directoryPath)).forEach(file -> {
+    //             if (Files.isRegularFile(file)) {
+    //                 String md5 = getFileMd5(file.toFile());
+    //                 try {
+    //                     writer.write(file.getFileName() + ": " + md5);
+    //                     writer.newLine();
+    //                 } catch (IOException e) {
+    //                     log.error("将文件 \"{}\" 的 MD5 值写入 \"{}\" 出错", directoryPath, file.toFile().getAbsolutePath());
+    //                 }
+    //             }
+    //         });
+    //     }
+    // }
+
+    /**
+     * 将 item 的值写入 txt 文件 (文件保存在临时目录中)
+     * @param items {@link T}
+     * @param outputFileName 输出文件的名称
+     * @throws IOException IO 异常
+     */
+    public static <T> void writeItemToFile(T item, String outputFileName) throws IOException {
+        Path outputPath = createTempFileIfNotExist(outputFileName, ".txt");
+        try (BufferedWriter writer = Files.newBufferedWriter(outputPath)) {
+            String val = String.valueOf(item);
+            // 若值为 null 或 为空 或 只包含空格，则跳过
+            // 若不是则写入
+            if (val != null && !val.trim().isEmpty()) {
+                writer.write(val);
+                writer.newLine();
+            }
+        }
+    }
+
+    /**
+     * 将 {@link List}&lt;{@link T}&gt; 中的值一行行写入 txt 文件 (文件保存在临时目录中)
+     * @param items {@link List}&lt;{@link T}&gt;
+     * @param outputFileName 输出文件的名称
+     * @throws IOException IO 异常
+     */
+    public static <T> void writeListToFile(List<T> items, String outputFileName) throws IOException {
+        Path outputPath = createTempFileIfNotExist(outputFileName, ".txt");
+        try (BufferedWriter writer = Files.newBufferedWriter(outputPath)) {
+            for (T item : items) {
+                String val = String.valueOf(item);
+                // 若值为 null 或 为空 或 只包含空格，则跳过
+                // 若不是则写入
+                if (val != null && !val.trim().isEmpty()) {
+                    writer.write(val);
+                    writer.newLine();
+                }
+            }
         }
     }
 
