@@ -4,6 +4,9 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.UUID;
 
 import lombok.extern.slf4j.Slf4j;
@@ -65,8 +68,14 @@ public class TempFileUtils {
      * @param tempFilePath 临时文件的绝对路径
      */
     public static void deleteTempFile(String tempFilePath) {
-        if (!new File(tempFilePath).delete()) {
-            log.error("删除临时文件 {} 出错", tempFilePath);
+        Path filePath = Paths.get("tempFilePath");
+        try {
+            if (Files.exists(filePath)) {
+                Files.delete(filePath);
+            }
+        } catch (IOException e) {
+            log.error("删除临时文件出错, filePath={}, errorMsg={}", tempFilePath, e.getMessage());
+            e.printStackTrace();
         }
     }
 

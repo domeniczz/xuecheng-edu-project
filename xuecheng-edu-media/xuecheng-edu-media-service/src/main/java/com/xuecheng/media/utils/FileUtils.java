@@ -12,14 +12,16 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.math.BigInteger;
 import java.nio.file.DirectoryStream;
+import java.nio.file.FileVisitResult;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.nio.file.SimpleFileVisitor;
+import java.nio.file.attribute.BasicFileAttributes;
 import java.security.MessageDigest;
 import java.util.Comparator;
 import java.util.List;
 import java.util.UUID;
-import java.util.stream.Stream;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -144,22 +146,22 @@ public class FileUtils {
      */
     public static void deleteFolder(String folderPath) throws IOException {
         Path dir = Paths.get(folderPath);
-        if (Files.isDirectory(dir)) {
-            try (Stream<Path> stream = Files.list(dir)) {
-                stream.forEach(file -> {
-                    try {
-                        if (Files.isDirectory(file)) {
-                            deleteFolder(file.toString());
-                        } else {
-                            Files.delete(file);
-                        }
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    }
-                });
+        Files.walkFileTree(dir, new SimpleFileVisitor<Path>() {
+            @Override
+            public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) throws IOException {
+                Files.delete(file);
+                return FileVisitResult.CONTINUE;
             }
-            Files.delete(dir);
-        }
+
+            @Override
+            public FileVisitResult postVisitDirectory(Path dir, IOException e) throws IOException {
+                if (e == null) {
+                    Files.delete(dir);
+                    return FileVisitResult.CONTINUE;
+                }
+                throw e;
+            }
+        });
     }
 
     /**
@@ -209,29 +211,6 @@ public class FileUtils {
             return null;
         }
     }
-
-    /**
-     * 获取文件夹下文件的 MD5 值，将其保存到指定文件中
-     * @param directoryPath 文件所在的目录
-     * @param outputFilePath 输出文件的路径
-     * @throws IOException IO 异常
-     */
-    // public static void getFileMd5AndPersistToFile(String directoryPath, String outputFilePath) throws IOException {
-    //     Path outputPath = Paths.get(outputFilePath);
-    //     try (BufferedWriter writer = Files.newBufferedWriter(outputPath)) {
-    //         Files.list(Paths.get(directoryPath)).forEach(file -> {
-    //             if (Files.isRegularFile(file)) {
-    //                 String md5 = getFileMd5(file.toFile());
-    //                 try {
-    //                     writer.write(file.getFileName() + ": " + md5);
-    //                     writer.newLine();
-    //                 } catch (IOException e) {
-    //                     log.error("将文件 \"{}\" 的 MD5 值写入 \"{}\" 出错", directoryPath, file.toFile().getAbsolutePath());
-    //                 }
-    //             }
-    //         });
-    //     }
-    // }
 
     /**
      * 将 item 的值写入 txt 文件 (文件保存在临时目录中)
