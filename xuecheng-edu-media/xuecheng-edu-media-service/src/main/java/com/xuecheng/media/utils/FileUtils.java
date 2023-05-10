@@ -19,9 +19,14 @@ import java.nio.file.Paths;
 import java.nio.file.SimpleFileVisitor;
 import java.nio.file.attribute.BasicFileAttributes;
 import java.security.MessageDigest;
+import java.text.SimpleDateFormat;
 import java.util.Comparator;
+import java.util.Date;
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -165,6 +170,68 @@ public class FileUtils {
     }
 
     /**
+     * 将 item 的值写入 txt 文件 (文件保存在临时目录中)
+     * @param items {@link T}
+     * @param outputFileName 输出文件的名称
+     * @throws IOException IO 异常
+     */
+    public static <T> void writeItemToFile(T item, String outputFileName) throws IOException {
+        Path outputPath = createTempFileIfNotExist(outputFileName, ".txt");
+        try (BufferedWriter writer = Files.newBufferedWriter(outputPath)) {
+            String val = String.valueOf(item);
+            // 若值为 null 或 为空 或 只包含空格，则跳过
+            // 若不是则写入
+            if (val != null && !val.trim().isEmpty()) {
+                writer.write(val);
+                writer.newLine();
+            }
+        }
+    }
+
+    /**
+     * 将 {@link List}&lt;{@link T}&gt; 中的值一行行写入 txt 文件 (文件保存在临时目录中)
+     * @param items {@link List}&lt;{@link T}&gt;
+     * @param outputFileName 输出文件的名称
+     * @throws IOException IO 异常
+     */
+    public static <T> void writeListToFile(List<T> items, String outputFileName) throws IOException {
+        Path outputPath = createTempFileIfNotExist(outputFileName, ".txt");
+        try (BufferedWriter writer = Files.newBufferedWriter(outputPath)) {
+            for (T item : items) {
+                String val = String.valueOf(item);
+                // 若值为 null 或 为空 或 只包含空格，则跳过
+                // 若不是则写入
+                if (val != null && !val.trim().isEmpty()) {
+                    writer.write(val);
+                    writer.newLine();
+                }
+            }
+        }
+    }
+
+    private static final ThreadLocal<SimpleDateFormat> DATE_FORMATTER = ThreadLocal.withInitial(() -> new SimpleDateFormat());
+
+    /**
+     * 获取文件在 minio 中的默认存储路径，示例：年/月/日
+     * @param year 路径是否包含 年
+     * @param month 路径是否包含 月
+     * @param day 路径是否包含 日
+     * @return 文件夹路径
+     */
+    public static String getFolderPathByDate(boolean year, boolean month, boolean day) {
+        // 使用 ThreadLocal 获取 SimpleDateFormat，能避免每次函数调用时创建新的 SimpleDateFormat 对象
+        DATE_FORMATTER.get().applyPattern(Stream.of(
+                year ? Optional.of("yyyy") : Optional.<String>empty(),
+                month ? Optional.of("MM") : Optional.<String>empty(),
+                day ? Optional.of("dd") : Optional.<String>empty())
+                .filter(Optional::isPresent)
+                .map(Optional::get)
+                .collect(Collectors.joining("/")));
+
+        return DATE_FORMATTER.get().format(new Date()) + "/";
+    }
+
+    /**
      * <p>
      * 根据扩展名获取文件的 mimeType<br/>
      * 传入值为 {@code null} 或 空 表示没有扩展名，返回通用 mimeType，表示是一个字节流
@@ -209,46 +276,6 @@ public class FileUtils {
         } catch (Exception e) {
             log.error("获取文件 \"{}\" MD5 出错, errorMag={}", file.getName(), e.getMessage());
             return null;
-        }
-    }
-
-    /**
-     * 将 item 的值写入 txt 文件 (文件保存在临时目录中)
-     * @param items {@link T}
-     * @param outputFileName 输出文件的名称
-     * @throws IOException IO 异常
-     */
-    public static <T> void writeItemToFile(T item, String outputFileName) throws IOException {
-        Path outputPath = createTempFileIfNotExist(outputFileName, ".txt");
-        try (BufferedWriter writer = Files.newBufferedWriter(outputPath)) {
-            String val = String.valueOf(item);
-            // 若值为 null 或 为空 或 只包含空格，则跳过
-            // 若不是则写入
-            if (val != null && !val.trim().isEmpty()) {
-                writer.write(val);
-                writer.newLine();
-            }
-        }
-    }
-
-    /**
-     * 将 {@link List}&lt;{@link T}&gt; 中的值一行行写入 txt 文件 (文件保存在临时目录中)
-     * @param items {@link List}&lt;{@link T}&gt;
-     * @param outputFileName 输出文件的名称
-     * @throws IOException IO 异常
-     */
-    public static <T> void writeListToFile(List<T> items, String outputFileName) throws IOException {
-        Path outputPath = createTempFileIfNotExist(outputFileName, ".txt");
-        try (BufferedWriter writer = Files.newBufferedWriter(outputPath)) {
-            for (T item : items) {
-                String val = String.valueOf(item);
-                // 若值为 null 或 为空 或 只包含空格，则跳过
-                // 若不是则写入
-                if (val != null && !val.trim().isEmpty()) {
-                    writer.write(val);
-                    writer.newLine();
-                }
-            }
         }
     }
 

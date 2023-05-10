@@ -22,8 +22,6 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.io.File;
-import java.text.SimpleDateFormat;
-import java.util.Date;
 import java.util.List;
 
 import io.minio.ObjectWriteResponse;
@@ -103,7 +101,7 @@ public class MediaFileServiceImpl implements MediaFileService {
         String mimeType = FileUtils.getMimeTypeFromExt(ext);
 
         // 文件存储路径 (年/月/日)
-        String defaultFolderPath = getDefaultFolderPath();
+        String defaultFolderPath = FileUtils.getFolderPathByDate(true, true, true);
 
         // 文件 MD5 值
         String fileMd5 = FileUtils.getFileMd5(new File(tempFilePath));
@@ -164,15 +162,6 @@ public class MediaFileServiceImpl implements MediaFileService {
         }
 
         return null;
-    }
-
-    /**
-     * 获取文件在 minio 中的默认存储路径，示例：年/月/日
-     * @return 文件夹路径
-     */
-    private String getDefaultFolderPath() {
-        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
-        return sdf.format(new Date()).replace("-", "/") + "/";
     }
 
 }
