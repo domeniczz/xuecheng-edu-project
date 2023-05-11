@@ -23,6 +23,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
@@ -54,6 +55,7 @@ public class CourseBaseInfoServiceImpl implements CourseBaseInfoService {
     private CourseTeacherService courseTeacherService;
 
     @Override
+    @Transactional(propagation = Propagation.NOT_SUPPORTED)
     public PageResult<CourseBase> queryCourseBaseList(PageParams pageParams, QueryCourseParamsDto dto) {
         // 创建查询接口
         LambdaQueryWrapper<CourseBase> queryWrapper = new LambdaQueryWrapper<>();
@@ -96,6 +98,7 @@ public class CourseBaseInfoServiceImpl implements CourseBaseInfoService {
      * @return 课程基本信息和课程营销信息 DTO
      */
     @Override
+    @Transactional(propagation = Propagation.NOT_SUPPORTED)
     public CourseBaseInfoDto queryCourseBaseAndMarketInfoById(Long courseId) {
         // 查询课程基本信息
         CourseBase courseBase = courseBaseMapper.selectById(courseId);

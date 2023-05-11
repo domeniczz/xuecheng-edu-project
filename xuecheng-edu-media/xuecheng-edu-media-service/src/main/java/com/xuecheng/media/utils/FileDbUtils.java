@@ -10,6 +10,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
@@ -137,6 +138,7 @@ public class FileDbUtils {
      * @param objectName 对象名 (文件的路径)
      * @return 媒体/视频 文件信息的 {@link List}
      */
+    @Transactional(propagation = Propagation.NOT_SUPPORTED)
     public List<MediaFile> getListFileInfo(Long companyId, FileParamsDto dto, String bucket, String objectName) {
         if (dto != null) {
             return mediaFileMapper.selectList(new LambdaQueryWrapper<MediaFile>()
@@ -169,6 +171,7 @@ public class FileDbUtils {
      * @param fileMd5 文件 MD5 值
      * @return 文件信息对象 {@link MediaFile}，若不存在则返回 null
      */
+    @Transactional(propagation = Propagation.NOT_SUPPORTED)
     public MediaFile getOneFileInfo(String fileMd5) {
         if (fileMd5 == null || fileMd5.trim().isEmpty()) {
             log.error("传入的文件 MD5 值为空");
