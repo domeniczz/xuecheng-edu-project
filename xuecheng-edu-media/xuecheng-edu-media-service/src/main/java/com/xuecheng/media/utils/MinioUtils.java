@@ -11,7 +11,7 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.FilterInputStream;
 import java.io.InputStream;
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.LinkedList;
 import java.util.List;
@@ -309,12 +309,15 @@ public class MinioUtils {
     }
 
     /**
-     * 清理桶中残留的分块文件
+     * <p>
+     * 清理桶中残留的分块文件 (用于定时清理任务)<br/>
+     * 只清理存在时间超过 24 小时的分块文件
+     * </p>
      * @param bucketName 桶名称
      */
     public void clearResidualChunkFiles(String bucketName) {
         try {
-            LocalDate today = LocalDate.now();
+            LocalDateTime now = LocalDateTime.now();
 
             ListObjectsArgs args = ListObjectsArgs.builder()
                     .bucket(bucketName)
@@ -344,9 +347,9 @@ public class MinioUtils {
                         leftoverChunkFolderCount++;
                     }
 
-                    LocalDate lastModified = item.lastModified().toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
-                    // 若最后修改日期不是今天，则对分块文件进行删除
-                    if (!lastModified.isEqual(today)) {
+                    LocalDateTime lastModified = item.lastModified().toInstant().atZone(ZoneId.systemDefault()).toLocalDateTime();
+                    // 若最后修改日期比当前时间早 24 小时，则对分块文件进行删除
+                    if (lastModified.isBefore(now.minusHours(24))) {
                         minioClient.removeObject(RemoveObjectArgs.builder().bucket(bucketName).object(itemObjectName).build());
                         leftoverChunkFileCount++;
                         log.debug("删除残留的分块文件: " + itemObjectName);
