@@ -148,7 +148,7 @@ public class BigFilesServiceTest {
     @Order(7)
     void test_deleteFile() {
         RestResponse<Boolean> res = bigFilesService.deleteFile(getMergedFileObjectName());
-        Assertions.assertTrue(res.getResult(), "文件删除失败");
+        Assertions.assertTrue(res.getResult(), "合并后的文件删除失败");
     }
 
     /**

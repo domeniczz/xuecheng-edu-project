@@ -227,7 +227,7 @@ public class FileChunkMergeTest {
     @Order(4)
     void test_mergeChunksOnMinio() throws Exception {
         // 合并文件
-        ObjectWriteResponse resp = minioUtils.mergeChunks(bucketName, mergedFilenameMinio, objectFolderPathMinio, chunkTotalNum);
+        ObjectWriteResponse resp = minioUtils.mergeChunks(bucketName, mergedFilenameMinio, objectFolderPathMinio);
         Assertions.assertNotNull(resp, "合并文件失败");
         Assertions.assertEquals(resp.object(), mergedFilenameMinio);
     }
@@ -246,7 +246,7 @@ public class FileChunkMergeTest {
         /* 删除 Minio 中测试产生的文件 */
 
         // 删除分块文件夹
-        minioUtils.clearChunkFiles(bucketName, objectFolderPathMinio, chunkTotalNum);
+        minioUtils.clearFolderNonRecursively(bucketName, chunkFolderPath);
 
         // 删除和合并后的文件
         minioUtils.deleteFile(bucketName, mergedFilenameMinio);

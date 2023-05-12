@@ -13,10 +13,9 @@ import java.io.FilterInputStream;
 import java.io.InputStream;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
+import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 import io.minio.BucketExistsArgs;
 import io.minio.ComposeObjectArgs;
@@ -28,15 +27,12 @@ import io.minio.MinioClient;
 import io.minio.ObjectWriteResponse;
 import io.minio.RemoveBucketArgs;
 import io.minio.RemoveObjectArgs;
-import io.minio.RemoveObjectsArgs;
 import io.minio.Result;
 import io.minio.StatObjectArgs;
 import io.minio.StatObjectResponse;
 import io.minio.UploadObjectArgs;
 import io.minio.errors.ErrorResponseException;
 import io.minio.errors.MinioException;
-import io.minio.messages.DeleteError;
-import io.minio.messages.DeleteObject;
 import io.minio.messages.Item;
 import lombok.extern.slf4j.Slf4j;
 
@@ -102,7 +98,6 @@ public class MinioUtils {
             return minioClient.getObject(args);
         } catch (Exception e) {
             log.error("向 minio 查询文件出错 (" + filePath + ")");
-            e.printStackTrace();
             return null;
         }
     }
@@ -134,7 +129,6 @@ public class MinioUtils {
             return res;
         } catch (Exception e) {
             log.error("上传文件到 minio 出错, bucket={}, objectName={}", bucket, objectName);
-            e.printStackTrace();
             XueChengEduException.cast("上传文件到 minio 出错，未知错误!");
             return null;
         }
@@ -164,7 +158,6 @@ public class MinioUtils {
             return file;
         } catch (Exception e) {
             log.error("从 minio 下载文件出错, bucket={}, objectName={}", bucket, objectName);
-            e.printStackTrace();
         }
         return null;
     }
@@ -198,7 +191,6 @@ public class MinioUtils {
             return file;
         } catch (Exception e) {
             log.error("从 minio 下载部分发文件出错, bucket={}, objectName={}", bucket, objectName);
-            e.printStackTrace();
         }
         return null;
     }
@@ -222,7 +214,6 @@ public class MinioUtils {
             return true;
         } catch (Exception e) {
             log.error("从 minio 删除文件出错, bucket={}, objectName={}, errorMsg={}", bucket, objectName, e.getMessage());
-            e.printStackTrace();
             XueChengEduException.cast("删除文件失败");
             return false;
         }
@@ -230,160 +221,103 @@ public class MinioUtils {
 
     /**
      * <p>
-     * 合并分块 (要求分块文件的命名是其序号 0,1,2...)<br/>
+     * 合并分块<br/>
      * 注意：minio 默认的分块文件大小为 5MB，且分块文件大小不能小于 5MB
      * </p>
      * @param bucketName 桶名
      * @param objectName 对象名 (合并后的文件的路径)
-     * @param sources {@link List}&lt;{@link ComposeSource}&gt; 源文件列表 (分块文件)
-     * @return {@link ObjectWriteResponse}
+     * @param chunkFolderPath 分块文件的路径
+     * @return {@link ObjectWriteResponse} 合并操作的响应
      */
-    public ObjectWriteResponse mergeChunks(String bucketName, String objectName, String chunkFolderPath, int chunkTotalNum) {
-
-        // 列出所有的分块文件
-        List<ComposeSource> sources = Stream.iterate(0, i -> ++i).limit(chunkTotalNum)
-                .map(i -> ComposeSource.builder()
-                        .bucket(bucketName)
-                        .object(chunkFolderPath + i)
-                        .build())
-                .collect(Collectors.toList());
-
-        ComposeObjectArgs composeObjectArgs = ComposeObjectArgs.builder()
-                .bucket(bucketName)
-                // 合并后的文件的 objectname
-                .object(objectName)
-                // 指定源文件
-                .sources(sources)
-                .build();
-
-        // 报错 size 1048576 must be greater than 5242880，minio 默认的分块文件大小为 5M
+    public ObjectWriteResponse mergeChunks(String bucketName, String objectName, String chunkFolderPath) {
         try {
-            return minioClient.composeObject(composeObjectArgs);
+            List<ComposeSource> sources = new ArrayList<>();
+
+            Iterable<Result<Item>> listChunks = minioClient.listObjects(ListObjectsArgs.builder()
+                    .bucket(bucketName)
+                    .prefix(chunkFolderPath)
+                    // 非递归
+                    .recursive(false)
+                    .build());
+
+            for (Result<Item> result : listChunks) {
+                sources.add(ComposeSource.builder()
+                        .bucket(bucketName)
+                        .object(result.get().objectName())
+                        .build());
+            }
+
+            ComposeObjectArgs args = ComposeObjectArgs.builder()
+                    .bucket(bucketName)
+                    // 合并后的文件的 objectname
+                    .object(objectName)
+                    // 指定源文件
+                    .sources(sources)
+                    .build();
+
+            ObjectWriteResponse resp = minioClient.composeObject(args);
+            log.debug("合并文件成功, bucket={}, objectName={}", bucketName, objectName);
+
+            return resp;
         } catch (Exception e) {
             log.error("合并文件出错, bucket={}, objectName={}, errorMsg={}", bucketName, objectName, e.getMessage());
-            e.printStackTrace();
             return null;
         }
     }
 
     /**
-     * 清除指定文件的分块文件 (要求分块文件的命名是其序号 0,1,2...)
-     * @param chunkFileFolderPath 分块文件夹路径
-     * @param chunkTotalNum 分块文件总数
-     */
-    public boolean clearChunkFiles(String bucketName, String chunkFileFolderPath, int chunkTotalNum) {
-        Iterable<DeleteObject> objectsToDelete = Stream.iterate(0, i -> ++i).limit(chunkTotalNum)
-                .map(i -> new DeleteObject(chunkFileFolderPath + i))
-                .collect(Collectors.toList());
-
-        RemoveObjectsArgs removeObjectsArgs = RemoveObjectsArgs.builder()
-                .bucket(bucketName)
-                .objects(objectsToDelete)
-                .build();
-
-        Iterable<Result<DeleteError>> results = null;
-        try {
-            results = minioClient.removeObjects(removeObjectsArgs);
-        } catch (Exception e) {
-            log.error("清除分块文件出错, bucket={}, objectName={}, errorMsg={}", bucketName, chunkFileFolderPath, e.getMessage());
-            e.printStackTrace();
-            return false;
-        }
-
-        // 遍历文件删除的结果，并检查在此过程中是否出现任何错误 (要经过遍历之后，才真正删除分块文件)
-        for (Result<DeleteError> result : results) {
-            try {
-                result.get();
-            } catch (Exception e) {
-                String failedObjectName = "";
-                if (e instanceof ErrorResponseException) {
-                    failedObjectName = ((ErrorResponseException) e).errorResponse().objectName();
-                }
-                log.error("清除分块文件出错, bucket={}, objectName={}, errorMsg={}", bucketName, failedObjectName, e.getMessage());
-                e.printStackTrace();
-                return false;
-            }
-        }
-
-        return true;
-    }
-
-    /**
-     * <p>
-     * 清理桶中残留的分块文件 (用于定时清理任务)<br/>
-     * 只清理存在时间超过 24 小时的分块文件
-     * </p>
-     * @param bucketName 桶名称
-     */
-    public void clearResidualChunkFiles(String bucketName) {
-        try {
-            LocalDateTime now = LocalDateTime.now();
-
-            ListObjectsArgs args = ListObjectsArgs.builder()
-                    .bucket(bucketName)
-                    .recursive(true)
-                    .build();
-
-            // results 是所有文件的列表
-            Iterable<Result<Item>> results = minioClient.listObjects(args);
-
-            String lastMd5Path = "";
-            int leftoverChunkFileCount = 0;
-            int leftoverChunkFolderCount = 0;
-
-            // 遍历所有文件，查找残留的分块文件
-            for (Result<Item> result : results) {
-                Item item = result.get();
-                String itemObjectName = item.objectName();
-                String[] pathParts = itemObjectName.split("/");
-
-                // 因为循环的 item 是文件，因此 length - 2 获取的就是该文件所在的文件夹名
-                // 若文件夹名为 "chunk"，则表示该文件是分块文件
-                String folderName = pathParts[pathParts.length - 2];
-                if (pathParts.length > 1 && "chunk".equals(folderName)) {
-                    // 判断是否切换到了另一个源文件的残留分块文件
-                    if (folderName != lastMd5Path) {
-                        lastMd5Path = folderName;
-                        leftoverChunkFolderCount++;
-                    }
-
-                    LocalDateTime lastModified = item.lastModified().toInstant().atZone(ZoneId.systemDefault()).toLocalDateTime();
-                    // 若最后修改日期比当前时间早 24 小时，则对分块文件进行删除
-                    if (lastModified.isBefore(now.minusHours(24))) {
-                        minioClient.removeObject(RemoveObjectArgs.builder().bucket(bucketName).object(itemObjectName).build());
-                        leftoverChunkFileCount++;
-                        log.debug("删除残留的分块文件: " + itemObjectName);
-                        System.out.println("删除残留的分块文件: " + itemObjectName);
-                    }
-                }
-            }
-
-            log.debug("总共清理了 {} 个残留的分块夹, {} 个残留的分块文件", leftoverChunkFolderCount, leftoverChunkFileCount);
-        } catch (MinioException e) {
-            System.out.println("Error: " + e);
-            log.error("删除残留的 chunk 文件夹出错, bucket={}, errorMsg={}\nhttpTrace={}", bucketName, e.getMessage(), e.httpTrace());
-        } catch (Exception e) {
-            log.error("删除残留的 chunk 文件夹出错, bucket={}, errorMsg={}", bucketName, e.getMessage());
-        }
-    }
-
-    /**
-     * 递归地删除文件夹
+     * (非递归地) 清除指定文件夹下的所有文件
      * @param bucketName 桶名
-     * @param folderName 文件夹路径
+     * @param folderPath 文件夹路径
      * @return {@link Boolean} {@code true} 成功, {@code false} 失败
      */
-    public boolean deleteFolderRecursively(String bucketName, String folderName) {
+    public boolean clearFolderNonRecursively(String bucketName, String folderPath) {
         try {
             // 获取文件夹下的所有文件
             Iterable<Result<Item>> results = minioClient.listObjects(ListObjectsArgs.builder()
                     .bucket(bucketName)
-                    .prefix(folderName)
+                    .prefix(folderPath)
+                    // 非递归
+                    .recursive(false)
+                    .build());
+
+            // 遍历所有文件
+            for (Result<Item> result : results) {
+                Item item = result.get();
+                minioClient.removeObject(RemoveObjectArgs.builder()
+                        .bucket(bucketName)
+                        .object(item.objectName())
+                        .build());
+            }
+
+            log.debug("非递归地清除文件夹 ({}) 成功, bucket={}", folderPath, bucketName);
+            return true;
+        } catch (Exception e) {
+            log.error("非递归地清除文件夹 ({}) 出错, bucket={}, errorMsg={}", folderPath, bucketName, e.getMessage());
+        }
+
+        return false;
+    }
+
+    /**
+    * (递归地) 清除文件夹下的所有文件
+    * @param bucketName 桶名
+    * @param folderPath 文件夹路径
+    * @return {@link Boolean} {@code true} 成功, {@code false} 失败
+    */
+    public boolean clearFolderRecursively(String bucketName, String folderPath) {
+        try {
+            // 获取文件夹下的所有文件
+            Iterable<Result<Item>> results = minioClient.listObjects(ListObjectsArgs.builder()
+                    .bucket(bucketName)
+                    .prefix(folderPath)
+                    // 递归
                     .recursive(true)
                     .build());
 
             // 封装删除文件的参数对象 RemoveObjectArgs 到 List 集合中
             List<RemoveObjectArgs> objectsToDelete = new LinkedList<>();
+            // 遍历所有文件
             for (Result<Item> result : results) {
                 Item item = result.get();
                 objectsToDelete.add(RemoveObjectArgs.builder()
@@ -399,17 +333,82 @@ public class MinioUtils {
                     try {
                         minioClient.removeObject(o);
                     } catch (Exception e) {
-                        log.error("从 Minio 删除文件 ({}) 失败, bucket={}, folder={}, errorMsg={}", o.object(), bucketName, folderName, e.getMessage());
-                        e.printStackTrace();
+                        log.error("递归地清除文件 ({}) 失败, bucket={}, folder={}, errorMsg={}", o.object(), bucketName, folderPath, e.getMessage());
                     }
                 }
-                log.debug("从 minio 删除文件夹成功, bucket={}, folder={}", bucketName, folderName);
+                log.debug("递归地清除文件夹 ({}) 成功, bucket={}", folderPath, bucketName);
                 return true;
             }
         } catch (Exception e) {
-            log.error("从 minio 删除文件夹出错, bucket={}, folder={}, errorMsg={}", bucketName, folderName, e.getMessage());
+            log.error("递归地清除文件夹 ({}) 出错, bucket={}, errorMsg={}", folderPath, bucketName, e.getMessage());
         }
         return false;
+    }
+
+    /**
+     * <p>
+     * 清理桶中残留的分块文件 (用于定时清理任务)<br/>
+     * 只清理存在时间超过 24 小时的分块文件
+     * </p>
+     * @param bucketName 桶名称
+     */
+    public void clearResidualChunkFiles(String bucketName) {
+        try {
+            // 获取所有文件
+            Iterable<Result<Item>> results = minioClient.listObjects(ListObjectsArgs.builder()
+                    .bucket(bucketName)
+                    // 递归
+                    .recursive(true)
+                    .build());
+
+            LocalDateTime now = LocalDateTime.now();
+            String lastMd5Path = "";
+            // 记录被清理的，分块文件数量
+            int leftoverChunkFileCount = 0;
+            // 记录被清理的，分块文件夹数量
+            int leftoverChunkFolderCount = 0;
+            // 记录同一个分块文件夹中的文件，最近的一次修改时间 (初始化最早的时间: -999999999-01-01T00:00:00)
+            LocalDateTime latestLastModified = LocalDateTime.MIN;
+
+            // 遍历所有文件，查找残留的分块文件
+            for (Result<Item> result : results) {
+                Item item = result.get();
+                String itemObjectName = item.objectName();
+                String[] pathParts = itemObjectName.split("/");
+
+                // 因为循环的 item 是文件，因此 length - 2 获取的就是该文件所在的文件夹名
+                // 若文件夹名为 "chunk"，则表示该文件是分块文件
+                String folderName = pathParts[pathParts.length - 2];
+                // 从文件路径中获取分块文件的源文件的 MD5 值
+                String currentMd5Path = pathParts[pathParts.length - 3];
+                if (pathParts.length > 1 && "chunk".equals(folderName)) {
+                    // 判断是否切换到了另一个源文件的残留分块文件夹
+                    if (currentMd5Path != lastMd5Path) {
+                        lastMd5Path = currentMd5Path;
+                        leftoverChunkFolderCount++;
+                        // 重置为最早的时间
+                        latestLastModified = LocalDateTime.MIN;
+                    }
+
+                    LocalDateTime lastModified = item.lastModified().toInstant().atZone(ZoneId.systemDefault()).toLocalDateTime();
+                    latestLastModified = lastModified.isAfter(latestLastModified) ? lastModified : latestLastModified;
+
+                    // 若最后修改日期比当前时间早 24 小时，则对分块文件进行删除
+                    if (latestLastModified.isBefore(now.minusHours(24))) {
+                        minioClient.removeObject(RemoveObjectArgs.builder().bucket(bucketName).object(itemObjectName).build());
+                        leftoverChunkFileCount++;
+                        log.debug("删除残留的分块文件: " + itemObjectName);
+                        System.out.println("删除残留的分块文件: " + itemObjectName);
+                    }
+                }
+            }
+
+            log.debug("总共清理了 {} 个残留的分块文件夹, 删除了 {} 个残留的分块文件", leftoverChunkFolderCount, leftoverChunkFileCount);
+        } catch (MinioException e) {
+            log.error("删除残留的 chunk 文件出错, bucket={}, errorMsg={}\nhttpTrace={}", bucketName, e.getMessage(), e.httpTrace());
+        } catch (Exception e) {
+            log.error("删除残留的 chunk 文件出错, bucket={}, errorMsg={}", bucketName, e.getMessage());
+        }
     }
 
     /**
@@ -462,7 +461,6 @@ public class MinioUtils {
             return getFileInfo(bucketName, objectName).etag();
         } catch (MinioException e) {
             log.error("获取文件 MD5 出错, bucket={}, objectName={}, errorMsg={}\nhttpTrace={}", bucketName, objectName, e.getMessage(), e.httpTrace());
-            e.printStackTrace();
         }
         return null;
     }
@@ -479,10 +477,8 @@ public class MinioUtils {
             return getFileInfo(bucketName, objectName).size();
         } catch (MinioException e) {
             log.error("获取文件大小出错, bucket={}, objectName={}, errorMsg={}\nhttpTrace={}", bucketName, objectName, e.getMessage(), e.httpTrace());
-            e.printStackTrace();
         } catch (Exception e) {
             log.error("获取文件大小出错, bucket={}, objectName={}, errorMsg={}", bucketName, objectName, e.getMessage());
-            e.printStackTrace();
         }
         return -1;
     }

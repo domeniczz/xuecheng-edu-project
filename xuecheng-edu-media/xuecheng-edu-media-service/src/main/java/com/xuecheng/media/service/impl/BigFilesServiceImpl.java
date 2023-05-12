@@ -80,6 +80,7 @@ public class BigFilesServiceImpl implements BigFilesService {
         String chunkFilePath = getChunkFileFolderPath(fileMd5) + chunkIndex;
 
         try {
+            // 获取分块文件的信息
             StatObjectResponse fileInfo = minioUtils.getFileInfo(bucket, chunkFilePath);
             // 文件不存在
             if (fileInfo != null) {
@@ -99,6 +100,7 @@ public class BigFilesServiceImpl implements BigFilesService {
         // 获取分块文件的路径
         String chunkFilePath = getChunkFileFolderPath(fileMd5) + chunkIndex;
 
+        // 获取分块文件的 MD5
         String chunkMd5 = FileUtils.getFileMd5(new File(localChunkFilePath));
 
         // 获取文件的 mimeType (传入值为 null 或 空 表示没有扩展名)
@@ -132,7 +134,7 @@ public class BigFilesServiceImpl implements BigFilesService {
 
         // ========== 合并文件 ==========
 
-        ObjectWriteResponse resp = minioUtils.mergeChunks(bucket, objectName, chunkFolderPath, chunkTotalNum);
+        ObjectWriteResponse resp = minioUtils.mergeChunks(bucket, objectName, chunkFolderPath);
         if (resp == null) {
             return RestResponse.fail(false, "合并文件异常");
         }
@@ -168,7 +170,7 @@ public class BigFilesServiceImpl implements BigFilesService {
 
         // ========== 清理分块文件 ==========
 
-        if (minioUtils.clearChunkFiles(bucket, chunkFolderPath, chunkTotalNum)) {
+        if (minioUtils.clearFolderNonRecursively(bucket, chunkFolderPath)) {
             return RestResponse.success(true);
         }
         return RestResponse.success(false, "清理分块文件失败");
