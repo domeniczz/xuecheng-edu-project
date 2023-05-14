@@ -43,7 +43,7 @@ public class FileDbUtils {
      */
     @Transactional(rollbackFor = Exception.class)
     public MediaFile addFileInfo(Long companyId, String fileMd5, FileParamsDto dto, String bucket, String filename, String objectName) {
-        if (fileMd5 == null || fileMd5.trim().isEmpty()) {
+        if (StringUtils.isBlank(fileMd5)) {
             log.error("传入的文件 MD5 值为空, objectName={}, FileParamsDto={}", objectName, dto);
             throw new RuntimeException("传入的文件 MD5 值为空");
         }
@@ -71,7 +71,7 @@ public class FileDbUtils {
      */
     @Transactional(rollbackFor = Exception.class)
     public MediaFile updateFileInfo(Long companyId, String fileMd5, FileParamsDto dto, String bucket, String filename, String objectName) {
-        if (fileMd5 == null || fileMd5.trim().isEmpty()) {
+        if (StringUtils.isBlank(fileMd5)) {
             log.error("传入的文件 MD5 值为空, objectName={}, FileParamsDto={}", objectName, dto);
             throw new RuntimeException("传入的文件 MD5 值为空");
         }
@@ -173,7 +173,7 @@ public class FileDbUtils {
      */
     @Transactional(propagation = Propagation.NOT_SUPPORTED)
     public MediaFile getOneFileInfo(String fileMd5) {
-        if (fileMd5 == null || fileMd5.trim().isEmpty()) {
+        if (StringUtils.isBlank(fileMd5)) {
             log.error("传入的文件 MD5 值为空");
             throw new RuntimeException("传入的文件 MD5 值为空");
         }
@@ -182,7 +182,7 @@ public class FileDbUtils {
     }
 
     private MediaFile saveFileInfo(Long companyId, String fileMd5, FileParamsDto dto, String bucket, String filename, String objectName) {
-        if (fileMd5 != null && !fileMd5.trim().isEmpty()) {
+        if (!StringUtils.isBlank(fileMd5)) {
             MediaFile mediaFile = new MediaFile();
             BeanUtils.copyProperties(dto, mediaFile);
 

@@ -1,5 +1,6 @@
 package com.xuecheng.media.others;
 
+import com.xuecheng.base.utils.FileUtil;
 import com.xuecheng.media.utils.FileUtils;
 import com.xuecheng.media.utils.MinioUtils;
 
@@ -90,8 +91,8 @@ public class FileChunkMergeTest {
         }
 
         // 清空分块文件夹
-        if (!FileUtils.isFolderEmpty(chunkFolderPath)) {
-            FileUtils.clearFolderRecursively(chunkFolderPath);
+        if (!FileUtil.isFolderEmpty(chunkFolderPath)) {
+            FileUtil.clearFolderRecursively(chunkFolderPath);
         }
 
         // minio 中的桶名，示例：testbucket56
@@ -238,10 +239,10 @@ public class FileChunkMergeTest {
         /* 删除本地测试产生的文件 */
 
         // 删除分块文件
-        FileUtils.deleteFolder(chunkFolderPath);
+        FileUtil.deleteFolder(chunkFolderPath);
 
         // 删除合并文件
-        FileUtils.deleteFile(sourceFolderPath + mergedFilename);
+        FileUtil.deleteFile(sourceFolderPath + mergedFilename);
 
         /* 删除 Minio 中测试产生的文件 */
 

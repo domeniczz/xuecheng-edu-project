@@ -1,6 +1,7 @@
 package com.xuecheng.media.service;
 
 import com.xuecheng.base.model.RestResponse;
+import com.xuecheng.base.utils.FileUtil;
 import com.xuecheng.media.model.dto.FileParamsDto;
 import com.xuecheng.media.utils.FileUtils;
 
@@ -86,8 +87,8 @@ public class BigFilesServiceTest {
         }
 
         // 清空分块文件夹
-        if (!FileUtils.isFolderEmpty(chunkFolderPath)) {
-            FileUtils.clearFolderRecursively(chunkFolderPath);
+        if (!FileUtil.isFolderEmpty(chunkFolderPath)) {
+            FileUtil.clearFolderRecursively(chunkFolderPath);
         }
 
         // 准备测试文件的本地分块文件
