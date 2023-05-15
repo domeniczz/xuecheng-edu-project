@@ -1,9 +1,15 @@
 package com.xuecheng.base.utils;
 
+import com.xuecheng.base.config.CustomPropertiesReader;
+
 import org.apache.commons.lang3.StringUtils;
 
+import java.io.BufferedInputStream;
 import java.io.BufferedWriter;
+import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.nio.file.DirectoryStream;
 import java.nio.file.FileVisitResult;
@@ -22,6 +28,81 @@ import java.util.List;
  * @Created by Domenic
  */
 public class FileUtil {
+
+    /**
+     * 读取文件内容，并作为字符串返回
+     * @param filePath 文件路径
+     * @return 文件内容 {@link String}
+     * @throws IOException IO 异常
+     */
+    public static String readFileAsString(String filePath) throws IOException {
+        Path file = Paths.get(filePath);
+        if (!Files.exists(file)) {
+            throw new FileNotFoundException("File not found, filePath=(" + filePath + ")");
+        }
+
+        long fileSize = Files.size(file);
+        // 文件最大字节数
+        long maxLen = CustomPropertiesReader.MAX_FILE_READ_SIZE;
+
+        if (fileSize > maxLen) {
+            throw new IOException("File is too large, it should be less than " + maxLen + ", filePath=(" + filePath + ")");
+        }
+
+        StringBuilder sb = new StringBuilder((int) (fileSize));
+
+        // 使用输入流来读取文件内容
+        try (FileInputStream fis = new FileInputStream(filePath)) {
+            // 创建一个的缓冲区
+            byte[] buffer = new byte[10240];
+            // 记录实际读取的字节数
+            int readBytes = -1;
+
+            while ((readBytes = fis.read(buffer)) != -1) {
+                sb.append(new String(buffer, 0, readBytes));
+            }
+        }
+
+        return sb.toString();
+    }
+
+    /**
+     * 读取文件内容，并作为字节数组返回
+     * @param filePath 文件路径
+     * @return 文件内容 {@link Byte}[]
+     * @throws IOException IO 异常
+     */
+    public static byte[] readFileAsBytes(String filePath) throws IOException {
+        Path file = Paths.get(filePath);
+        if (!Files.exists(file)) {
+            throw new FileNotFoundException("File not found, filepath=(" + filePath + ")");
+        }
+
+        long fileSize = Files.size(file);
+        // 文件最大字节数
+        long maxLen = CustomPropertiesReader.MAX_FILE_READ_SIZE;
+
+        if (fileSize > maxLen) {
+            throw new IOException("File is too large, it should be less than " + maxLen + ", filePath=(" + filePath + ")");
+        }
+
+        // 使用输入流来读取文件内容
+        try (ByteArrayOutputStream bos = new ByteArrayOutputStream((int) fileSize);
+                BufferedInputStream bis = new BufferedInputStream(file.toUri().toURL().openStream())) {
+            int bufSize = 10240;
+            // 创建一个的缓冲区
+            byte[] buffer = new byte[bufSize];
+            // 记录实际读取的字节数
+            int readBytes = -1;
+
+            while ((readBytes = bis.read(buffer, 0, bufSize)) != -1) {
+                bos.write(buffer, 0, readBytes);
+            }
+
+            byte[] res = bos.toByteArray();
+            return res;
+        }
+    }
 
     /**
      * 创建临时文件
@@ -165,7 +246,7 @@ public class FileUtil {
             String val = String.valueOf(item);
             // 若值为 null 或 为空 或 只包含空格，则跳过
             // 若不是则写入
-            if (val != null && !StringUtils.isBlank(val)) {
+            if (!StringUtils.isBlank(val)) {
                 writer.write(val);
                 writer.newLine();
             }
@@ -185,7 +266,7 @@ public class FileUtil {
                 String val = String.valueOf(item);
                 // 若值为 null 或 为空 或 只包含空格，则跳过
                 // 若不是则写入
-                if (val != null && !StringUtils.isBlank(val)) {
+                if (!StringUtils.isBlank(val)) {
                     writer.write(val);
                     writer.newLine();
                 }
