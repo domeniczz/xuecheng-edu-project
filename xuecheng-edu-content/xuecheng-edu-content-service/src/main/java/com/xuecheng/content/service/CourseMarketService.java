@@ -18,7 +18,7 @@ public interface CourseMarketService {
     CourseMarket query(Long courseId);
 
     /**
-     * 保存课程营销信息（有则更新，无则添加）
+     * 保存课程营销信息 (有则更新，无则添加)
      * @param courseMarket 课程营销信息
      * @return 1：更新成功 0：更新失败
      */

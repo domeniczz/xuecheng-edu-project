@@ -18,7 +18,7 @@ import com.xuecheng.content.service.CourseCategoryService;
 import com.xuecheng.content.service.CourseMarketService;
 import com.xuecheng.content.service.CourseTeacherService;
 import com.xuecheng.content.service.TeachplanService;
-import lombok.extern.slf4j.Slf4j;
+
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,6 +28,8 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.List;
+
+import lombok.extern.slf4j.Slf4j;
 
 /**
  * @author Domenic
@@ -156,7 +158,7 @@ public class CourseBaseInfoServiceImpl implements CourseBaseInfoService {
         BeanUtils.copyProperties(dto, courseMarket);
 
         Long courseId = courseBase.getId();
-        // 设置课程 id（主键）
+        // 设置课程 id (主键)
         courseMarket.setId(courseId);
         // 创建营销信息
         CourseMarket marketRes = courseMarketService.saveCourseMarket(courseMarket);
@@ -209,7 +211,7 @@ public class CourseBaseInfoServiceImpl implements CourseBaseInfoService {
         CourseMarket courseMarket = new CourseMarket();
         BeanUtils.copyProperties(dto, courseMarket);
 
-        // 设置课程 id（主键）
+        // 设置课程 id (主键)
         courseMarket.setId(courseId);
         // 更新营销信息
         CourseMarket marketRes = courseMarketService.saveCourseMarket(courseMarket);
@@ -234,7 +236,7 @@ public class CourseBaseInfoServiceImpl implements CourseBaseInfoService {
             courseBaseMapper.deleteById(courseId);
             // 删除课程营销信息
             courseMarketService.delete(courseId);
-            // 删除课程计划（章节）信息
+            // 删除课程计划 (章节)信息
             teachplanService.deleteAll(courseId);
             // 删除课程教师信息
             courseTeacherService.deleteAll(courseId);

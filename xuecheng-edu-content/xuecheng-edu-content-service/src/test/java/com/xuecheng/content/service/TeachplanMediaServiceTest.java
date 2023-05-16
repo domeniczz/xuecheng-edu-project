@@ -15,7 +15,7 @@ import org.springframework.boot.test.context.SpringBootTest;
  */
 @SpringBootTest
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
-// 暂时不使用该测试类（还未完成）
+// 暂时不使用该测试类 (还未完成)
 @Disabled
 public class TeachplanMediaServiceTest {
 

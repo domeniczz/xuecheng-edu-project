@@ -78,7 +78,7 @@ public class CourseBase implements Serializable {
     private String grade;
 
     /**
-     * 教育模式 (common 普通，record 录播，live 直播等）
+     * 教育模式 (common 普通，record 录播，live 直播等)
      */
     private String teachmode;
 

@@ -4,6 +4,7 @@ import com.xuecheng.base.model.RestResponse;
 import com.xuecheng.content.model.dto.SaveTeachplanDto;
 import com.xuecheng.content.model.dto.TeachplanDto;
 import com.xuecheng.content.model.po.Teachplan;
+
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.MethodOrderer;
@@ -19,7 +20,7 @@ import java.util.List;
 /**
  * @author Domenic
  * @Classname TeachplanServiceTest
- * @Description 教学计划（章节）测试类
+ * @Description 教学计划 (章节) 测试类
  * @Created by Domenic
  */
 @SpringBootTest

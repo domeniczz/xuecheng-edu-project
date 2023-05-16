@@ -1,10 +1,11 @@
 package com.xuecheng.content.model.po;
 
 import com.baomidou.mybatisplus.annotation.TableName;
-import io.swagger.annotations.ApiModel;
-import lombok.Data;
 
 import java.io.Serializable;
+
+import io.swagger.annotations.ApiModel;
+import lombok.Data;
 
 /**
  * @author Domenic
@@ -35,7 +36,7 @@ public class CourseCategory implements Serializable {
     private String label;
 
     /**
-     * 父结点id（第一级的父节点是0，自关联字段id）
+     * 父结点id (第一级的父节点是0，自关联字段id)
      */
     private String parentid;
 

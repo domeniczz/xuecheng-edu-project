@@ -39,7 +39,7 @@ public class IpUtil {
         /*
          * 遍历提供的请求头，尝试获取客户端 IP
          * - 若找到标头 "x-forwarded-for"，且其值不是 "unknown"，则能从中直接提取出 IP 地址
-         * - 若标头中有多个 IP 地址（由于多个代理），会使用第一个，因为这通常是原始客户端的 IP
+         * - 若标头中有多个 IP 地址 (由于多个代理)，会使用第一个，因为这通常是原始客户端的 IP
          * - 若没有找到标头 x-forwarded-for，则尝试获取请求头中其他有可能包含客户端原始 IP 的标头
          */
         for (String header : IP_HEADER_CANDIDATES) {

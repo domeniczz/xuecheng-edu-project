@@ -110,7 +110,7 @@ public class Teachplan implements Serializable {
     private Integer status;
 
     /**
-     * 是否支持试学或预览（试看）
+     * 是否支持试学或预览 (试看)
      */
     private String isPreview;
 

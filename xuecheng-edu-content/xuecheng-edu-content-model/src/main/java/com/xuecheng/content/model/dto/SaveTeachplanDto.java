@@ -72,7 +72,7 @@ public class SaveTeachplanDto {
     private Long coursePubId;
 
     /**
-     * 是否支持试学或预览（试看）
+     * 是否支持试学或预览 (试看)
      */
     @ApiModelProperty(value = "是否支持试学或预览")
     private String isPreview;

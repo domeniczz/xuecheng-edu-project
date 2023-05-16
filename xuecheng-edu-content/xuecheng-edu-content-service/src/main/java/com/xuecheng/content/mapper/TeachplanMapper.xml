@@ -61,7 +61,7 @@
     </resultMap>
 
     <!--
-        查询课程教学计划的树形结构（包含媒资信息）
+        查询课程教学计划的树形结构 (包含媒资信息)
         教学计划在数据库中以树形结构存储，子节点的 parentid 指向父节点的 id
     -->
     <select id="selectTreeNodes" parameterType="long" resultMap="treeNodeResultMap">

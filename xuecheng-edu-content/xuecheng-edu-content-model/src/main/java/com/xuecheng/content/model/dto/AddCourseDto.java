@@ -3,13 +3,14 @@ package com.xuecheng.content.model.dto;
 import com.xuecheng.base.validation.ValidationGroups;
 import com.xuecheng.base.validation.constraints.PhoneNumberConstraint;
 import com.xuecheng.base.validation.constraints.QqNumberConstraint;
-import io.swagger.annotations.ApiModel;
-import io.swagger.annotations.ApiModelProperty;
-import lombok.Data;
 
 import javax.validation.constraints.DecimalMin;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.Size;
+
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
+import lombok.Data;
 
 /**
  * @author Domenic
@@ -66,7 +67,7 @@ public class AddCourseDto {
     /**
      * 课程教学模式
      */
-    @ApiModelProperty(value = "课程教学模式（普通，录播，直播等）", required = true)
+    @ApiModelProperty(value = "课程教学模式 (普通，录播，直播等)", required = true)
     @NotEmpty(message = "教学模式不能为空", groups = { ValidationGroups.Insert.class, ValidationGroups.Update.class })
     private String teachmode;
 

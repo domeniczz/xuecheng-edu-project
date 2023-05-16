@@ -22,7 +22,7 @@ public class Mp4VideoUtil extends AbstractVideoUtil {
      * @return 成功返回 success，失败返回控制台日志
      */
     public static String generateMp4(String originalVideoPath, String outputVideoPath) {
-        // (若存在）清除已生成的 mp4
+        // (若存在) 清除已生成的 mp4
         clearMp4(outputVideoPath);
 
         /*

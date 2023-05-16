@@ -88,7 +88,7 @@ public class StringUtil {
 	}
 
 	/**
-	 * 指定字符串是否被同一字符包装（前后都有这些字符串）
+	 * 指定字符串是否被同一字符包装 (前后都有这些字符串)
 	 * @param str 字符串
 	 * @param wrapper 包装字符串
 	 * @return 是否被包装
@@ -98,7 +98,7 @@ public class StringUtil {
 	}
 
 	/**
-	 * 指定字符串是否被同一字符包装（前后都有这些字符串）
+	 * 指定字符串是否被同一字符包装 (前后都有这些字符串)
 	 * @param str 字符串
 	 * @param wrapper 包装字符
 	 * @return 是否被包装

@@ -1,12 +1,16 @@
 package com.xuecheng.media.model.po;
 
-import com.baomidou.mybatisplus.annotation.*;
-import lombok.Data;
+import com.baomidou.mybatisplus.annotation.FieldFill;
+import com.baomidou.mybatisplus.annotation.IdType;
+import com.baomidou.mybatisplus.annotation.TableField;
+import com.baomidou.mybatisplus.annotation.TableId;
+import com.baomidou.mybatisplus.annotation.TableName;
 
 import java.io.Serializable;
 import java.time.LocalDateTime;
 
 import io.swagger.annotations.ApiModel;
+import lombok.Data;
 
 /**
  * @author Domenic
@@ -46,7 +50,7 @@ public class MediaFile implements Serializable {
     private String filename;
 
     /**
-     * 文件类型（文档，音频，视频）
+     * 文件类型 (文档，音频，视频)
      */
     private String fileType;
 

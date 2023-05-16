@@ -23,7 +23,7 @@ public class FileParamsDto {
     private String filename;
 
     /**
-     * 文件类型（文档，音频，视频）
+     * 文件类型 (文档，音频，视频)
      */
     @ApiModelProperty("文件类型")
     private String fileType;
