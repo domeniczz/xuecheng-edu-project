@@ -41,7 +41,7 @@ docker pull nacos/nacos-server:1.4.1
 ```
 
 ```bash
-docker run -dt \
+docker run -d \
     --name nacos \
     --restart always \
     --privileged \
@@ -81,7 +81,7 @@ docker pull minio/minio:RELEASE.2022-09-07T22-25-02Z
 ```
 
 ```bash
-docker run -dt \
+docker run -d \
 	--name=minio \
 	-p 9000:9000 \
 	-p 9001:9001 \
@@ -115,3 +115,29 @@ docker start minio
 docker stop minio
 ```
 
+## XXL-JOB
+
+[xxl-job - docker hub](https://hub.docker.com/r/xuxueli/xxl-job-admin)
+
+```bash
+docker pull xuxueli/xxl-job-admin:2.3.1
+```
+
+```bash
+docker run -d \
+	--name xxl-job-admin \
+	-p 8080:8080 \
+	# mount local directory /data/xxl-job-admin to the container
+	-v /data/xxl-job-admin:/data/applogs \
+	xuxueli/xxl-job-admin:2.3.1 \
+```
+
+```bash
+# go into xxl-job-admin container
+docker exec -it xxl-job-admin bash
+```
+
+```bash
+docker start xxl-job-admin
+docker stop xxl-job-admin
+```
