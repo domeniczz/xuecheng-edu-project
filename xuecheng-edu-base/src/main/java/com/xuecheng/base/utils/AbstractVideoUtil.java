@@ -52,13 +52,13 @@ public abstract class AbstractVideoUtil {
      * @return 视频时间
      */
     public static String getVideoTime(String videoPath) {
-        List<String> commend = new ArrayList<String>();
-        commend.add(FFMPEG_PATH);
-        commend.add("-i");
-        commend.add(videoPath);
+        List<String> cmd = new ArrayList<String>();
+        cmd.add(FFMPEG_PATH);
+        cmd.add("-i");
+        cmd.add(videoPath);
 
         ProcessBuilder builder = new ProcessBuilder();
-        builder.command(commend);
+        builder.command(cmd);
         // 将标准输入流和错误输入流合并，通过标准输入流程读取信息
         builder.redirectErrorStream(true);
 
