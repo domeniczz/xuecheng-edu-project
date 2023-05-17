@@ -1,10 +1,39 @@
-## 数据字典
+[English](https://github.com/domeniczz/xuecheng-edu-project/blob/master/sql/README.md) | [中文](https://github.com/domeniczz/xuecheng-edu-project/blob/master/sql/README-zh.md)
 
-数据库名称：xc_edu_system
+## Data Dictionary
 
-审核状态、课程状态、课程类型、用户类型等信息，有一个共同点就是它有一些分类项，且这些分类项较为固定。针对这些数据，为提高系统的可扩展性，故定义专门的数据字典表去维护
+Database name: xc_edu_system
 
-## 内容模块数据
+SQL file: xc_edu_system.sql
 
-数据库名称：xc_edu_content
+Audit status, course status, course type, user type, etc., have a common feature in that they have some classification items, and these classification items are relatively fixed. To improve the system's scalability, a special data dictionary table is defined to maintain these data.
 
+## Content Module Data
+
+Database name: xc_edu_content
+
+SQL file: xc_edu_content.sql
+
+Course information, chapter information, teacher information...
+
+## Media Module Data
+
+Database name: xc_edu_content
+
+SQL file: xc_edu_media.sql
+
+Media resource files, such as: images, course videos...
+
+---
+
+## Nacos Initialization Database
+
+Database name: nacos_1.4.1
+
+SQL file: nacos_1.4.1.sql
+
+## XXL-JOB Initialization Database
+
+Database name: xxl_job_2.3.1
+
+SQL file: xxl_job_2.3.1.sql

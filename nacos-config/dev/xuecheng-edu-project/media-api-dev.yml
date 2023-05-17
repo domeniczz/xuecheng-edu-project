@@ -2,3 +2,9 @@ server:
   servlet:
     context-path: /media
   port: 63050
+
+spring:
+  cloud:
+    config:
+      # 配置文件本地最优先
+      override-none: true

@@ -10,9 +10,15 @@ spring:
     config:
       # 配置文件本地最优先
       override-none: true
+  servlet:
+    multipart:
+      # 设置上传文件的大小限制 (默认为 1MB)
+      max-file-size: 500MB
+      max-request-size: 500MB
 
 minio:
-  endpoint: http://192.168.101.65:9000
+  # minio api 访问路径
+  endpoint: http://localhost:9000
   accessKey: minioadmin
   secretKey: minioadmin
   bucket:
@@ -33,4 +39,5 @@ xxl:
     accessToken: default_token
 
 videoprocess:
+  # ffmepeg.exe 本地路径
   ffmpegpath: D:/Program/ffmpeg/bin/ffmpeg.exe
