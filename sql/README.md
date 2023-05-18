@@ -28,12 +28,12 @@ Media resource files, such as: images, course videos...
 
 ## Nacos Initialization Database
 
-Database name: nacos_1.4.1
+Database name: nacos_schema_1.4.1
 
 SQL file: nacos_1.4.1.sql
 
 ## XXL-JOB Initialization Database
 
-Database name: xxl_job_2.3.1
+Database name: xxl-job_schema_2.3.1
 
 SQL file: xxl_job_2.3.1.sql
