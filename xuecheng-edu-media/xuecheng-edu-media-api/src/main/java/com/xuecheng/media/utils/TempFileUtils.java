@@ -20,6 +20,10 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class TempFileUtils {
 
+    private TempFileUtils() {
+        // prevents other classes from instantiating it
+    }
+
     /**
     * 将给定的 MultipartFile 文件存储为临时文件，并返回临时文件的绝对路径
     * @param filedata {@link MultipartFile} 文件

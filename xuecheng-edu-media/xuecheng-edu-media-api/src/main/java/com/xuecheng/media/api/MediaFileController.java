@@ -53,7 +53,7 @@ public class MediaFileController {
 
         // TODO: 4/27/2023 6:36 PM 通过单点登录系统，获取到用户所属机构的 ID
         Long companyId = 1232141425L;
-        // String companyName = "机构名称";
+        String companyName = null;
 
         // 封装上传文件的信息到 DTO
         FileParamsDto dto = new FileParamsDto();
@@ -64,7 +64,7 @@ public class MediaFileController {
         // 文件类型：图片
         dto.setFileType(TempFileUtils.getFileType(file));
         // 上传人
-        // dto.setUsername("");
+        dto.setUsername(companyName);
 
         // 将数据转存为本地临时文件
         String tempFilePath = TempFileUtils.storeAsTempFile(file);

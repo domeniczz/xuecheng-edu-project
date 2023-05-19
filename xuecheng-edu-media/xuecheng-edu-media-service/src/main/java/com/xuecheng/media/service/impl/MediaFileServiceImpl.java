@@ -143,17 +143,20 @@ public class MediaFileServiceImpl implements MediaFileService {
             fileToDelete = fileList.get(0);
 
             // 删除数据库中的文件信息
-            if (fileDbUtils.deleteFileInfo(fileToDelete)) {
+            boolean dbRes = fileDbUtils.deleteFileInfo(fileToDelete);
+            if (dbRes) {
                 // 将文件从 minio 中删除
-                if (minioUtils.deleteFile(bucket, fileToDelete.getFilePath())) {
+                boolean minioRes = minioUtils.deleteFile(bucket, fileToDelete.getFilePath());
+                if (minioRes) {
                     // 返回 FileResultDto 对象
                     FileResultDto resDto = new FileResultDto();
                     BeanUtils.copyProperties(fileToDelete, resDto);
                     return resDto;
                 }
             }
+
             XueChengEduException.cast("从数据库删除文件信息失败");
-        } else if (fileList.size() == 0) {
+        } else if (fileList.isEmpty()) {
             log.error("从数据库删除文件信息失败，数据库中没有该文件 ({}) 的记录, bucket={}", dto.getFilename(), bucket);
             XueChengEduException.cast("从数据库删除文件信息失败，无效文件!");
         } else {

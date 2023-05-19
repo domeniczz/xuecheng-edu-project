@@ -112,6 +112,7 @@ public class FileChunkMergeTest {
 
         // 文件分块的数量
         chunkTotalNum = (int) Math.ceil(sourceFile.length() * 1.0 / chunkSize);
+        Assertions.assertTrue(chunkTotalNum > 0, "文件分块数量不能小于 1");
 
         // 从源文件读数据，向分块文件中写数据
         try (RandomAccessFile raf_r = new RandomAccessFile(sourceFile, "r");) {

@@ -11,12 +11,8 @@ import java.io.FileInputStream;
 import java.io.InputStream;
 import java.math.BigInteger;
 import java.security.MessageDigest;
-import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.Optional;
+import java.time.LocalDate;
 import java.util.UUID;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -29,7 +25,9 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class FileUtils {
 
-    private static final ThreadLocal<SimpleDateFormat> DATE_FORMATTER = ThreadLocal.withInitial(() -> new SimpleDateFormat());
+    private FileUtils() {
+        // prevents other classes from instantiating it
+    }
 
     /**
      * 获取文件在 minio 中的默认存储路径，示例：年/月/日
@@ -39,16 +37,25 @@ public class FileUtils {
      * @return 文件夹路径
      */
     public static String getFolderPathByDate(boolean year, boolean month, boolean day) {
-        // 使用 ThreadLocal 获取 SimpleDateFormat，能避免每次函数调用时创建新的 SimpleDateFormat 对象
-        DATE_FORMATTER.get().applyPattern(Stream.of(
-                year ? Optional.of("yyyy") : Optional.<String>empty(),
-                month ? Optional.of("MM") : Optional.<String>empty(),
-                day ? Optional.of("dd") : Optional.<String>empty())
-                .filter(Optional::isPresent)
-                .map(Optional::get)
-                .collect(Collectors.joining("/")));
+        LocalDate now = LocalDate.now();
 
-        return DATE_FORMATTER.get().format(new Date()) + "/";
+        StringBuilder path = new StringBuilder();
+
+        if (year) {
+            path.append(now.getYear());
+        }
+
+        if (month && path.length() > 0) {
+            path.append('/');
+            path.append(String.format("%02d", now.getMonthValue()));
+        }
+
+        if (day && path.length() > 0) {
+            path.append('/');
+            path.append(String.format("%02d", now.getDayOfMonth()));
+        }
+
+        return path.toString();
     }
 
     /**

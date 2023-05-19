@@ -31,7 +31,7 @@ public class MediaProcessXxlJob {
      * @throws Exception
      */
     @XxlJob("residualFileCleanerJob")
-    public void residualFileCleanerJob() throws Exception {
+    public void residualFileCleanerJob() {
         minioUtils.clearResidualChunkFiles(bucket);
     }
 
@@ -41,12 +41,14 @@ public class MediaProcessXxlJob {
      * @throws Exception
      */
     @XxlJob("sampleSharingJobHandler")
-    public void sampleSharingJobHandler() throws Exception {
+    public void sampleSharingJobHandler() {
+
+        org.slf4j.Logger log = org.slf4j.LoggerFactory.getLogger(MediaProcessXxlJob.class);
 
         int shardIndex = XxlJobHelper.getShardIndex();
         int shardTotal = XxlJobHelper.getShardTotal();
 
-        System.out.println("当前分片索引: " + shardIndex + ", 当前分片总数: " + shardTotal);
+        log.debug("当前分片索引: {}, 当前分片总数: {}", shardIndex, shardTotal);
     }
 
 }

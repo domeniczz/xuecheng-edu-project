@@ -20,6 +20,7 @@ import java.io.FileOutputStream;
 import java.io.FilterInputStream;
 
 import io.minio.BucketExistsArgs;
+import io.minio.GetBucketPolicyArgs;
 import io.minio.MinioClient;
 import io.minio.ObjectWriteResponse;
 import io.minio.SetBucketPolicyArgs;
@@ -94,18 +95,32 @@ public class MinioTest {
     @Test
     @Order(2)
     void test_setBucketAccessPolicyPublic() throws Exception {
-        String policy = "{" +
-                "\"Version\":\"2012-10-17\"," +
-                "   \"Statement\":[{" +
-                "       \"Effect\":\"Allow\"," +
-                "       \"Principal\":\"*\"," +
-                "       \"Action\":\"s3:GetObject\"," +
-                "       \"Resource\":\"arn:aws:s3:::" + bucketName + "/*\"" +
-                "   }]" +
+        String policy = "{\n" +
+                "    \"Version\": \"2012-10-17\"," +
+                "    \"Statement\": [" +
+                "        {" +
+                "            \"Effect\": \"Allow\"," +
+                "            \"Principal\": {" +
+                "                \"AWS\": [" +
+                "                    \"*\"" +
+                "                ]" +
+                "            }," +
+                "            \"Action\": [" +
+                "                \"s3:GetObject\"" +
+                "            ]," +
+                "            \"Resource\": [\n" +
+                "                \"arn:aws:s3:::" + bucketName + "/*\"" +
+                "            ]" +
+                "        }" +
+                "    ]" +
                 "}";
 
         // 设置桶的访问策略，允许 API 执行增删改查操作
         minioClient.setBucketPolicy(SetBucketPolicyArgs.builder().bucket(bucketName).config(policy).build());
+
+        String resPolicy = minioClient.getBucketPolicy(GetBucketPolicyArgs.builder().bucket(bucketName).build());
+        Assertions.assertEquals(policy.replace(" ", "").replace("\n", ""),
+                resPolicy.replace(" ", "").replace("\n", ""));
     }
 
     /**
@@ -144,10 +159,10 @@ public class MinioTest {
         File src = new File(localFilePath);
         File dest = new File(testDownloadFilePath);
 
-        try (FilterInputStream is = minioUtils.queryFile(bucketName, objectName);
-                FileOutputStream os = new FileOutputStream(dest)) {
+        try (FilterInputStream in = minioUtils.queryFile(bucketName, objectName);
+                FileOutputStream out = new FileOutputStream(dest)) {
             // 将下载的数据流写入到目标文件
-            IOUtils.copy(is, os);
+            IOUtils.copy(in, out);
         }
 
         // 通过 MD5 校验文件的完整性
@@ -166,7 +181,8 @@ public class MinioTest {
     @Test
     @Order(5)
     void test_deleteFile() throws Exception {
-        minioUtils.deleteFile(bucketName, objectName);
+        boolean res = minioUtils.deleteFile(bucketName, objectName);
+        Assertions.assertTrue(res, "删除文件失败");
     }
 
 }

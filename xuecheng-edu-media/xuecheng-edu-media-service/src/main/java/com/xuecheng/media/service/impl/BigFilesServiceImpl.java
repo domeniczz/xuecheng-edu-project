@@ -149,7 +149,7 @@ public class BigFilesServiceImpl implements BigFilesService {
             log.error("获取文件大小出错, bucket={}, objectName={}, errorMsg={}", bucket, objectName, e.getMessage());
         }
 
-        if (!checkFileConsistency(fileMd5, fileSize, objectName)) {
+        if (!checkFileConsistency(fileSize, objectName)) {
             log.error("合并后的文件与源文件不一致");
             // 删除校验失败的合并后文件
             deleteFile(objectName);
@@ -162,7 +162,7 @@ public class BigFilesServiceImpl implements BigFilesService {
         // 设置文件大小的信息
         dto.setFileSize(fileSize);
 
-        // 将文件信息入库
+        // 将文件信息入库，并将文件添加到待处理任务列表，等待对视频进行转码
         MediaFile mediaFiles = fileDbUtils.addFileInfo(companyId, fileMd5, dto, bucket, filename, objectName);
         if (mediaFiles == null) {
             return RestResponse.fail(false, "文件上传失败");
@@ -206,34 +206,14 @@ public class BigFilesServiceImpl implements BigFilesService {
      * 因此，分块一致性校验通过，那只需保证合并后文件的大小与源文件一致，即可认为合并后的文件应该没有受损
      * 优点：对大文件友好，省去上传后再下载的时间
      * -->
-     * @param fileMd5 文件的 MD5 值
      * @param objectName 对象名 (文件的路径)
      * @return {@link Boolean} {@code true} 校验通过, {@code false} 校验不通过
      */
-    private boolean checkFileConsistency(String fileMd5, long fileSize, String objectName) {
+    private boolean checkFileConsistency(long fileSize, String objectName) {
         long mergedSize = minioUtils.getFileSize(bucket, objectName);
         // 若文件大小一致，再进行 MD5 校验
         if (fileSize == mergedSize) {
             return true;
-            /* // 下载合并后的文件
-            File downloadMergedFile = minioUtils.downloadFile(bucket, objectName);
-            
-            // 计算合并后文件的 MD5
-            String mergeFileMd5 = FileUtils.getFileMd5(downloadMergedFile);
-            
-            // 比较原始和合并后文件的 MD5
-            if (fileMd5.equals(mergeFileMd5)) {
-                return true;
-            } else {
-                log.error("校验合并文件 MD5 值不一致, 原始文件={}, 合并文件={}", fileMd5, mergeFileMd5);
-            }
-            
-            try {
-                // 校验后，删除下载的临时文件
-                FileUtils.deleteFile(downloadMergedFile.getAbsolutePath());
-            } catch (IOException e) {
-                log.error("校验后, 删除临时文件失败, tempFilePath={}, errorMsg={}", downloadMergedFile.getAbsolutePath(), e.getMessage());
-            } */
         } else {
             log.error("校验文件大小不一致, 原始文件大小={}, 合并文件大小={}", fileSize, mergedSize);
         }
