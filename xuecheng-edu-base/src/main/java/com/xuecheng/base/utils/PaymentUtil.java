@@ -18,6 +18,10 @@ public class PaymentUtil {
     private static final Pattern PATTERN = Pattern.compile("SJPAY(,\\S+){4}");
     public static final String PAY_PREFIX = "XC";
 
+    private PaymentUtil() {
+        // prevents other classes from instantiating it
+    }
+
     public static boolean checkPayOrderAttach(String attach) {
         if (StringUtils.isBlank(attach)) {
             return false;

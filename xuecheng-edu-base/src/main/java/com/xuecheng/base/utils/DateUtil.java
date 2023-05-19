@@ -42,6 +42,10 @@ public class DateUtil {
     public static final DateTimeFormatter TIME_FORMATTER = DateTimeFormatter.ofPattern(HH_MM_SS, LOCALE);
     public static final DateTimeFormatter YEAR_MONTH_FORMATTER = DateTimeFormatter.ofPattern(YYYY_MM, LOCALE);
 
+    private DateUtil() {
+        // prevents other classes from instantiating it
+    }
+
     /**
      * 返回一个默认格式的日期时间字符串
      * @param dateTime 日期时间
@@ -350,7 +354,11 @@ public class DateUtil {
      * @return 前一天的日期
      */
     public static String getTheDayBefore(String specifiedDay) {
-        return format(parseDateTime(specifiedDay).minusDays(1));
+        LocalDateTime parsedDateTime = parseDateTime(specifiedDay);
+        if (parsedDateTime != null) {
+            return format(parsedDateTime.minusDays(1));
+        }
+        return null;
     }
 
     /**
@@ -359,7 +367,11 @@ public class DateUtil {
      * @return 前一天的日期
      */
     public static String getTheDayAfter(String specifiedDay) {
-        return format(parseDateTime(specifiedDay).plusDays(1));
+        LocalDateTime parsedDateTime = parseDateTime(specifiedDay);
+        if (parsedDateTime != null) {
+            return format(parsedDateTime.plusDays(1));
+        }
+        return null;
     }
 
     /**
@@ -369,9 +381,12 @@ public class DateUtil {
      */
     public static LocalDate getFirstDayOfWeek(String specifiedDate) {
         LocalDate date = parseDate(specifiedDate);
-        int daysSinceMonday = date.getDayOfWeek().ordinal() - DayOfWeek.MONDAY.ordinal();
-        // 将日期设置为当前周的第一天，并返回
-        return date.with(DayOfWeek.MONDAY).minusDays(daysSinceMonday);
+        if (date != null) {
+            int daysSinceMonday = date.getDayOfWeek().ordinal() - DayOfWeek.MONDAY.ordinal();
+            // 将日期设置为当前周的第一天，并返回
+            return date.with(DayOfWeek.MONDAY).minusDays(daysSinceMonday);
+        }
+        return null;
     }
 
     /**
@@ -380,7 +395,11 @@ public class DateUtil {
      * @return 表示指定月第一天的 {@link LocalDate}
      */
     public static LocalDate getFirstDayOfMonth(String specifiedDate) {
-        return parseDate(specifiedDate).withDayOfMonth(1);
+        LocalDate date = parseDate(specifiedDate);
+        if (date != null) {
+            return date.withDayOfMonth(1);
+        }
+        return null;
     }
 
     /**
@@ -408,9 +427,12 @@ public class DateUtil {
      */
     public static LocalDate getLastDayOfWeek(String specifiedDate) {
         LocalDate date = parseDate(specifiedDate);
-        int daysUntilSunday = DayOfWeek.SUNDAY.ordinal() - date.getDayOfWeek().ordinal();
-        // 将日期设置为当前周的最后一天，并返回
-        return date.with(DayOfWeek.SUNDAY).plusDays(daysUntilSunday);
+        if (date != null) {
+            int daysUntilSunday = DayOfWeek.SUNDAY.ordinal() - date.getDayOfWeek().ordinal();
+            // 将日期设置为当前周的最后一天，并返回
+            return date.with(DayOfWeek.SUNDAY).plusDays(daysUntilSunday);
+        }
+        return null;
     }
 
     /**
@@ -420,8 +442,11 @@ public class DateUtil {
      */
     public static LocalDate getLastDayOfMonth(String specifiedDate) {
         LocalDate date = parseDate(specifiedDate);
-        // 将日期设置为当前月的最后一天，并返回
-        return date.withDayOfMonth(date.getMonth().maxLength());
+        if (date != null) {
+            // 将日期设置为当前月的最后一天，并返回
+            return date.withDayOfMonth(date.getMonth().maxLength());
+        }
+        return null;
     }
 
     /**

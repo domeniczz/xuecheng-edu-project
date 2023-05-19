@@ -2,15 +2,19 @@ package com.xuecheng.base.utils;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
+import java.security.GeneralSecurityException;
 import java.security.KeyFactory;
 import java.security.KeyPair;
 import java.security.KeyPairGenerator;
+import java.security.NoSuchAlgorithmException;
 import java.security.PrivateKey;
 import java.security.PublicKey;
 import java.security.Signature;
+import java.security.spec.InvalidKeySpecException;
 import java.security.spec.PKCS8EncodedKeySpec;
 import java.security.spec.X509EncodedKeySpec;
 import java.util.Arrays;
@@ -26,10 +30,20 @@ import javax.crypto.Cipher;
  */
 public class RsaUtil {
 
+	private RsaUtil() {
+		// prevents other classes from instantiating it
+	}
+
 	public static final String SIGN_ALGORITHMS = "SHA1WithRSA";
-	private static final String RSA_ALGORITHM = "RSA";
-	private final static Base64.Encoder ENCODER = Base64.getEncoder();
-	private final static Base64.Decoder DECODER = Base64.getDecoder();
+	/**
+	 * Explain each part:
+	 * 1. "RSA": The encryption algorithm used.
+	 * 2. "None": Refers to the mode of operation for the cipher.
+	 * 3. "OAEPWITHSHA-256ANDMGF1PADDING": Refers to the padding scheme being used by the RSA encryption.
+	 */
+	private static final String RSA_ALGORITHM = "RSA/None/OAEPWITHSHA-256ANDMGF1PADDING";
+	private static final Base64.Encoder ENCODER = Base64.getEncoder();
+	private static final Base64.Decoder DECODER = Base64.getDecoder();
 
 	/**
 	 * <p>
@@ -109,9 +123,11 @@ public class RsaUtil {
 	 * @param inputCharset 编码格式
 	 * @return 解密后的字符串
 	 */
-	public static String decrypt(String content, String privateKey, Charset inputCharset) throws Exception {
+	public static String decrypt(String content, String privateKey, Charset inputCharset) throws IOException, GeneralSecurityException {
+		Cipher cipher = null;
+
 		// 初始化用于解密的 Cipher 实例
-		Cipher cipher = Cipher.getInstance(RSA_ALGORITHM);
+		cipher = Cipher.getInstance(RSA_ALGORITHM);
 		PrivateKey prikey = getPrivateKey(privateKey);
 		cipher.init(Cipher.DECRYPT_MODE, prikey);
 
@@ -125,12 +141,15 @@ public class RsaUtil {
 
 			while ((bufferLen = ins.read(buffer)) != -1) {
 				byte[] block;
+
 				if (buffer.length == bufferLen) {
 					block = buffer;
 				} else {
 					block = Arrays.copyOf(buffer, bufferLen);
 				}
-				writer.write(cipher.doFinal(block));
+
+				byte[] doFinal = cipher.doFinal(block);
+				writer.write(doFinal);
 			}
 
 			return new String(writer.toByteArray(), inputCharset);
@@ -145,7 +164,7 @@ public class RsaUtil {
 	 * @param key {@link PrivateKey} 密钥字符串 (经过 Base64 编码)
 	 * @throws Exception
 	 */
-	public static PrivateKey getPrivateKey(String key) throws Exception {
+	public static PrivateKey getPrivateKey(String key) throws NoSuchAlgorithmException, InvalidKeySpecException {
 
 		byte[] keyBytes;
 
@@ -153,9 +172,10 @@ public class RsaUtil {
 
 		PKCS8EncodedKeySpec keySpec = new PKCS8EncodedKeySpec(keyBytes);
 
-		KeyFactory keyFactory = KeyFactory.getInstance(RSA_ALGORITHM);
+		PrivateKey privateKey = null;
 
-		PrivateKey privateKey = keyFactory.generatePrivate(keySpec);
+		KeyFactory keyFactory = KeyFactory.getInstance(RSA_ALGORITHM);
+		privateKey = keyFactory.generatePrivate(keySpec);
 
 		return privateKey;
 	}
@@ -164,15 +184,17 @@ public class RsaUtil {
 	 * 使用 RSA 算法生成一个 512 位的公私钥对
 	 * @return KeyPair {@link KeyPair} 密钥对
 	 */
-	public static KeyPair getKeyPair() throws Exception {
+	public static KeyPair getKeyPair() throws NoSuchAlgorithmException {
 		KeyPairGenerator keyGen = KeyPairGenerator.getInstance(RSA_ALGORITHM);
+
 		// 可以理解为：加密后的密文长度，实际原文要小些，越大 加密解密越慢
 		keyGen.initialize(512);
-		KeyPair keyPair = keyGen.generateKeyPair();
-		return keyPair;
+		return keyGen.generateKeyPair();
 	}
 
-	public static void main(String[] args) throws Exception {
+	public static void main(String[] args) {
+
+		org.slf4j.Logger log = org.slf4j.LoggerFactory.getLogger(RsaUtil.class);
 
 		String p2pPublickey = "MFwwDQYJKoZIhvcNAQEBBQADSwAwSAJBAKZKjaBEvudPDolCyuVCBLmfVsSFBu3wfdldLxItRcjSYMzHNoIuYcvHhnMmMi1iXRLeYdbwvI3JQoBHDGN5ad0CAwEAAQ==";
 		String p2pPrivatekey = "MIIBVAIBADANBgkqhkiG9w0BAQEFAASCAT4wggE6AgEAAkEApkqNoES+508OiULK5UIEuZ9WxIUG7fB92V0vEi1FyNJgzMc2gi5hy8eGcyYyLWJdEt5h1vC8jclCgEcMY3lp3QIDAQABAkAUhQia6UDBXEEH8QUGazIYEbBsSZoETHPLGbOQQ6Pj1tb6CVC57kioBjwtNBnY2jBDWi5K815LnOBcJSSjJPwhAiEA2eO6VZMTkdjQAkpB5dhy/0C3i8zs0c0M1rPoTA/RpkUCIQDDYHJPqHLkQyd//7sEeYcm8cMBTvDKBXyiuGk8eLRauQIgQo6IlalGmg+Dgp+SP5Z9kjD/oCmp0XB0UoVEGS/f140CIQCsG9YXHgi31ACD3T9eHcBVKjvidyveix7UKSdrQdl+4QIgNCtRVLV+783e7PX5hRXD+knsWTQxDEMEsHi1KsAWtPk=";
@@ -184,26 +206,30 @@ public class RsaUtil {
 
 		String content = "加密原文1234567890加密原文1234567890加密原文1234567890加密原文1234567890加密原文1234567890加密原文1234567890加密原文1234567890加密原文1234567890加密原文1234567890加密原文1234567890加密原文1234567890加密原文1234567890加密原文1234567890加密原文1234567890加密原文1234567890加密原文1234567890加密原文1234567890加密原文1234567890加密原文1234567890加密原文1234567890加密原文1234567890加密原文1234567890加密原文1234567890加密原文1234567890加密原文1234567890加密原文1234567890加密原文1234567890加密原文1234567890加密原文1234567890加密原文1234567890";
 
-		System.out.println("----------------- P2P 向存管发送数据 ---------------------");
+		log.debug("----------------- P2P 向存管发送数据 ---------------------");
+
 		String signature1 = RsaUtil.sign(content, p2pPrivatekey, inputCharset);
-		System.out.println("生成签名, 原文为 " + content);
-		System.out.println("生成签名, 签名为 " + signature1);
+
+		log.debug("生成签名, 原文为 {}", content);
+		log.debug("生成签名, 签名为 {}", signature1);
 
 		if (RsaUtil.verify(content, signature1, p2pPublickey, inputCharset)) {
-			System.out.println("验证签名成功：" + signature1);
+			log.debug("验证签名成功：{}", signature1);
 		} else {
-			System.out.println("验证签名失败！");
+			log.debug("验证签名失败！");
 		}
 
-		System.out.println("----------------- 存管向 P2P 返回数据 ---------------------");
+		log.debug("----------------- 存管向 P2P 返回数据 ---------------------");
+
 		String signature2 = RsaUtil.sign(content, depositoryPrivatekey, inputCharset);
-		System.out.println("生成签名, 原文为 " + content);
-		System.out.println("生成签名, 签名为 " + signature2);
+
+		log.debug("生成签名, 原文为 {}", content);
+		log.debug("生成签名, 签名为 {}", signature2);
 
 		if (RsaUtil.verify(content, signature2, depositoryPublickey, inputCharset)) {
-			System.out.println("验证签名成功：" + signature2);
+			log.debug("验证签名成功：{}", signature2);
 		} else {
-			System.out.println("验证签名失败！");
+			log.debug("验证签名失败！");
 		}
 
 	}

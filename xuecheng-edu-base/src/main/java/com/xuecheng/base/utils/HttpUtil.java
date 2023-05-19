@@ -21,6 +21,10 @@ import javax.servlet.http.HttpServletResponse;
  */
 public class HttpUtil {
 
+    private HttpUtil() {
+        // prevents other classes from instantiating it
+    }
+
     /**
      * 将错误响应以 JSON 字符串的形式写入 {@link HttpServletResponse} 对象
      * @param restResponse 包含错误信息的 {@link RestResponse} 对象
@@ -29,7 +33,7 @@ public class HttpUtil {
      */
     public static void writerError(RestResponse<?> restResponse, HttpServletResponse response) throws IOException {
         response.setContentType("application/json,charset=utf-8");
-        response.setStatus(Integer.valueOf(restResponse.getCode()));
+        response.setStatus(restResponse.getCode());
         JSON.writeJSONString(response.getOutputStream(), restResponse);
     }
 
@@ -42,7 +46,7 @@ public class HttpUtil {
      * @return 请求的响应
      * @throws Exception 发送请求时出错
      */
-    public static String post(String generalUrl, String contentType, String params, String encoding) throws Exception {
+    public static String post(String generalUrl, String contentType, String params, String encoding) throws IOException {
         URL url = new URL(generalUrl);
 
         // 创建和 URL 之间的连接
@@ -66,26 +70,18 @@ public class HttpUtil {
         // 建立连接
         connection.connect();
 
-        // 获取所有响应头字段
-        // Map<String, List<String>> headers = connection.getHeaderFields();
-        // 遍历所有的响应头字段
-        /*for (String key : headers.keySet()) {
-            System.err.println(key + "--->" + headers.get(key));
-        }*/
-
         // 使用输入流读取 URL 响应
-        String result = "";
+        StringBuilder result = new StringBuilder();
         try (BufferedReader in = new BufferedReader(new InputStreamReader(connection.getInputStream(), encoding))) {
-            String getLine;
-
-            while ((getLine = in.readLine()) != null) {
-                result += getLine;
+            String line;
+            while ((line = in.readLine()) != null) {
+                result.append(line);
             }
 
             connection.disconnect();
         }
 
-        return result;
+        return result.toString();
     }
 
     /**
@@ -95,7 +91,7 @@ public class HttpUtil {
      * @return 根据提供的 API Key 和 Secret Key 生成的访问令牌
      * @throws Exception 生成访问令牌时出错
      */
-    public static String getAccessToken(String apiKey, String secretKey) throws Exception {
+    public static String getAccessToken(String apiKey, String secretKey) throws IOException {
         // 生成 Token 地址
         String authHost = "https://aip.baidubce.com/oauth/2.0/token";
         String getAccessTokenUrl = authHost
@@ -114,25 +110,18 @@ public class HttpUtil {
         connection.setRequestMethod("GET");
         connection.connect();
 
-        // 获取所有响应头字段
-        /*Map<String, List<String>> map = connection.getHeaderFields();
-        // 遍历所有的响应头字段
-        for (String key : map.keySet()) {
-            System.err.println(key + "--->" + map.get(key));
-        }*/
-
         // 使用输入流读取 URL 的响应
-        String result = "";
+        StringBuilder result = new StringBuilder();
         try (BufferedReader in = new BufferedReader(new InputStreamReader(connection.getInputStream()))) {
             String line;
             while ((line = in.readLine()) != null) {
-                result += line;
+                result.append(line);
             }
         }
 
         connection.disconnect();
 
-        Map<String, Object> resultMap = JsonUtil.jsonToMap(result);
+        Map<String, Object> resultMap = JsonUtil.jsonToMap(result.toString());
         return resultMap.get("access_token").toString();
     }
 
@@ -144,7 +133,7 @@ public class HttpUtil {
      * @return 请求的响应
      * @throws Exception 发送请求时出错
      */
-    public static String postWithToken(String requestUrl, String accessToken, String params) throws Exception {
+    public static String postWithToken(String requestUrl, String accessToken, String params) throws IOException {
         // 这是在 HTTP 请求正文中发送数据时可以使用的内容类型之一
         // 它主要用于在 HTTP, POST, PUT 请求中提交表单数据
         String contentType = "application/x-www-form-urlencoded";
@@ -161,7 +150,7 @@ public class HttpUtil {
      * @return 请求的响应
      * @throws Exception 发送请求时出错
      */
-    public static String postWithToken(String requestUrl, String accessToken, String contentType, String params) throws Exception {
+    public static String postWithToken(String requestUrl, String accessToken, String contentType, String params) throws IOException {
         String encoding = "UTF-8";
 
         String str = "nlp";
@@ -182,7 +171,7 @@ public class HttpUtil {
      * @return 请求的响应
      * @throws Exception 发送请求时出错
      */
-    public static String postWithToken(String requestUrl, String accessToken, String contentType, String params, String encoding) throws Exception {
+    public static String postWithToken(String requestUrl, String accessToken, String contentType, String params, String encoding) throws IOException {
         String url = requestUrl + "?access_token=" + accessToken;
         return HttpUtil.post(url, contentType, params, encoding);
     }

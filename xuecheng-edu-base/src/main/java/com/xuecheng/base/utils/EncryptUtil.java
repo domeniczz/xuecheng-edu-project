@@ -3,6 +3,7 @@ package com.xuecheng.base.utils;
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
 import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 import java.util.Base64;
 
 import lombok.extern.slf4j.Slf4j;
@@ -16,14 +17,17 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class EncryptUtil {
 
+    private EncryptUtil() {
+        // prevents other classes from instantiating it
+    }
+
     /**
     * 将字节数组转换为 Base64 编码的字符串
     * @param bytes 要编码的字节数组
     * @return Base64 编码后的字符串
     */
     public static String encodeBase64(byte[] bytes) {
-        String encoded = Base64.getEncoder().encodeToString(bytes);
-        return encoded;
+        return Base64.getEncoder().encodeToString(bytes);
     }
 
     /**
@@ -43,15 +47,7 @@ public class EncryptUtil {
     * @return 编码后的字符串，若不支持 UTF-8 编码格式则返回 {@code null}
     */
     public static String encodeBase64Utf8(String str) {
-        String encoded = null;
-
-        try {
-            encoded = Base64.getEncoder().encodeToString(str.getBytes("utf-8"));
-        } catch (UnsupportedEncodingException e) {
-            log.warn("不支持的编码格式, errorMsg={}", e.getMessage());
-        }
-
-        return encoded;
+        return Base64.getEncoder().encodeToString(str.getBytes(StandardCharsets.UTF_8));
     }
 
     /**
@@ -60,16 +56,8 @@ public class EncryptUtil {
     * @return 解码后的 UTF-8 字符串
     */
     public static String decodeBase64Utf8(String str) {
-        String decoded = null;
         byte[] bytes = Base64.getDecoder().decode(str);
-
-        try {
-            decoded = new String(bytes, "utf-8");
-        } catch (UnsupportedEncodingException e) {
-            log.warn("不支持的编码格式, errorMsg={}", e.getMessage());
-        }
-
-        return decoded;
+        return new String(bytes, StandardCharsets.UTF_8);
     }
 
     /**

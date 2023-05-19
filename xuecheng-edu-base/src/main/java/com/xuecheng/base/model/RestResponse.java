@@ -49,7 +49,7 @@ public class RestResponse<T> {
      * @return {@link RestResponse}
      */
     public static <T> RestResponse<T> fail(String msg) {
-        RestResponse<T> resp = new RestResponse<T>();
+        RestResponse<T> resp = new RestResponse<>();
         resp.setCode(-1);
         resp.setMsg(msg);
         return resp;
@@ -62,7 +62,7 @@ public class RestResponse<T> {
      * @return {@link RestResponse}
      */
     public static <T> RestResponse<T> fail(T result, String msg) {
-        RestResponse<T> resp = new RestResponse<T>();
+        RestResponse<T> resp = new RestResponse<>();
         resp.setCode(-1);
         resp.setMsg(msg);
         resp.setResult(result);
@@ -75,7 +75,7 @@ public class RestResponse<T> {
      * @return {@link RestResponse}
      */
     public static <T> RestResponse<T> success(T result) {
-        RestResponse<T> resp = new RestResponse<T>();
+        RestResponse<T> resp = new RestResponse<>();
         resp.setResult(result);
         return resp;
     }
@@ -87,7 +87,7 @@ public class RestResponse<T> {
      * @return {@link RestResponse}
      */
     public static <T> RestResponse<T> success(T result, String msg) {
-        RestResponse<T> resp = new RestResponse<T>();
+        RestResponse<T> resp = new RestResponse<>();
         resp.setMsg(msg);
         resp.setResult(result);
         return resp;
@@ -98,7 +98,7 @@ public class RestResponse<T> {
      * @return {@link RestResponse}
      */
     public static <T> RestResponse<T> success() {
-        return new RestResponse<T>();
+        return new RestResponse<>();
     }
 
     /**
@@ -107,7 +107,7 @@ public class RestResponse<T> {
      * @return {@link RestResponse}
      */
     public static <T> RestResponse<T> success(String msg) {
-        RestResponse<T> resp = new RestResponse<T>();
+        RestResponse<T> resp = new RestResponse<>();
         resp.setMsg(msg);
         return resp;
     }

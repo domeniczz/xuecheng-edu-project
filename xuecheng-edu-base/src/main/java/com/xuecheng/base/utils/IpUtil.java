@@ -27,6 +27,10 @@ public class IpUtil {
             "HTTP_X_FORWARDED_FOR",
             "X-Real-IP" };
 
+    private IpUtil() {
+        // prevents other classes from instantiating it
+    }
+
     /**
      * 获取服务器发出请求的客户端的 IP 地址<br/>
      * 因为客户端可能通过 HTTP 代理或负载均衡器，连接到 Web 服务器<br/>

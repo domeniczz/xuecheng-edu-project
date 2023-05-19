@@ -10,6 +10,10 @@ import java.security.SecureRandom;
  */
 public class RandomStringUtil {
 
+    private RandomStringUtil() {
+        // prevents other classes from instantiating it
+    }
+
     /**
      * 获取指定长度随机字符串
      * @param length 指定长度

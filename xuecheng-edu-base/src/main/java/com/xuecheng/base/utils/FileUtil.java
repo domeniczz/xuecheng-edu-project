@@ -20,6 +20,9 @@ import java.nio.file.SimpleFileVisitor;
 import java.nio.file.attribute.BasicFileAttributes;
 import java.util.Comparator;
 import java.util.List;
+import java.util.stream.Stream;
+
+import lombok.extern.slf4j.Slf4j;
 
 /**
  * @author Domenic
@@ -27,7 +30,12 @@ import java.util.List;
  * @Description 文件工具类
  * @Created by Domenic
  */
+@Slf4j
 public class FileUtil {
+
+    private FileUtil() {
+        // prevents other classes from instantiating it
+    }
 
     /**
      * 读取文件内容，并作为字符串返回
@@ -148,7 +156,7 @@ public class FileUtil {
                 long fileSize = Files.size(path);
                 return fileSize == 0;
             } catch (IOException e) {
-                System.out.println("Error occurred while checking if file is empty: " + e.getMessage());
+                log.error("Error occurred while checking if file is empty: " + e.getMessage());
             }
             return false;
         } else {
@@ -181,10 +189,11 @@ public class FileUtil {
     public static void clearFolderRecursively(String folderPath) throws IOException {
         Path dir = Paths.get(folderPath);
         if (Files.isDirectory(dir)) {
-            Files.walk(dir)
-                    // 反向排序，这样文件和子目录会在它们的父目录之前被删除
-                    .sorted(Comparator.reverseOrder())
-                    .map(Path::toFile).forEach(File::delete);
+            try (Stream<Path> stream = Files.walk(dir)) {
+                // 反向排序，这样文件和子目录会在它们的父目录之前被删除
+                stream.sorted(Comparator.reverseOrder())
+                        .map(Path::toFile).forEach(File::delete);
+            }
         } else {
             throw new IllegalArgumentException("The provided path is not a directory.");
         }

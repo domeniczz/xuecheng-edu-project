@@ -2,9 +2,9 @@ package com.xuecheng.base.utils;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONException;
-import com.alibaba.fastjson.JSONObject;
 import com.alibaba.fastjson.serializer.SerializerFeature;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
@@ -24,13 +24,17 @@ public class JsonUtil {
      */
     private static final SerializerFeature[] FEATURES = { SerializerFeature.WriteDateUseDateFormat };
 
+    private JsonUtil() {
+        // prevents other classes from instantiating it
+    }
+
     /**
      * 将 {@link Object} 转换为 JSON 字符串
      * @param object 待转换的 {@link Object}
      * @return 转换后的 JSON 字符串
      */
     public static String objectTojson(Object object) {
-        // JSON.DEFFAULT_DATE_FORMAT = "yyyy-MM-dd HH:mm:ss";
+        // JSON.DEFFAULT_DATE_FORMAT is "yyyy-MM-dd HH:mm:ss"
         return JSON.toJSONString(object, FEATURES);
     }
 
@@ -50,10 +54,10 @@ public class JsonUtil {
      */
     public static Map<String, Object> jsonToMap(String strJson) {
         try {
-            return JSONObject.<Map<String, Object>>parseObject(strJson, Map.class);
+            return JSON.<Map<String, Object>>parseObject(strJson, Map.class);
         } catch (JSONException e) {
             log.error("JSON 转换为 Map 出错, errorMsg={}" + e.getMessage());
-            return null;
+            return Collections.emptyMap();
         }
     }
 
@@ -80,11 +84,11 @@ public class JsonUtil {
      */
     public static <T> List<T> jsonToList(String strJson, Class<T> tClass) {
         try {
-            return JSONObject.parseArray(strJson, tClass);
+            return JSON.parseArray(strJson, tClass);
         } catch (JSONException e) {
             log.error("JSON 转换为 List 出错, errorMsg={}" + e.getMessage());
         }
-        return null;
+        return Collections.emptyList();
     }
 
 }

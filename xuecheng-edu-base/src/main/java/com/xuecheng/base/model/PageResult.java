@@ -1,12 +1,12 @@
 package com.xuecheng.base.model;
 
+import java.io.Serializable;
+import java.util.List;
+
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
-
-import java.io.Serializable;
-import java.util.List;
 
 /**
  * @author Domenic
@@ -18,7 +18,7 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 @ToString
-public class PageResult<T> implements Serializable {
+public class PageResult<T extends Serializable> implements Serializable {
 
     /**
      * 数据列表

@@ -25,6 +25,10 @@ public class IDCardUtil {
 	 */
 	private static final int ID_LENGTH_GEN2 = 18;
 
+	private IDCardUtil() {
+		// prevents other classes from instantiating it
+	}
+
 	/**
 	 * 通过身份证号码获取 生日 (birthday), 年龄 (), 性别 (gender)
 	 * 返回出生日期 yyyy-MM-dd; 性别 M-男, F-女

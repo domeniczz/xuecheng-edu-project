@@ -4,13 +4,19 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.Properties;
 
+import lombok.extern.slf4j.Slf4j;
+
 /**
  * @author Domenic
  * @Classname CustomPropertiesReader
  * @Description 读取自定义的配置文件
  * @Created by Domenic
  */
+@Slf4j
 public class CustomPropertiesReader {
+
+    private CustomPropertiesReader() {
+    }
 
     /**
      * 读取文件的最大大小
@@ -28,7 +34,7 @@ public class CustomPropertiesReader {
 
         try (InputStream is = CustomPropertiesReader.class.getClassLoader().getResourceAsStream(propertiesFile)) {
             if (is == null) {
-                System.out.println("Unable to find \"" + propertiesFile + "\"!");
+                log.error("Unable to find \"" + propertiesFile + "\"!");
             }
 
             // Load the configuration file
@@ -36,7 +42,7 @@ public class CustomPropertiesReader {
 
         } catch (IOException e) {
             e.printStackTrace();
-            throw new RuntimeException("Error loading properties file", e);
+            throw new IllegalArgumentException("Error loading properties file, maybe it does not exist", e);
         }
 
         // 从配置文件中获取值

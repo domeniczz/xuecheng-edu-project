@@ -10,6 +10,10 @@ import java.security.SecureRandom;
  */
 public class PasswordUtil {
 
+	private PasswordUtil() {
+		// prevents other classes from instantiating it
+	}
+
 	/**
 	 * Generate a salted password
 	 * @param password original password

@@ -12,6 +12,10 @@ import java.security.NoSuchAlgorithmException;
  */
 public class Md5Util {
 
+    private Md5Util() {
+        // prevents other classes from instantiating it
+    }
+
     /**
      * 为字符串生成 MD5 值 (32 位字符的十六进制表示)
      * @param plainText 待生成 MD5 的字符串
@@ -29,7 +33,7 @@ public class Md5Util {
             // we will get a 32 characters long string.
             return bytesToHex(encodedhash);
         } catch (NoSuchAlgorithmException e) {
-            throw new RuntimeException(e.getMessage());
+            throw new IllegalArgumentException("No such algorithm! " + e.getMessage());
         }
     }
 

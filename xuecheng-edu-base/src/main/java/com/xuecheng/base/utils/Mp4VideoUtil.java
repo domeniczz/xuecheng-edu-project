@@ -7,13 +7,20 @@ import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 
+import lombok.extern.slf4j.Slf4j;
+
 /**
  * @author Domenic
  * @Classname Mp4VideoUtil
  * @Description 视频处理工具类，输出 mp4 格式视频
  * @Created by Domenic
  */
+@Slf4j
 public class Mp4VideoUtil extends AbstractVideoUtil {
+
+    private Mp4VideoUtil() {
+        // prevents other classes from instantiating it
+    }
 
     /**
      * 转换视频编码，生成 mp4 文件
@@ -28,7 +35,7 @@ public class Mp4VideoUtil extends AbstractVideoUtil {
         /*
          * ffmpeg.exe -i example.avi -c:v libx264 -s 1280x720 -pix_fmt yuv420p -b:a 63k -b:v 753k -r 18 .\example.mp4
          */
-        List<String> cmd = new ArrayList<String>();
+        List<String> cmd = new ArrayList<>();
         cmd.add(AbstractVideoUtil.FFMPEG_PATH);
         cmd.add("-i");
         cmd.add(originalVideoPath);
@@ -59,12 +66,17 @@ public class Mp4VideoUtil extends AbstractVideoUtil {
             Process p = builder.start();
             outstring = execute(p);
             p.waitFor();
+        } catch (InterruptedException e) {
+            log.error("Thread {} Interrupted! errorMsg={}", Thread.currentThread().getName(), e.getMessage());
+            // Restore interrupted state...
+            Thread.currentThread().interrupt();
         } catch (Exception e) {
             e.printStackTrace();
         }
 
         // 校验视频时长是否一致
-        if (!checkVideoTime(originalVideoPath, outputVideoPath)) {
+        Boolean res = checkVideoTime(originalVideoPath, outputVideoPath);
+        if (Boolean.FALSE.equals(res)) {
             return outstring;
         } else {
             return "success";

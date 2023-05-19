@@ -1,6 +1,5 @@
 package com.xuecheng.base.exception;
 
-import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.http.HttpStatus;
 import org.springframework.validation.BindingResult;
@@ -12,6 +11,8 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import lombok.extern.slf4j.Slf4j;
 
 /**
  * @author Domenic
@@ -31,17 +32,17 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(XueChengEduException.class)
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
     public RestErrorResponse customException(XueChengEduException e) {
-        log.error("系统异常：{}", e.getErrMessage(), e);
+        log.error("系统异常, errorMsg={}", e.getErrMessage(), e);
         return new RestErrorResponse(e.getErrMessage());
     }
 
     /**
-     * 自定义异常
+     * 参数校验
      * @param e {@link MethodArgumentNotValidException}
      * @return {@link RestErrorResponse}
      */
     @ExceptionHandler(MethodArgumentNotValidException.class)
-    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
     public RestErrorResponse methodArgumentNotValidException(MethodArgumentNotValidException e) {
         // 获取异常信息
         BindingResult bindingResult = e.getBindingResult();
@@ -56,7 +57,7 @@ public class GlobalExceptionHandler {
         });
 
         String errMessage = StringUtils.join(errors, ", ");
-        log.error("系统异常：{}", e.getMessage());
+        log.error("方法参数异常, errorMsg={}", e.getMessage());
         return new RestErrorResponse(errMessage);
     }
 
@@ -79,8 +80,7 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(Exception.class)
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
     public RestErrorResponse exception(Exception e) {
-        log.error("系统异常：{}", e.getMessage(), e);
-        // return new RestErrorResponse(CommonError.UNKOWN_ERROR.getErrMessage());
+        log.error("未知异常, errorMsg={}", e.getMessage(), e);
         return new RestErrorResponse(e.getMessage());
     }
 

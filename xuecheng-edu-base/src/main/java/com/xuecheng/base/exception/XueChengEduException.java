@@ -8,22 +8,12 @@ package com.xuecheng.base.exception;
  */
 public class XueChengEduException extends RuntimeException {
 
-    private String errMessage;
-
-    public XueChengEduException() {
-        super();
-    }
-
     public XueChengEduException(String errMessage) {
-        this.errMessage = errMessage;
+        super(errMessage);
     }
 
     public String getErrMessage() {
-        return errMessage;
-    }
-
-    public void setErrMessage(String errMessage) {
-        this.errMessage = errMessage;
+        return getMessage();
     }
 
     /**

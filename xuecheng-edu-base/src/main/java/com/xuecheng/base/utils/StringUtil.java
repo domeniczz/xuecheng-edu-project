@@ -31,6 +31,10 @@ public class StringUtil {
 
 	public static final String EMPTY_JSON = "{}";
 
+	private StringUtil() {
+		// prevents other classes from instantiating it
+	}
+
 	/**
 	 * 字符串是否为空白
 	 * @param str 待检测的字符串
@@ -46,7 +50,7 @@ public class StringUtil {
 	 * @return 是否为非空白
 	 */
 	public static boolean isNotBlank(String str) {
-		return false == isBlank(str);
+		return !isBlank(str);
 	}
 
 	/**
@@ -64,7 +68,7 @@ public class StringUtil {
 	 * @return 是否为非空
 	 */
 	public static boolean isNotEmpty(String str) {
-		return false == isEmpty(str);
+		return !isEmpty(str);
 	}
 
 	/**
@@ -206,17 +210,17 @@ public class StringUtil {
 	 */
 	public static byte[] bytes(String str, String charset) {
 		if (null == str) {
-			return null;
+			return new byte[0];
 		}
 
 		if (isBlank(charset)) {
-			return null;
+			return new byte[0];
 		}
 
 		return str.getBytes(Charset.forName(charset));
 	}
 
-	private static final Pattern INT_PATTERN = Pattern.compile("^[+-]?[0-9]+$");
+	private static final Pattern INT_PATTERN = Pattern.compile("^[+-]?\\d+$");
 
 	/**
 	 * 判断字符串是否 {@link Integer}

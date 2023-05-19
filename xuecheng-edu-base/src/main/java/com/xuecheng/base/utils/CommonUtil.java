@@ -19,6 +19,10 @@ import java.util.regex.Pattern;
  */
 public class CommonUtil {
 
+	private CommonUtil() {
+		// prevents other classes from instantiating it
+	}
+
 	/**
 	 * If `mobile` is empty or {@code null}, returns an empty {@link String}.<br/>
 	 * Otherwise, this method replaces the middle 4 digits of the mobile number with {@code *},
@@ -76,7 +80,7 @@ public class CommonUtil {
 		}
 
 		Long totalSeconds = 0L;
-		hourMinSec = hourMinSec.replaceAll(" ", "");
+		hourMinSec = hourMinSec.replace(" ", "");
 		boolean matched = HOUR_MIN_SEC_PATTERN.matcher(hourMinSec).matches();
 
 		if (matched) {
@@ -105,7 +109,7 @@ public class CommonUtil {
 	 * Regular expression used to map Underscore to CamelCase naming
 	 * Precompile the regex for efficiency
 	 */
-	private static final Pattern UTC_PATTERN = Pattern.compile("_([a-z]){1}");
+	private static final Pattern UTC_PATTERN = Pattern.compile("_([a-z])");
 
 	/**
 	 * Map Underscore to CamelCase naming
@@ -129,7 +133,7 @@ public class CommonUtil {
 	 * @return Converted string (Underscore)
 	 */
 	public static String mapCamelCaseToUnderscore(String str) {
-		return str.replaceAll("([A-Z]){1}", "_$1").toUpperCase();
+		return str.replaceAll("([A-Z])", "_$1").toUpperCase();
 	}
 
 }
