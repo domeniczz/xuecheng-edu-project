@@ -8,6 +8,7 @@ import com.xuecheng.content.model.dto.CourseBaseInfoDto;
 import com.xuecheng.content.model.dto.QueryCourseParamsDto;
 import com.xuecheng.content.model.dto.UpdateCourseDto;
 import com.xuecheng.content.model.po.CourseBase;
+
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.MethodOrderer;
@@ -130,7 +131,7 @@ public class CourseBaseInfoServiceTest {
     @Order(5)
     void test_delete() {
         // 使用 create 方法创建的课程的 ID
-        RestResponse<?> res = courseBaseInfoService.delete(addedCourseId);
+        RestResponse<Object> res = courseBaseInfoService.delete(addedCourseId);
         Assertions.assertEquals(0, res.getCode());
     }
 

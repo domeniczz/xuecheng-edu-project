@@ -122,6 +122,8 @@ public class RsaUtil {
 	 * @param privateKey 私钥
 	 * @param inputCharset 编码格式
 	 * @return 解密后的字符串
+	 * @throws IOException IO 异常
+	 * @throws GeneralSecurityException 解密异常
 	 */
 	public static String decrypt(String content, String privateKey, Charset inputCharset) throws IOException, GeneralSecurityException {
 		Cipher cipher = null;
@@ -162,7 +164,9 @@ public class RsaUtil {
 	 * 接受 Base64 编码的字符串作为输入，将其转换为字节数组，再从字节数组生成私钥
 	 * </p>
 	 * @param key {@link PrivateKey} 密钥字符串 (经过 Base64 编码)
-	 * @throws Exception
+	 * @return 私钥 {@link PrivateKey}
+	 * @throws NoSuchAlgorithmException 加密算法不存在
+	 * @throws InvalidKeySpecException 私钥格式不正确
 	 */
 	public static PrivateKey getPrivateKey(String key) throws NoSuchAlgorithmException, InvalidKeySpecException {
 

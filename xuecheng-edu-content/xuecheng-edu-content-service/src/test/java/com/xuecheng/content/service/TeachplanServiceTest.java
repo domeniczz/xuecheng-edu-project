@@ -120,10 +120,10 @@ class TeachplanServiceTest {
     @Order(6)
     void test_deleteTeachplan() {
         // 删除子章节
-        RestResponse<?> res1 = teachplanService.deleteTeachplan(dtoChildrenList.get(0).getId());
+        RestResponse<Object> res1 = teachplanService.deleteTeachplan(dtoChildrenList.get(0).getId());
         Assertions.assertNotNull(res1);
         // 删除父章节
-        RestResponse<?> res2 = teachplanService.deleteTeachplan(dtoParentList.get(0).getId());
+        RestResponse<Object> res2 = teachplanService.deleteTeachplan(dtoParentList.get(0).getId());
         Assertions.assertNotNull(res2);
     }
 
@@ -131,25 +131,25 @@ class TeachplanServiceTest {
     @Order(7)
     void test_deleteAll() {
         // 删除所有章节
-        RestResponse<?> resp = teachplanService.deleteAll(1000000L);
+        RestResponse<Object> resp = teachplanService.deleteAll(1000000L);
         Assertions.assertNotNull(resp);
     }
 
     @Test
     @Order(4)
     void test_moveUp() {
-        RestResponse<?> res1 = teachplanService.moveUp(dtoParentList.get(1).getId());
+        RestResponse<Object> res1 = teachplanService.moveUp(dtoParentList.get(1).getId());
         Assertions.assertNotNull(res1);
-        RestResponse<?> res2 = teachplanService.moveUp(dtoChildrenList.get(2).getId());
+        RestResponse<Object> res2 = teachplanService.moveUp(dtoChildrenList.get(2).getId());
         Assertions.assertNotNull(res2);
     }
 
     @Test
     @Order(5)
     void test_moveDown() {
-        RestResponse<?> res1 = teachplanService.moveUp(dtoParentList.get(0).getId());
+        RestResponse<Object> res1 = teachplanService.moveUp(dtoParentList.get(0).getId());
         Assertions.assertNotNull(res1);
-        RestResponse<?> res2 = teachplanService.moveUp(dtoChildrenList.get(1).getId());
+        RestResponse<Object> res2 = teachplanService.moveUp(dtoChildrenList.get(1).getId());
         Assertions.assertNotNull(res2);
     }
 

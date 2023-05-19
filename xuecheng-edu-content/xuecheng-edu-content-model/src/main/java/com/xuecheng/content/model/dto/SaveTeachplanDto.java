@@ -50,7 +50,7 @@ public class SaveTeachplanDto {
     /**
      * 课程类型：1 视频、2 文档
      */
-    @ApiModelProperty(value = "课程类型：1 视频、2 文档")
+    @ApiModelProperty(value = "课程类型: 1 视频, 2 文档")
     private String mediaType;
 
     /**

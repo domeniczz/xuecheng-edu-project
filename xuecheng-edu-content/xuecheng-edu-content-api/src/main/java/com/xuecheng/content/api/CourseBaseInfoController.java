@@ -6,13 +6,11 @@ import com.xuecheng.base.model.RestResponse;
 import com.xuecheng.base.validation.ValidationGroups;
 import com.xuecheng.content.model.dto.AddCourseDto;
 import com.xuecheng.content.model.dto.CourseBaseInfoDto;
-import com.xuecheng.content.model.dto.UpdateCourseDto;
 import com.xuecheng.content.model.dto.QueryCourseParamsDto;
+import com.xuecheng.content.model.dto.UpdateCourseDto;
 import com.xuecheng.content.model.po.CourseBase;
 import com.xuecheng.content.service.CourseBaseInfoService;
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiImplicitParam;
-import io.swagger.annotations.ApiOperation;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -23,6 +21,10 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiImplicitParam;
+import io.swagger.annotations.ApiOperation;
 
 /**
  * @author Domenic
@@ -75,7 +77,7 @@ public class CourseBaseInfoController {
     @DeleteMapping("/{courseId}")
     @ApiOperation("删除课程")
     @ApiImplicitParam(value = "courseId", name = "课程 id", required = true, dataType = "Long", paramType = "path")
-    public RestResponse<?> deleteCourseBaseById(@PathVariable Long courseId) {
+    public RestResponse<Object> deleteCourseBaseById(@PathVariable Long courseId) {
         return courseBaseInfoService.delete(courseId);
     }
 

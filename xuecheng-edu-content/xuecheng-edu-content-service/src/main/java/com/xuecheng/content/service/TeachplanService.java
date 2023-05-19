@@ -39,7 +39,7 @@ public interface TeachplanService {
      * @param id 教学计划 id
      * @return 删除结果，若有错误则抛出 {@link XueChengException}
      */
-    RestResponse<?> deleteTeachplan(Long id);
+    RestResponse<Object> deleteTeachplan(Long id);
 
     /**
      * <p>
@@ -50,20 +50,20 @@ public interface TeachplanService {
      * @param courseId 课程 id
      * @return 删除结果
      */
-    RestResponse<?> deleteAll(Long courseId);
+    RestResponse<Object> deleteAll(Long courseId);
 
     /**
      * 课程计划上移
      * @param id 课程计划 id
      * @return 上移结果
      */
-    RestResponse<?> moveUp(Long id);
+    RestResponse<Object> moveUp(Long id);
 
     /**
      * 课程计划下移
      * @param id 课程计划 id
      * @return 下移结果
      */
-    RestResponse<?> moveDown(Long id);
+    RestResponse<Object> moveDown(Long id);
 
 }

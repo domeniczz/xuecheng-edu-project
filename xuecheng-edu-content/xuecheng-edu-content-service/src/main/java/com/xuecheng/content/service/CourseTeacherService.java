@@ -33,7 +33,7 @@ public interface CourseTeacherService {
      * @param teacherId 师资 id
      * @return 删除结果
      */
-    RestResponse<?> delete(Long courseId, Long teacherId);
+    RestResponse<Object> delete(Long courseId, Long teacherId);
 
     /**
      * <p>
@@ -43,6 +43,6 @@ public interface CourseTeacherService {
      * @param courseId 课程 id
      * @return 删除结果
      */
-    RestResponse<?> deleteAll(Long courseId);
+    RestResponse<Object> deleteAll(Long courseId);
 
 }

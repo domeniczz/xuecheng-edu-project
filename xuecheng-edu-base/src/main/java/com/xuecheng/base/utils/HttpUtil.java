@@ -31,7 +31,7 @@ public class HttpUtil {
      * @param response 要写入错误的 {@link HttpServletResponse} 对象
      * @throws IOException 写入响应时发生 IO 异常
      */
-    public static void writerError(RestResponse<?> restResponse, HttpServletResponse response) throws IOException {
+    public static void writerError(RestResponse<Object> restResponse, HttpServletResponse response) throws IOException {
         response.setContentType("application/json,charset=utf-8");
         response.setStatus(restResponse.getCode());
         JSON.writeJSONString(response.getOutputStream(), restResponse);
@@ -44,7 +44,7 @@ public class HttpUtil {
      * @param params 请求参数
      * @param encoding 请求正文的编码
      * @return 请求的响应
-     * @throws Exception 发送请求时出错
+     * @throws IOException 发送请求时出错
      */
     public static String post(String generalUrl, String contentType, String params, String encoding) throws IOException {
         URL url = new URL(generalUrl);
@@ -89,7 +89,7 @@ public class HttpUtil {
      * @param apiKey API Key
      * @param secretKey Secret Key
      * @return 根据提供的 API Key 和 Secret Key 生成的访问令牌
-     * @throws Exception 生成访问令牌时出错
+     * @throws IOException 生成访问令牌时出错
      */
     public static String getAccessToken(String apiKey, String secretKey) throws IOException {
         // 生成 Token 地址
@@ -131,7 +131,7 @@ public class HttpUtil {
      * @param accessToken 访问令牌
      * @param params 请求参数
      * @return 请求的响应
-     * @throws Exception 发送请求时出错
+     * @throws IOException 发送请求时出错
      */
     public static String postWithToken(String requestUrl, String accessToken, String params) throws IOException {
         // 这是在 HTTP 请求正文中发送数据时可以使用的内容类型之一
@@ -148,7 +148,7 @@ public class HttpUtil {
      * @param contentType 请求正文的内容类型
      * @param params 请求参数
      * @return 请求的响应
-     * @throws Exception 发送请求时出错
+     * @throws IOException 发送请求时出错
      */
     public static String postWithToken(String requestUrl, String accessToken, String contentType, String params) throws IOException {
         String encoding = "UTF-8";
@@ -169,7 +169,7 @@ public class HttpUtil {
      * @param params 请求参数
      * @param encoding 请求正文的编码
      * @return 请求的响应
-     * @throws Exception 发送请求时出错
+     * @throws IOException 发送请求时出错
      */
     public static String postWithToken(String requestUrl, String accessToken, String contentType, String params, String encoding) throws IOException {
         String url = requestUrl + "?access_token=" + accessToken;

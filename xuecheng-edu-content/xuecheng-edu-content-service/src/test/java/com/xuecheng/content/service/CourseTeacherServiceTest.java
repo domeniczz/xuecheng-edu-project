@@ -79,14 +79,14 @@ public class CourseTeacherServiceTest {
     @Test
     @Order(4)
     void test_delete() {
-        RestResponse<?> res = courseTeacherService.delete(courseId, courseTeacher.getId());
+        RestResponse<Object> res = courseTeacherService.delete(courseId, courseTeacher.getId());
         Assertions.assertNotNull(res);
     }
 
     @Test
     @Order(5)
     void test_deleteAll() {
-        RestResponse<?> res = courseTeacherService.deleteAll(courseId);
+        RestResponse<Object> res = courseTeacherService.deleteAll(courseId);
         Assertions.assertNotNull(res);
     }
 

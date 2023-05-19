@@ -5,9 +5,7 @@ import com.xuecheng.content.model.dto.SaveTeachplanDto;
 import com.xuecheng.content.model.dto.TeachplanDto;
 import com.xuecheng.content.model.po.Teachplan;
 import com.xuecheng.content.service.TeachplanService;
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiImplicitParam;
-import io.swagger.annotations.ApiOperation;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -18,6 +16,10 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
+
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiImplicitParam;
+import io.swagger.annotations.ApiOperation;
 
 /**
  * @author Domenic
@@ -49,21 +51,21 @@ public class TeachplanController {
     @DeleteMapping("/{id}")
     @ApiOperation("删除课程计划")
     @ApiImplicitParam(value = "id", name = "课程计划 id", required = true, dataType = "Long", paramType = "path")
-    public RestResponse<?> deleteTeachplan(@PathVariable Long id) {
+    public RestResponse<Object> deleteTeachplan(@PathVariable Long id) {
         return teachplanService.deleteTeachplan(id);
     }
 
     @PostMapping("/moveup/{id}")
     @ApiOperation("课程计划上移")
     @ApiImplicitParam(value = "id", name = "课程计划 id", required = true, dataType = "Long", paramType = "path")
-    public RestResponse<?> moveUp(@PathVariable Long id) {
+    public RestResponse<Object> moveUp(@PathVariable Long id) {
         return teachplanService.moveUp(id);
     }
 
     @PostMapping("/movedown/{id}")
     @ApiOperation("课程计划下移")
     @ApiImplicitParam(value = "id", name = "课程计划 id", required = true, dataType = "Long", paramType = "path")
-    public RestResponse<?> moveDown(@PathVariable Long id) {
+    public RestResponse<Object> moveDown(@PathVariable Long id) {
         return teachplanService.moveDown(id);
     }
 

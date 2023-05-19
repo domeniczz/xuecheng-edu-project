@@ -65,7 +65,7 @@ public class CourseTeacherServiceImpl implements CourseTeacherService {
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public RestResponse<?> delete(Long courseId, Long teacherId) {
+    public RestResponse<Object> delete(Long courseId, Long teacherId) {
         int res = courseTeacherMapper.delete(new LambdaQueryWrapper<CourseTeacher>()
                 .eq(CourseTeacher::getCourseId, courseId)
                 .eq(CourseTeacher::getId, teacherId));
@@ -79,7 +79,7 @@ public class CourseTeacherServiceImpl implements CourseTeacherService {
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public RestResponse<?> deleteAll(Long courseId) {
+    public RestResponse<Object> deleteAll(Long courseId) {
         courseTeacherMapper.delete(new LambdaQueryWrapper<CourseTeacher>().eq(CourseTeacher::getCourseId, courseId));
         return RestResponse.success("删除课程对应的所有教师信息成功");
     }

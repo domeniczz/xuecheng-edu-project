@@ -28,6 +28,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Objects;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -190,7 +191,7 @@ public class CourseBaseInfoServiceImpl implements CourseBaseInfoService {
         }
 
         // 操作权限合法性校验
-        if (companyId != courseBase.getCompanyId()) {
+        if (!Objects.equals(companyId, courseBase.getCompanyId())) {
             XueChengEduException.cast("只能修改本机构的课程");
             return null;
         }
@@ -229,7 +230,7 @@ public class CourseBaseInfoServiceImpl implements CourseBaseInfoService {
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public RestResponse<?> delete(Long courseId) {
+    public RestResponse<Object> delete(Long courseId) {
         boolean ifSubmitForAudit = checkAuditState(courseId);
         if (!ifSubmitForAudit) {
             // 删除课程基本信息

@@ -1,5 +1,6 @@
 package com.xuecheng.content.service;
 
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.MethodOrderer;
 import org.junit.jupiter.api.Test;
@@ -24,7 +25,8 @@ public class TeachplanMediaServiceTest {
 
     @Test
     void test_deleteTeachplanMedia() {
-        teachplanMediaService.deleteTeachplanMedia(1000001L);
+        int res = teachplanMediaService.deleteTeachplanMedia(1000001L);
+        Assertions.assertEquals(1, res);
     }
 
 }

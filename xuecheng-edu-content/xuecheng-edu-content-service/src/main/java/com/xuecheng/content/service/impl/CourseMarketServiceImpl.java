@@ -4,6 +4,7 @@ import com.xuecheng.base.exception.XueChengEduException;
 import com.xuecheng.content.mapper.CourseMarketMapper;
 import com.xuecheng.content.model.po.CourseMarket;
 import com.xuecheng.content.service.CourseMarketService;
+
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -31,16 +32,15 @@ public class CourseMarketServiceImpl implements CourseMarketService {
     public CourseMarket saveCourseMarket(CourseMarket courseMarket) {
         // 参数合法性校验在 controller 层已经做过
 
-        // 若课程为收费，但价格没有填写，则抛出异常
         String charge = courseMarket.getCharge();
         // TODO: 这里 charge 类型不能直接写死，应该要从 System 模块中查询 Dictionary 获取
         // 201001 是收费，201000 是免费
         String chargedStatus = "201001";
-        if (chargedStatus.equals(charge)) {
-            if (courseMarket.getPrice() == null || courseMarket.getPrice() <= 0) {
-                XueChengEduException.cast("课程的价格不能为空，且必须大于 0");
-                return null;
-            }
+
+        // 若课程为收费，但价格没有填写，则抛出异常
+        if (chargedStatus.equals(charge) && !isPriceInvalid(courseMarket.getPrice())) {
+            XueChengEduException.cast("课程的价格不能为空，且必须大于 0");
+            return null;
         }
 
         // 判断课程营销信息是否存在，若存在则更新，若不存在则新增
@@ -64,6 +64,15 @@ public class CourseMarketServiceImpl implements CourseMarketService {
     @Transactional(rollbackFor = Exception.class)
     public int delete(Long courseId) {
         return courseMarketMapper.deleteById(courseId);
+    }
+
+    /**
+     * 判断价格是否合法 (不为 {@code null} 且大于 0 则合法)
+     * @param price
+     * @return
+     */
+    private boolean isPriceInvalid(Double price) {
+        return price != null && price > 0;
     }
 
 }

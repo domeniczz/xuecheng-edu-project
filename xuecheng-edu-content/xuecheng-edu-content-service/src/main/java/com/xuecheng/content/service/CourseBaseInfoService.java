@@ -60,6 +60,6 @@ public interface CourseBaseInfoService {
      * @param courseId 课程 ID
      * @return 操作结果
      */
-    RestResponse<?> delete(Long courseId);
+    RestResponse<Object> delete(Long courseId);
 
 }
