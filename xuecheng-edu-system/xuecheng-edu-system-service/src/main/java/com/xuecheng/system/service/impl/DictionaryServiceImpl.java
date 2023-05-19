@@ -6,10 +6,12 @@ import com.xuecheng.base.exception.XueChengEduException;
 import com.xuecheng.system.mapper.DictionaryMapper;
 import com.xuecheng.system.model.po.Dictionary;
 import com.xuecheng.system.service.DictionaryService;
-import lombok.extern.slf4j.Slf4j;
+
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+
+import lombok.extern.slf4j.Slf4j;
 
 /**
  * @author Domenic
@@ -24,9 +26,7 @@ public class DictionaryServiceImpl extends ServiceImpl<DictionaryMapper, Diction
     @Override
     public List<Dictionary> queryAll() {
 
-        List<Dictionary> list = this.list();
-
-        return list;
+        return this.list();
     }
 
     @Override
