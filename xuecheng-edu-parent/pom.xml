@@ -4,14 +4,12 @@
 
     <modelVersion>4.0.0</modelVersion>
 
-
     <groupId>com.xuecheng</groupId>
     <artifactId>xuecheng-edu-parent</artifactId>
     <version>0.0.1-SNAPSHOT</version>
     <name>xuecheng-edu-parent</name>
     <description>xuecheng-edu-parent</description>
     <packaging>pom</packaging>
-
 
     <properties>
         <java.version>1.8</java.version>
@@ -39,10 +37,8 @@
         <p6spy.version>3.9.1</p6spy.version>
     </properties>
 
-
     <dependencyManagement>
         <dependencies>
-
             <dependency>
                 <groupId>org.springframework.cloud</groupId>
                 <artifactId>spring-cloud-dependencies</artifactId>
@@ -200,7 +196,6 @@
 
     </dependencyManagement>
 
-
     <build>
         <finalName>${project.name}</finalName>
         <!--编译打包过滤配置-->
@@ -219,39 +214,66 @@
                 </includes>
             </resource>
         </resources>
-        <plugins>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-compiler-plugin</artifactId>
-                <version>3.8.1</version>
-                <configuration>
-                    <!--指定项目源码jdk的版本-->
-                    <source>1.8</source>
-                    <!--指定项目编译后的jdk的版本-->
-                    <target>1.8</target>
-                    <!--配置注解预编译-->
-                    <annotationProcessorPaths>
-                        <path>
-                            <groupId>org.projectlombok</groupId>
-                            <artifactId>lombok</artifactId>
-                            <version>${org.projectlombok.version}</version>
-                        </path>
-                    </annotationProcessorPaths>
-                </configuration>
-            </plugin>
-
-            <!--责处理项目资源文件并拷贝到输出目录，如果有额外的资源文件目录则需要配置-->
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-resources-plugin</artifactId>
-                <version>3.3.0</version>
-                <configuration>
-                    <encoding>utf-8</encoding>
-                    <!--使用默认分隔符，resource中可以使用分割符定义过虑的路径-->
-                    <useDefaultDelimiters>true</useDefaultDelimiters>
-                </configuration>
-            </plugin>
-        </plugins>
+        <pluginManagement>
+            <plugins>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-compiler-plugin</artifactId>
+                    <version>3.8.1</version>
+                    <configuration>
+                        <!-- 指定项目源码 JDK 的版本 -->
+                        <source>${java.version}</source>
+                        <!-- 指定项目编译后的 JDK 的版本 -->
+                        <target>${java.version}</target>
+                        <!-- 配置注解预编译 -->
+                        <annotationProcessorPaths>
+                            <path>
+                                <groupId>org.projectlombok</groupId>
+                                <artifactId>lombok</artifactId>
+                                <version>${org.projectlombok.version}</version>
+                            </path>
+                        </annotationProcessorPaths>
+                    </configuration>
+                </plugin>
+    
+                <!-- 责处理项目资源文件并拷贝到输出目录，如果有额外的资源文件目录则需要配置 -->
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-resources-plugin</artifactId>
+                    <version>3.3.0</version>
+                    <configuration>
+                        <encoding>utf-8</encoding>
+                        <!-- 使用默认分隔符，resource 中可以使用分割符定义过虑的路径 -->
+                        <useDefaultDelimiters>true</useDefaultDelimiters>
+                    </configuration>
+                </plugin>
+    
+                <!--
+                    使用 maven 的 toolchains 来使用指定的 JDK 版本，而无需更改 JAVA_HOME
+                    只需在 toolchains.xml 中指定本地安装的多个 JDK (若有) 的安装路径
+                -->
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-toolchains-plugin</artifactId>
+                    <version>3.0.0</version>
+                    <executions>
+                        <execution>
+                            <goals>
+                                <goal>toolchain</goal>
+                            </goals>
+                        </execution>
+                    </executions>
+                    <configuration>
+                        <toolchains>
+                            <jdk>
+                                <version>1.8</version>
+                                <vendor>oracle</vendor>
+                            </jdk>
+                        </toolchains>
+                    </configuration>
+                </plugin>
+            </plugins>
+        </pluginManagement>
     </build>
 
 </project>
