@@ -81,7 +81,7 @@ public class MinioTest {
     */
     @Test
     @Order(1)
-    void test_createBucket() {
+    void testCreateBucket() {
         try {
             minioUtils.createBucket(bucketName);
         } catch (Exception e) {
@@ -94,7 +94,7 @@ public class MinioTest {
      */
     @Test
     @Order(2)
-    void test_setBucketAccessPolicyPublic() throws Exception {
+    void testSetBucketAccessPolicyPublic() throws Exception {
         String policy = "{\n" +
                 "    \"Version\": \"2012-10-17\"," +
                 "    \"Statement\": [" +
@@ -128,7 +128,7 @@ public class MinioTest {
      */
     @Test
     @Order(6)
-    void test_deleteBucket() throws Exception {
+    void testDeleteBucket() throws Exception {
         minioUtils.deleteBucket(bucketName);
         Assertions.assertFalse(minioClient.bucketExists(BucketExistsArgs.builder().bucket(bucketName).build()));
     }
@@ -138,7 +138,7 @@ public class MinioTest {
      */
     @Test
     @Order(3)
-    void test_uploadFile() {
+    void testUploadFile() {
         try {
             ObjectWriteResponse resp = minioUtils.uploadFile(localFilePath,
                     FileUtils.getMimeTypeFromExt(filename.substring(filename.lastIndexOf("."))),
@@ -155,7 +155,7 @@ public class MinioTest {
      */
     @Test
     @Order(4)
-    void test_downloadFile() throws Exception {
+    void testDownloadFile() throws Exception {
         File src = new File(localFilePath);
         File dest = new File(testDownloadFilePath);
 
@@ -180,7 +180,7 @@ public class MinioTest {
      */
     @Test
     @Order(5)
-    void test_deleteFile() throws Exception {
+    void testDeleteFile() throws Exception {
         boolean res = minioUtils.deleteFile(bucketName, objectName);
         Assertions.assertTrue(res, "删除文件失败");
     }

@@ -16,7 +16,7 @@ import java.util.Map;
 public class CodeValueParserTest {
 
     @Test
-    void test_parseItemValues() {
+    void testParseItemValues() {
         String jsonString = "{\"id\":1,\"name\":\"学历\",\"code\":\"education\",\"itemValues\":[{\"code\":\"200001\",\"desc\":\"低级\"},{\"code\":\"200002\",\"desc\":\"中级\"},{\"code\":\"200003\",\"desc\":\"高级\"}]}";
         try {
             Map<String, String> itemValues = CodeValueParser.parseItemValues(jsonString, 5);

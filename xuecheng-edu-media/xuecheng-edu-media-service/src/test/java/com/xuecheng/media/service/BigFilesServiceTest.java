@@ -97,14 +97,14 @@ public class BigFilesServiceTest {
 
     @Test
     @Order(1)
-    void test_checkFile_pre() {
+    void testCheckFilePre() {
         RestResponse<Boolean> res = bigFilesService.checkFile(fileMd5);
         Assertions.assertFalse(res.getResult(), "文件不应该存在");
     }
 
     @Test
     @Order(2)
-    void test_uploadChunk() {
+    void testUploadChunk() {
         // 将分块文件上传到 minio
         for (int i = 0; i < chunkTotalNum; ++i) {
             RestResponse<Boolean> res = bigFilesService.uploadChunk(fileMd5, i, chunkFolderPath + i);
@@ -114,7 +114,7 @@ public class BigFilesServiceTest {
 
     @Test
     @Order(3)
-    void test_checkChunk_pre() {
+    void testCheckChunkPre() {
         // 检查分块文件是否存在
         for (int i = 0; i < chunkTotalNum; ++i) {
             RestResponse<Boolean> res = bigFilesService.checkChunk(fileMd5, i);
@@ -124,14 +124,14 @@ public class BigFilesServiceTest {
 
     @Test
     @Order(4)
-    void test_mergeChunks() {
+    void testMergeChunks() {
         RestResponse<Boolean> res = bigFilesService.mergeChunksAndSave(companyId, fileMd5, chunkTotalNum, dto);
         Assertions.assertTrue(res.getResult(), "分块文件合并失败");
     }
 
     @Test
     @Order(5)
-    void test_checkChunk_post() {
+    void testCheckChunkPost() {
         for (int i = 0; i < chunkTotalNum; ++i) {
             RestResponse<Boolean> res = bigFilesService.checkChunk(fileMd5, i);
             Assertions.assertFalse(res.getResult(), "分块文件 " + i + " 未被删除");
@@ -140,14 +140,14 @@ public class BigFilesServiceTest {
 
     @Test
     @Order(6)
-    void test_checkFile_post() {
+    void testCheckFilePost() {
         RestResponse<Boolean> res = bigFilesService.checkFile(fileMd5);
         Assertions.assertTrue(res.getResult(), "文件不存在");
     }
 
     @Test
     @Order(7)
-    void test_deleteFile() {
+    void testDeleteFile() {
         RestResponse<Boolean> res = bigFilesService.deleteFile(getMergedFileObjectName());
         Assertions.assertTrue(res.getResult(), "合并后的文件删除失败");
     }

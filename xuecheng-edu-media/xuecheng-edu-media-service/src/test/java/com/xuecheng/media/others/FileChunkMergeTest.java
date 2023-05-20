@@ -106,7 +106,7 @@ public class FileChunkMergeTest {
      */
     @Test
     @Order(1)
-    void test_chunking() throws IOException {
+    void testChunking() throws IOException {
 
         File sourceFile = new File(sourceFolderPath + sourceFilename);
 
@@ -154,7 +154,7 @@ public class FileChunkMergeTest {
      */
     @Test
     @Order(2)
-    void test_merging() throws IOException {
+    void testMerging() throws IOException {
         File sourceFolder = new File(sourceFolderPath);
         File chunkFolder = new File(chunkFolderPath);
         File mergedFile = new File(sourceFolderPath + mergedFilename);
@@ -204,7 +204,7 @@ public class FileChunkMergeTest {
      */
     @Test
     @Order(3)
-    void test_uploadChunksToMinio() throws Exception {
+    void testUploadChunksToMinio() throws Exception {
         // 将分块文件上传到 minio
         try (Stream<Path> stream = Files.list(Paths.get(chunkFolderPath))) {
             stream.filter(Files::isRegularFile).forEach(file -> {
@@ -227,7 +227,7 @@ public class FileChunkMergeTest {
      */
     @Test
     @Order(4)
-    void test_mergeChunksOnMinio() throws Exception {
+    void testMergeChunksOnMinio() throws Exception {
         // 合并文件
         ObjectWriteResponse resp = minioUtils.mergeChunks(bucketName, mergedFilenameMinio, objectFolderPathMinio);
         Assertions.assertNotNull(resp, "合并文件失败");

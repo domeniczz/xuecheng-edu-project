@@ -27,25 +27,25 @@ public class CourseTeacherServiceTest {
     @Autowired
     private CourseTeacherService courseTeacherService;
 
-    private static long courseId;
-    private static CourseTeacher courseTeacher;
+    private static long COURSE_ID;
+    private static CourseTeacher COURSE_TEACHER;
 
     @BeforeAll
     static void setUp() {
-        courseId = 1000001L;
+        COURSE_ID = 1000001L;
 
-        courseTeacher = new CourseTeacher();
-        courseTeacher.setCourseId(courseId);
-        courseTeacher.setTeacherName("测试老师 Unit Test");
-        courseTeacher.setPosition("测试职位 Unit Test");
-        courseTeacher.setIntroduction("测试测试测试测试测试测试");
-        courseTeacher.setPhotograph("https://www.test.com/test.jpg");
+        COURSE_TEACHER = new CourseTeacher();
+        COURSE_TEACHER.setCourseId(COURSE_ID);
+        COURSE_TEACHER.setTeacherName("测试老师 Unit Test");
+        COURSE_TEACHER.setPosition("测试职位 Unit Test");
+        COURSE_TEACHER.setIntroduction("测试测试测试测试测试测试");
+        COURSE_TEACHER.setPhotograph("https://www.test.com/test.jpg");
     }
 
     @Test
     @Order(2)
-    void test_queryTeacherList() {
-        List<CourseTeacher> res = courseTeacherService.queryTeacherList(courseId);
+    void testQueryTeacherList() {
+        List<CourseTeacher> res = courseTeacherService.queryTeacherList(COURSE_ID);
         Assertions.assertNotNull(res);
 
         System.out.println("\n===================================================");
@@ -55,10 +55,10 @@ public class CourseTeacherServiceTest {
 
     @Test
     @Order(1)
-    void test_createTeacher() {
-        CourseTeacher res = courseTeacherService.save(courseTeacher);
+    void testCreateTeacher() {
+        CourseTeacher res = courseTeacherService.save(COURSE_TEACHER);
         Assertions.assertNotNull(res);
-        Assertions.assertEquals(courseId, res.getCourseId());
+        Assertions.assertEquals(COURSE_ID, res.getCourseId());
 
         System.out.println("\n===================================================\n"
                 + res
@@ -67,8 +67,8 @@ public class CourseTeacherServiceTest {
 
     @Test
     @Order(3)
-    void test_updateTeacher() {
-        CourseTeacher res = courseTeacherService.save(courseTeacher);
+    void testUpdateTeacher() {
+        CourseTeacher res = courseTeacherService.save(COURSE_TEACHER);
         Assertions.assertNotNull(res);
 
         System.out.println("\n===================================================\n"
@@ -78,15 +78,15 @@ public class CourseTeacherServiceTest {
 
     @Test
     @Order(4)
-    void test_delete() {
-        RestResponse<Object> res = courseTeacherService.delete(courseId, courseTeacher.getId());
+    void testDelete() {
+        RestResponse<Object> res = courseTeacherService.delete(COURSE_ID, COURSE_TEACHER.getId());
         Assertions.assertNotNull(res);
     }
 
     @Test
     @Order(5)
-    void test_deleteAll() {
-        RestResponse<Object> res = courseTeacherService.deleteAll(courseId);
+    void testDeleteAll() {
+        RestResponse<Object> res = courseTeacherService.deleteAll(COURSE_ID);
         Assertions.assertNotNull(res);
     }
 

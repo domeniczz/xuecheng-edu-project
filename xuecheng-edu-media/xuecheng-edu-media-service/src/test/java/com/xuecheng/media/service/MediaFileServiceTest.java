@@ -74,7 +74,7 @@ public class MediaFileServiceTest {
 
     @Test
     @Order(2)
-    void test_queryMediaFileList() {
+    void testQueryMediaFileList() {
         // 分页参数
         PageParams pageParams = new PageParams();
         // 当前页码
@@ -101,7 +101,7 @@ public class MediaFileServiceTest {
 
     @Test
     @Order(1)
-    void test_uploadMediaFile() {
+    void testUploadMediaFile() {
         FileResultDto resDto = mediaFileService.uploadMediaFile(companyId, dto, filePath);
         Assertions.assertNotNull(resDto, "媒资文件上传失败");
 
@@ -112,7 +112,7 @@ public class MediaFileServiceTest {
 
     @Test
     @Order(3)
-    void test_deleteMediaFile() {
+    void testDeleteMediaFile() {
         // 若测试失败，可能是因为 bucket Access Policy 是 private，需要改为 public
         mediaFileService.deleteMediaFile(companyId, dto);
     }

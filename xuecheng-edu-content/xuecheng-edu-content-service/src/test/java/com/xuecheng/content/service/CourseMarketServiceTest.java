@@ -24,25 +24,25 @@ public class CourseMarketServiceTest {
     @Autowired
     private CourseMarketService courseMarketService;
 
-    private static long courseId;
-    private static CourseMarket courseMarket;
+    private static long COURSE_ID;
+    private static CourseMarket COURSE_MARKET;
 
     @BeforeAll
     static void setUp() {
-        courseMarket = new CourseMarket();
-        courseMarket.setCharge("201001");
-        courseMarket.setPrice(299.99);
-        courseMarket.setOriginalPrice(399.99);
-        courseMarket.setQq("1925768576");
-        courseMarket.setWechat("test_wechat_id");
-        courseMarket.setPhone("13758475860");
-        courseMarket.setValidDays(321);
+        COURSE_MARKET = new CourseMarket();
+        COURSE_MARKET.setCharge("201001");
+        COURSE_MARKET.setPrice(299.99);
+        COURSE_MARKET.setOriginalPrice(399.99);
+        COURSE_MARKET.setQq("1925768576");
+        COURSE_MARKET.setWechat("test_wechat_id");
+        COURSE_MARKET.setPhone("13758475860");
+        COURSE_MARKET.setValidDays(321);
     }
 
     @Test
     @Order(2)
-    public void test_query() {
-        CourseMarket courseMarket = courseMarketService.query(courseId);
+    public void testQuery() {
+        CourseMarket courseMarket = courseMarketService.query(COURSE_ID);
         Assertions.assertNotNull(courseMarket);
 
         System.out.println("\n===================================================\n"
@@ -52,24 +52,24 @@ public class CourseMarketServiceTest {
 
     @Test
     @Order(1)
-    public void test_createCourseMarket() {
-        CourseMarket res = courseMarketService.saveCourseMarket(courseMarket);
-        courseId = res.getId();
+    public void testCreateCourseMarket() {
+        CourseMarket res = courseMarketService.saveCourseMarket(COURSE_MARKET);
+        COURSE_ID = res.getId();
         Assertions.assertNotNull(res);
     }
 
     @Test
     @Order(3)
-    public void test_updateCourseMarket() {
-        courseMarket.setId(courseId);
-        CourseMarket res = courseMarketService.saveCourseMarket(courseMarket);
+    public void testUpdateCourseMarket() {
+        COURSE_MARKET.setId(COURSE_ID);
+        CourseMarket res = courseMarketService.saveCourseMarket(COURSE_MARKET);
         Assertions.assertNotNull(res);
     }
 
     @Test
     @Order(4)
-    public void test_delete() {
-        int res = courseMarketService.delete(courseId);
+    public void testDelete() {
+        int res = courseMarketService.delete(COURSE_ID);
         Assertions.assertEquals(1, res);
     }
 

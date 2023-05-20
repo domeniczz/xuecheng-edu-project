@@ -24,7 +24,7 @@ public class TeachplanMediaServiceTest {
     private TeachplanMediaService teachplanMediaService;
 
     @Test
-    void test_deleteTeachplanMedia() {
+    void testDeleteTeachplanMedia() {
         int res = teachplanMediaService.deleteTeachplanMedia(1000001L);
         Assertions.assertEquals(1, res);
     }

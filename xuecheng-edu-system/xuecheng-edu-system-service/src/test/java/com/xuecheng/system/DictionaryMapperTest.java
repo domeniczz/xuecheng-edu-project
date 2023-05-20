@@ -24,7 +24,7 @@ public class DictionaryMapperTest {
     private DictionaryMapper dictionaryMapper;
 
     @Test
-    void test_queryAll() {
+    void testQueryAll() {
         // 查询全部
         List<Dictionary> dictionaryList = dictionaryMapper.selectList(null);
         Assertions.assertNotNull(dictionaryList);
@@ -32,7 +32,7 @@ public class DictionaryMapperTest {
     }
 
     @Test
-    void test_getByCode() {
+    void testGetByCode() {
         Dictionary dictItem = dictionaryMapper.selectOne(
                 new LambdaQueryWrapper<Dictionary>().eq(Dictionary::getCode, "200"));
         Assertions.assertNotNull(dictItem);
