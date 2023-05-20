@@ -1,4 +1,4 @@
-package com.xuecheng.media.utils;
+package com.xuecheng.media.operations;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.xuecheng.base.exception.XueChengEduException;
@@ -20,19 +20,19 @@ import lombok.extern.slf4j.Slf4j;
 
 /**
  * @author Domenic
- * @Classname FileInfoDbUtils
+ * @Classname FileInfoDbOperation
  * @Description 文件信息数据库操作的工具类
  * @Created by Domenic
  */
 @Component
 @Slf4j
-public class FileInfoDbUtils {
+public class FileInfoDbOperation {
 
     @Autowired
     private MediaFileMapper mediaFileMapper;
 
     @Autowired
-    private FileInfoDbUtils currentProxy;
+    private FileInfoDbOperation currentProxy;
 
     /**
      * 将 媒体/视频 文件信息添加到文件信息表中

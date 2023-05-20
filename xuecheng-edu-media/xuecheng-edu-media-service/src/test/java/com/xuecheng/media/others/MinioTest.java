@@ -1,7 +1,7 @@
 package com.xuecheng.media.others;
 
-import com.xuecheng.media.utils.FileUtils;
-import com.xuecheng.media.utils.MinioUtils;
+import com.xuecheng.media.operations.FileOperation;
+import com.xuecheng.media.operations.MinioOperation;
 
 import org.apache.commons.io.IOUtils;
 import org.junit.jupiter.api.Assertions;
@@ -40,7 +40,7 @@ public class MinioTest {
     private MinioClient minioClient;
 
     @Autowired
-    private MinioUtils minioUtils;
+    private MinioOperation minioOperation;
 
     /**
      * 测试文件名
@@ -83,7 +83,7 @@ public class MinioTest {
     @Order(1)
     void testCreateBucket() {
         try {
-            minioUtils.createBucket(bucketName);
+            minioOperation.createBucket(bucketName);
         } catch (Exception e) {
             Assertions.fail(e.getMessage() + "创建桶 (" + bucketName + ") 失败");
         }
@@ -129,7 +129,7 @@ public class MinioTest {
     @Test
     @Order(6)
     void testDeleteBucket() throws Exception {
-        minioUtils.deleteBucket(bucketName);
+        minioOperation.deleteBucket(bucketName);
         Assertions.assertFalse(minioClient.bucketExists(BucketExistsArgs.builder().bucket(bucketName).build()));
     }
 
@@ -140,8 +140,8 @@ public class MinioTest {
     @Order(3)
     void testUploadFile() {
         try {
-            ObjectWriteResponse resp = minioUtils.uploadFile(localFilePath,
-                    FileUtils.getMimeTypeFromExt(filename.substring(filename.lastIndexOf("."))),
+            ObjectWriteResponse resp = minioOperation.uploadFile(localFilePath,
+                    FileOperation.getMimeTypeFromExt(filename.substring(filename.lastIndexOf("."))),
                     bucketName, objectName);
             Assertions.assertNotNull(resp, "上传文件失败");
             Assertions.assertEquals(resp.object(), objectName, "上传文件失败, 文件名称不一致");
@@ -159,15 +159,15 @@ public class MinioTest {
         File src = new File(localFilePath);
         File dest = new File(testDownloadFilePath);
 
-        try (FilterInputStream in = minioUtils.queryFile(bucketName, objectName);
+        try (FilterInputStream in = minioOperation.queryFile(bucketName, objectName);
                 FileOutputStream out = new FileOutputStream(dest)) {
             // 将下载的数据流写入到目标文件
             IOUtils.copy(in, out);
         }
 
         // 通过 MD5 校验文件的完整性
-        String srcMD5 = FileUtils.getFileMd5(src);
-        String destMD5 = FileUtils.getFileMd5(dest);
+        String srcMD5 = FileOperation.getFileMd5(src);
+        String destMD5 = FileOperation.getFileMd5(dest);
         Assertions.assertEquals(srcMD5, destMD5, "MD5 校验失败");
 
         // 删除下载的文件
@@ -181,7 +181,7 @@ public class MinioTest {
     @Test
     @Order(5)
     void testDeleteFile() throws Exception {
-        boolean res = minioUtils.deleteFile(bucketName, objectName);
+        boolean res = minioOperation.deleteFile(bucketName, objectName);
         Assertions.assertTrue(res, "删除文件失败");
     }
 

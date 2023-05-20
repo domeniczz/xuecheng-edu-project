@@ -1,6 +1,6 @@
 package com.xuecheng.media.service.jobhandler;
 
-import com.xuecheng.media.utils.MinioUtils;
+import com.xuecheng.media.operations.MinioOperation;
 import com.xxl.job.core.context.XxlJobHelper;
 import com.xxl.job.core.handler.annotation.XxlJob;
 
@@ -18,7 +18,7 @@ import org.springframework.stereotype.Component;
 public class MediaProcessXxlJob {
 
     @Autowired
-    private MinioUtils minioUtils;
+    private MinioOperation minioOperation;
 
     /**
      * 存储视频的桶
@@ -32,7 +32,7 @@ public class MediaProcessXxlJob {
      */
     @XxlJob("residualFileCleanerJob")
     public void residualFileCleanerJob() {
-        minioUtils.clearResidualChunkFiles(bucket);
+        minioOperation.clearResidualChunkFiles(bucket);
     }
 
     /**

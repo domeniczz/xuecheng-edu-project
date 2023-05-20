@@ -1,8 +1,8 @@
 package com.xuecheng.media.others;
 
 import com.xuecheng.base.utils.FileUtil;
-import com.xuecheng.media.utils.FileUtils;
-import com.xuecheng.media.utils.MinioUtils;
+import com.xuecheng.media.operations.FileOperation;
+import com.xuecheng.media.operations.MinioOperation;
 
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.Assertions;
@@ -41,7 +41,7 @@ import io.minio.ObjectWriteResponse;
 public class FileChunkMergeTest {
 
     @Autowired
-    private MinioUtils minioUtils;
+    private MinioOperation minioOperation;
 
     /**
      * 文件分块大小，minio 规定分块大小需要大于等于 5MB
@@ -97,7 +97,7 @@ public class FileChunkMergeTest {
 
         // minio 中的桶名，示例：testbucket56
         bucketName = "testbucket" + (int) Math.floor(Math.random() * (100 + 1));
-        minioUtils.createBucket(bucketName);
+        minioOperation.createBucket(bucketName);
     }
 
     /**
@@ -194,8 +194,8 @@ public class FileChunkMergeTest {
         Assertions.assertEquals(mergedFile.getName(), mergedFilename);
 
         // 合并文件完成后，对合并的文件 MD5 校验
-        String sourceMD5 = FileUtils.getFileMd5(new File(sourceFolder + File.separator + sourceFilename));
-        String mergeMD5 = FileUtils.getFileMd5(mergedFile);
+        String sourceMD5 = FileOperation.getFileMd5(new File(sourceFolder + File.separator + sourceFilename));
+        String mergeMD5 = FileOperation.getFileMd5(mergedFile);
         Assertions.assertEquals(sourceMD5, mergeMD5, "MD5 校验失败");
     }
 
@@ -210,8 +210,8 @@ public class FileChunkMergeTest {
             stream.filter(Files::isRegularFile).forEach(file -> {
                 try {
                     String objectName = objectFolderPathMinio + file.getFileName().toString();
-                    ObjectWriteResponse resp = minioUtils.uploadFile(file.toAbsolutePath().toString(),
-                            FileUtils.getMimeTypeFromExt(""),
+                    ObjectWriteResponse resp = minioOperation.uploadFile(file.toAbsolutePath().toString(),
+                            FileOperation.getMimeTypeFromExt(""),
                             bucketName, objectName);
                     Assertions.assertNotNull(resp, "上传文件失败");
                     Assertions.assertEquals(resp.object(), objectName, "上传文件失败, 文件名称不一致");
@@ -229,7 +229,7 @@ public class FileChunkMergeTest {
     @Order(4)
     void testMergeChunksOnMinio() throws Exception {
         // 合并文件
-        ObjectWriteResponse resp = minioUtils.mergeChunks(bucketName, mergedFilenameMinio, objectFolderPathMinio);
+        ObjectWriteResponse resp = minioOperation.mergeChunks(bucketName, mergedFilenameMinio, objectFolderPathMinio);
         Assertions.assertNotNull(resp, "合并文件失败");
         Assertions.assertEquals(resp.object(), mergedFilenameMinio);
     }
@@ -248,13 +248,13 @@ public class FileChunkMergeTest {
         /* 删除 Minio 中测试产生的文件 */
 
         // 删除分块文件夹
-        minioUtils.clearFolderNonRecursively(bucketName, chunkFolderPath);
+        minioOperation.clearFolderNonRecursively(bucketName, chunkFolderPath);
 
         // 删除和合并后的文件
-        minioUtils.deleteFile(bucketName, mergedFilenameMinio);
+        minioOperation.deleteFile(bucketName, mergedFilenameMinio);
 
         // 删除测试桶
-        minioUtils.deleteBucket(bucketName);
+        minioOperation.deleteBucket(bucketName);
     }
 
 }

@@ -1,6 +1,6 @@
 package com.xuecheng.media.service;
 
-import com.xuecheng.media.utils.MinioUtils;
+import com.xuecheng.media.operations.MinioOperation;
 
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
@@ -13,7 +13,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 public class ScheduledTaskServiceTest {
 
     @Autowired
-    private MinioUtils minioUtils;
+    private MinioOperation minioOperation;
 
     /**
      * 存储视频的桶
@@ -23,7 +23,7 @@ public class ScheduledTaskServiceTest {
 
     @Test
     void testClearResidualChunkFiles() {
-        minioUtils.clearResidualChunkFiles(bucket);
+        minioOperation.clearResidualChunkFiles(bucket);
     }
 
 }

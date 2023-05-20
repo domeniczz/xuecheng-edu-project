@@ -10,10 +10,10 @@ import com.xuecheng.media.model.dto.FileParamsDto;
 import com.xuecheng.media.model.dto.FileResultDto;
 import com.xuecheng.media.model.dto.QueryMediaParamsDto;
 import com.xuecheng.media.model.po.MediaFile;
+import com.xuecheng.media.operations.FileInfoDbOperation;
+import com.xuecheng.media.operations.FileOperation;
+import com.xuecheng.media.operations.MinioOperation;
 import com.xuecheng.media.service.MediaFileService;
-import com.xuecheng.media.utils.FileInfoDbUtils;
-import com.xuecheng.media.utils.FileUtils;
-import com.xuecheng.media.utils.MinioUtils;
 
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.BeanUtils;
@@ -41,10 +41,10 @@ public class MediaFileServiceImpl implements MediaFileService {
     private MediaFileMapper mediaFileMapper;
 
     @Autowired
-    private FileInfoDbUtils fileInfoDbUtils;
+    private FileInfoDbOperation fileInfoDbOperation;
 
     @Autowired
-    private MinioUtils minioUtils;
+    private MinioOperation minioOperation;
 
     /**
      * 存储普通文件的桶
@@ -98,13 +98,13 @@ public class MediaFileServiceImpl implements MediaFileService {
         String ext = filename.substring(filename.lastIndexOf("."));
 
         // 文件 mimeType
-        String mimeType = FileUtils.getMimeTypeFromExt(ext);
+        String mimeType = FileOperation.getMimeTypeFromExt(ext);
 
         // 文件存储路径 (年/月/日)
-        String defaultFolderPath = FileUtils.getFolderPathByDate(true, true, true);
+        String defaultFolderPath = FileOperation.getFolderPathByDate(true, true, true);
 
         // 文件 MD5 值
-        String fileMd5 = FileUtils.getFileMd5(new File(tempFilePath));
+        String fileMd5 = FileOperation.getFileMd5(new File(tempFilePath));
 
         // 最终的文件名
         String finalFilename = filename.substring(0, filename.lastIndexOf(".")) + fileMd5 + ext;
@@ -113,11 +113,11 @@ public class MediaFileServiceImpl implements MediaFileService {
         String objectName = defaultFolderPath + finalFilename;
 
         // 将上传的文件信息添加到数据库的文件信息表中
-        MediaFile resDb = fileInfoDbUtils.addFileInfo(companyId, fileMd5, dto, bucket, finalFilename, objectName);
+        MediaFile resDb = fileInfoDbOperation.addFileInfo(companyId, fileMd5, dto, bucket, finalFilename, objectName);
 
         if (resDb != null) {
             // 上传文件到 minio
-            ObjectWriteResponse resp = minioUtils.uploadFile(tempFilePath, mimeType, bucket, objectName);
+            ObjectWriteResponse resp = minioOperation.uploadFile(tempFilePath, mimeType, bucket, objectName);
 
             // 准备返回的对象
             if (resp != null) {
@@ -133,7 +133,7 @@ public class MediaFileServiceImpl implements MediaFileService {
     public FileResultDto deleteMediaFile(Long companyId, FileParamsDto dto) {
 
         // 从数据库中获取文件信息
-        List<MediaFile> fileList = fileInfoDbUtils.getListFileInfo(companyId, dto, bucket, null);
+        List<MediaFile> fileList = fileInfoDbOperation.getListFileInfo(companyId, dto, bucket, null);
 
         MediaFile fileToDelete = null;
 
@@ -143,10 +143,10 @@ public class MediaFileServiceImpl implements MediaFileService {
             fileToDelete = fileList.get(0);
 
             // 删除数据库中的文件信息
-            boolean dbRes = fileInfoDbUtils.deleteFileInfo(fileToDelete);
+            boolean dbRes = fileInfoDbOperation.deleteFileInfo(fileToDelete);
             if (dbRes) {
                 // 将文件从 minio 中删除
-                boolean minioRes = minioUtils.deleteFile(bucket, fileToDelete.getFilePath());
+                boolean minioRes = minioOperation.deleteFile(bucket, fileToDelete.getFilePath());
                 if (minioRes) {
                     // 返回 FileResultDto 对象
                     FileResultDto resDto = new FileResultDto();

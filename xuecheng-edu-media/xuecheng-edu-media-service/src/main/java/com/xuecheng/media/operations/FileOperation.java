@@ -1,4 +1,4 @@
-package com.xuecheng.media.utils;
+package com.xuecheng.media.operations;
 
 import com.j256.simplemagic.ContentInfo;
 import com.j256.simplemagic.ContentInfoUtil;
@@ -18,14 +18,14 @@ import lombok.extern.slf4j.Slf4j;
 
 /**
  * @author Domenic
- * @Classname FileUtils
+ * @Classname FileOperation
  * @Description 本地文件操作的工具类
  * @Created by Domenic
  */
 @Slf4j
-public class FileUtils {
+public class FileOperation {
 
-    private FileUtils() {
+    private FileOperation() {
         // prevents other classes from instantiating it
     }
 

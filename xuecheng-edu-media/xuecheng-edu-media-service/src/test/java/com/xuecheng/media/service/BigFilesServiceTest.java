@@ -3,7 +3,7 @@ package com.xuecheng.media.service;
 import com.xuecheng.base.model.RestResponse;
 import com.xuecheng.base.utils.FileUtil;
 import com.xuecheng.media.model.dto.FileParamsDto;
-import com.xuecheng.media.utils.FileUtils;
+import com.xuecheng.media.operations.FileOperation;
 
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
@@ -75,7 +75,7 @@ public class BigFilesServiceTest {
 
         // 文件 MD5
         File file = new File(folderPath + filename);
-        fileMd5 = FileUtils.getFileMd5(file);
+        fileMd5 = FileOperation.getFileMd5(file);
 
         // 分块文件夹
         chunkFolderPath = folderPath + "chunk" + File.separator;

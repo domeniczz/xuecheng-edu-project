@@ -4,10 +4,10 @@ import com.xuecheng.base.model.RestResponse;
 import com.xuecheng.media.mapper.MediaFileMapper;
 import com.xuecheng.media.model.dto.FileParamsDto;
 import com.xuecheng.media.model.po.MediaFile;
+import com.xuecheng.media.operations.FileInfoDbOperation;
+import com.xuecheng.media.operations.FileOperation;
+import com.xuecheng.media.operations.MinioOperation;
 import com.xuecheng.media.service.BigFilesService;
-import com.xuecheng.media.utils.FileInfoDbUtils;
-import com.xuecheng.media.utils.FileUtils;
-import com.xuecheng.media.utils.MinioUtils;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -34,10 +34,10 @@ public class BigFilesServiceImpl implements BigFilesService {
     private MediaFileMapper mediaFileMapper;
 
     @Autowired
-    private FileInfoDbUtils fileInfoDbUtils;
+    private FileInfoDbOperation fileInfoDbOperation;
 
     @Autowired
-    private MinioUtils minioUtils;
+    private MinioOperation minioOperation;
 
     /**
      * 存储视频的桶
@@ -53,7 +53,7 @@ public class BigFilesServiceImpl implements BigFilesService {
         // 若数据库中存在文件信息，再查询 minio
         if (mediaFile != null) {
             try {
-                StatObjectResponse fileInfo = minioUtils.getFileInfo(mediaFile.getBucket(), mediaFile.getFilePath());
+                StatObjectResponse fileInfo = minioOperation.getFileInfo(mediaFile.getBucket(), mediaFile.getFilePath());
                 // 文件不存在
                 if (fileInfo != null) {
                     // 文件已存在
@@ -63,7 +63,7 @@ public class BigFilesServiceImpl implements BigFilesService {
                     log.error("数据库中存在文件信息, 但 minio 中不存在该文件, fileMd5={}, bucket={}, filePath={}",
                             fileMd5, mediaFile.getBucket(), mediaFile.getFilePath());
                     // 删除数据库中的异常文件信息
-                    fileInfoDbUtils.deleteFileInfo(mediaFile);
+                    fileInfoDbOperation.deleteFileInfo(mediaFile);
                 }
             } catch (Exception e) {
                 log.error("查询文件出错, FilterInputStream 出错, errorMsg={}", e.getMessage());
@@ -82,7 +82,7 @@ public class BigFilesServiceImpl implements BigFilesService {
 
         try {
             // 获取分块文件的信息
-            StatObjectResponse fileInfo = minioUtils.getFileInfo(bucket, chunkFilePath);
+            StatObjectResponse fileInfo = minioOperation.getFileInfo(bucket, chunkFilePath);
             // 文件不存在
             if (fileInfo != null) {
                 // 文件已存在
@@ -102,13 +102,13 @@ public class BigFilesServiceImpl implements BigFilesService {
         String chunkFilePath = getChunkFileFolderPath(fileMd5) + chunkIndex;
 
         // 获取分块文件的 MD5
-        String chunkMd5 = FileUtils.getFileMd5(new File(localChunkFilePath));
+        String chunkMd5 = FileOperation.getFileMd5(new File(localChunkFilePath));
 
         // 获取文件的 mimeType (传入值为 null 或 空 表示没有扩展名)
-        String mimeType = FileUtils.getMimeTypeFromExt("");
+        String mimeType = FileOperation.getMimeTypeFromExt("");
 
         // 将分块文件上传到 minio
-        ObjectWriteResponse resp = minioUtils.uploadFile(localChunkFilePath, mimeType, bucket, chunkFilePath);
+        ObjectWriteResponse resp = minioOperation.uploadFile(localChunkFilePath, mimeType, bucket, chunkFilePath);
         // 校验分块的 MD5 和 ETag 值是否一致，来判断分块文件一致性是否受损
         if (resp != null && chunkMd5.equals(resp.etag())) {
             // 上传成功
@@ -135,7 +135,7 @@ public class BigFilesServiceImpl implements BigFilesService {
 
         // ========== 合并文件 ==========
 
-        ObjectWriteResponse resp = minioUtils.mergeChunks(bucket, objectName, chunkFolderPath);
+        ObjectWriteResponse resp = minioOperation.mergeChunks(bucket, objectName, chunkFolderPath);
         if (resp == null) {
             return RestResponse.fail(false, "合并文件异常");
         }
@@ -145,7 +145,7 @@ public class BigFilesServiceImpl implements BigFilesService {
         Optional<Long> fileSize = Optional.empty();
         try {
             // 获取合并后文件的大小
-            fileSize = minioUtils.getFileSize(bucket, objectName);
+            fileSize = minioOperation.getFileSize(bucket, objectName);
         } catch (Exception e) {
             log.error("获取文件大小出错, bucket={}, objectName={}, errorMsg={}", bucket, objectName, e.getMessage());
         }
@@ -168,14 +168,14 @@ public class BigFilesServiceImpl implements BigFilesService {
         dto.setFileSize(fileSize.get());
 
         // 将文件信息入库，并将文件添加到待处理任务列表，等待对视频进行转码
-        MediaFile mediaFiles = fileInfoDbUtils.addFileInfo(companyId, fileMd5, dto, bucket, filename, objectName);
+        MediaFile mediaFiles = fileInfoDbOperation.addFileInfo(companyId, fileMd5, dto, bucket, filename, objectName);
         if (mediaFiles == null) {
             return RestResponse.fail(false, "文件上传失败");
         }
 
         // ========== 清理分块文件 ==========
 
-        if (minioUtils.clearFolderNonRecursively(bucket, chunkFolderPath)) {
+        if (minioOperation.clearFolderNonRecursively(bucket, chunkFolderPath)) {
             return RestResponse.success(true);
         }
         return RestResponse.success(false, "清理分块文件失败");
@@ -184,12 +184,12 @@ public class BigFilesServiceImpl implements BigFilesService {
     @Override
     public RestResponse<Boolean> deleteFile(String objectName) {
         // 先删除 minio 中的文件
-        if (minioUtils.deleteFile(bucket, objectName)) {
+        if (minioOperation.deleteFile(bucket, objectName)) {
             MediaFile file = new MediaFile();
             file.setBucket(bucket);
             file.setFilePath(objectName);
             // 再删除数据库中的文件信息
-            if (fileInfoDbUtils.deleteFileInfo(file)) {
+            if (fileInfoDbOperation.deleteFileInfo(file)) {
                 return RestResponse.success(true);
             } else {
                 log.error("删除文件的数据库信息出错, bucket={}, objectName={}", bucket, objectName);
@@ -215,7 +215,7 @@ public class BigFilesServiceImpl implements BigFilesService {
      * @return {@link Boolean} {@code true} 校验通过, {@code false} 校验不通过
      */
     private boolean checkFileConsistency(long fileSize, String objectName) {
-        Optional<Long> mergedSize = minioUtils.getFileSize(bucket, objectName);
+        Optional<Long> mergedSize = minioOperation.getFileSize(bucket, objectName);
         // 若文件大小一致，再进行 MD5 校验
         if (mergedSize.isPresent() && fileSize == mergedSize.get()) {
             return true;

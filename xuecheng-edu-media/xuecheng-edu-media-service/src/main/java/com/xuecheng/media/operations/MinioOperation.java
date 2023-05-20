@@ -1,4 +1,4 @@
-package com.xuecheng.media.utils;
+package com.xuecheng.media.operations;
 
 import com.xuecheng.base.exception.XueChengEduException;
 
@@ -42,13 +42,13 @@ import lombok.extern.slf4j.Slf4j;
 
 /**
  * @author Domenic
- * @Classname MinioUtils
+ * @Classname MinioOperation
  * @Description Minio 操作的工具类
  * @Created by Domenic
  */
 @Component
 @Slf4j
-public class MinioUtils {
+public class MinioOperation {
 
     @Autowired
     private MinioClient minioClient;
@@ -157,7 +157,7 @@ public class MinioUtils {
 
         try (InputStream downloadstream = minioClient.getObject(args)) {
             // 创建临时文件，示例命名：down-minio-6c2293.mp4
-            File file = File.createTempFile("down-minio-" + FileUtils.getUuid(), objectName.substring(objectName.lastIndexOf(".")));
+            File file = File.createTempFile("down-minio-" + FileOperation.getUuid(), objectName.substring(objectName.lastIndexOf(".")));
 
             try (FileOutputStream out = new FileOutputStream(file)) {
                 IOUtils.copy(downloadstream, out);
@@ -191,7 +191,7 @@ public class MinioUtils {
 
         try (InputStream downloadstream = minioClient.getObject(args)) {
             // 创建临时文件，示例命名：down-part-minio-6c2293.mp4
-            File file = File.createTempFile("down-part-minio-" + FileUtils.getUuid(), objectName.substring(objectName.lastIndexOf(".")));
+            File file = File.createTempFile("down-part-minio-" + FileOperation.getUuid(), objectName.substring(objectName.lastIndexOf(".")));
 
             try (FileOutputStream out = new FileOutputStream(file)) {
                 IOUtils.copy(downloadstream, out);
