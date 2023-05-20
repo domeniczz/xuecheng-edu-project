@@ -57,3 +57,6 @@ hs_err_pid*
 
 # alibaba p3c cache file
 .pmdCache
+
+# SonarScanner
+.scannerwork/
