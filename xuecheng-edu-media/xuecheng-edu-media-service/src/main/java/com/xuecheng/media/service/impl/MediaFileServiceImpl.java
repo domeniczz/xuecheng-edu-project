@@ -11,9 +11,9 @@ import com.xuecheng.media.model.dto.FileResultDto;
 import com.xuecheng.media.model.dto.QueryMediaParamsDto;
 import com.xuecheng.media.model.po.MediaFile;
 import com.xuecheng.media.operations.FileInfoDbOperation;
-import com.xuecheng.media.operations.FileOperation;
 import com.xuecheng.media.operations.MinioOperation;
 import com.xuecheng.media.service.MediaFileService;
+import com.xuecheng.media.utils.FileUtils;
 
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.BeanUtils;
@@ -98,13 +98,13 @@ public class MediaFileServiceImpl implements MediaFileService {
         String ext = filename.substring(filename.lastIndexOf("."));
 
         // 文件 mimeType
-        String mimeType = FileOperation.getMimeTypeFromExt(ext);
+        String mimeType = FileUtils.getMimeTypeFromExt(ext);
 
         // 文件存储路径 (年/月/日)
-        String defaultFolderPath = FileOperation.getFolderPathByDate(true, true, true);
+        String defaultFolderPath = FileUtils.getFolderPathByDate(true, true, true);
 
         // 文件 MD5 值
-        String fileMd5 = FileOperation.getFileMd5(new File(tempFilePath));
+        String fileMd5 = FileUtils.getFileMd5(new File(tempFilePath));
 
         // 最终的文件名
         String finalFilename = filename.substring(0, filename.lastIndexOf(".")) + fileMd5 + ext;

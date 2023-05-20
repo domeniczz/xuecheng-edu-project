@@ -1,8 +1,8 @@
 package com.xuecheng.media.others;
 
 import com.xuecheng.base.utils.FileUtil;
-import com.xuecheng.media.operations.FileOperation;
 import com.xuecheng.media.operations.MinioOperation;
+import com.xuecheng.media.utils.FileUtils;
 
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.Assertions;
@@ -194,8 +194,8 @@ public class FileChunkMergeTest {
         Assertions.assertEquals(mergedFile.getName(), mergedFilename);
 
         // 合并文件完成后，对合并的文件 MD5 校验
-        String sourceMD5 = FileOperation.getFileMd5(new File(sourceFolder + File.separator + sourceFilename));
-        String mergeMD5 = FileOperation.getFileMd5(mergedFile);
+        String sourceMD5 = FileUtils.getFileMd5(new File(sourceFolder + File.separator + sourceFilename));
+        String mergeMD5 = FileUtils.getFileMd5(mergedFile);
         Assertions.assertEquals(sourceMD5, mergeMD5, "MD5 校验失败");
     }
 
@@ -211,7 +211,7 @@ public class FileChunkMergeTest {
                 try {
                     String objectName = objectFolderPathMinio + file.getFileName().toString();
                     ObjectWriteResponse resp = minioOperation.uploadFile(file.toAbsolutePath().toString(),
-                            FileOperation.getMimeTypeFromExt(""),
+                            FileUtils.getMimeTypeFromExt(""),
                             bucketName, objectName);
                     Assertions.assertNotNull(resp, "上传文件失败");
                     Assertions.assertEquals(resp.object(), objectName, "上传文件失败, 文件名称不一致");
