@@ -11,7 +11,7 @@ import com.xuecheng.media.model.dto.FileResultDto;
 import com.xuecheng.media.model.dto.QueryMediaParamsDto;
 import com.xuecheng.media.model.po.MediaFile;
 import com.xuecheng.media.service.MediaFileService;
-import com.xuecheng.media.utils.FileDbUtils;
+import com.xuecheng.media.utils.FileInfoDbUtils;
 import com.xuecheng.media.utils.FileUtils;
 import com.xuecheng.media.utils.MinioUtils;
 
@@ -41,7 +41,7 @@ public class MediaFileServiceImpl implements MediaFileService {
     private MediaFileMapper mediaFileMapper;
 
     @Autowired
-    private FileDbUtils fileDbUtils;
+    private FileInfoDbUtils fileInfoDbUtils;
 
     @Autowired
     private MinioUtils minioUtils;
@@ -113,7 +113,7 @@ public class MediaFileServiceImpl implements MediaFileService {
         String objectName = defaultFolderPath + finalFilename;
 
         // 将上传的文件信息添加到数据库的文件信息表中
-        MediaFile resDb = fileDbUtils.addFileInfo(companyId, fileMd5, dto, bucket, finalFilename, objectName);
+        MediaFile resDb = fileInfoDbUtils.addFileInfo(companyId, fileMd5, dto, bucket, finalFilename, objectName);
 
         if (resDb != null) {
             // 上传文件到 minio
@@ -133,7 +133,7 @@ public class MediaFileServiceImpl implements MediaFileService {
     public FileResultDto deleteMediaFile(Long companyId, FileParamsDto dto) {
 
         // 从数据库中获取文件信息
-        List<MediaFile> fileList = fileDbUtils.getListFileInfo(companyId, dto, bucket, null);
+        List<MediaFile> fileList = fileInfoDbUtils.getListFileInfo(companyId, dto, bucket, null);
 
         MediaFile fileToDelete = null;
 
@@ -143,7 +143,7 @@ public class MediaFileServiceImpl implements MediaFileService {
             fileToDelete = fileList.get(0);
 
             // 删除数据库中的文件信息
-            boolean dbRes = fileDbUtils.deleteFileInfo(fileToDelete);
+            boolean dbRes = fileInfoDbUtils.deleteFileInfo(fileToDelete);
             if (dbRes) {
                 // 将文件从 minio 中删除
                 boolean minioRes = minioUtils.deleteFile(bucket, fileToDelete.getFilePath());

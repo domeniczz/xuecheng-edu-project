@@ -19,6 +19,7 @@ import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
 
 import io.minio.BucketExistsArgs;
 import io.minio.ComposeObjectArgs;
@@ -42,7 +43,7 @@ import lombok.extern.slf4j.Slf4j;
 /**
  * @author Domenic
  * @Classname MinioUtils
- * @Description MinioTest 和 FileChunkMergeTest 中的公共代码
+ * @Description Minio 操作的工具类
  * @Created by Domenic
  */
 @Component
@@ -477,15 +478,16 @@ public class MinioUtils {
      * @return 文件大小
      * @throws Exception 异常 (除了 {@link MinioException} 异常)
      */
-    public long getFileSize(String bucketName, String objectName) {
+    public Optional<Long> getFileSize(String bucketName, String objectName) {
         try {
-            return getFileInfo(bucketName, objectName).size();
+            long size = getFileInfo(bucketName, objectName).size();
+            return Optional.of(size);
         } catch (MinioException e) {
             log.error("获取文件大小出错, bucket={}, objectName={}, errorMsg={}\nhttpTrace={}", bucketName, objectName, e.getMessage(), e.httpTrace());
         } catch (Exception e) {
             log.error("获取文件大小出错, bucket={}, objectName={}, errorMsg={}", bucketName, objectName, e.getMessage());
         }
-        return -1;
+        return Optional.empty();
     }
 
 }

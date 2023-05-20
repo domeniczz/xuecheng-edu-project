@@ -20,19 +20,19 @@ import lombok.extern.slf4j.Slf4j;
 
 /**
  * @author Domenic
- * @Classname FileDbUtils
- * @Description 文件信息数据库操作
+ * @Classname FileInfoDbUtils
+ * @Description 文件信息数据库操作的工具类
  * @Created by Domenic
  */
 @Component
 @Slf4j
-public class FileDbUtils {
+public class FileInfoDbUtils {
 
     @Autowired
     private MediaFileMapper mediaFileMapper;
 
     @Autowired
-    private FileDbUtils currentProxy;
+    private FileInfoDbUtils currentProxy;
 
     /**
      * 将 媒体/视频 文件信息添加到文件信息表中
@@ -54,8 +54,9 @@ public class FileDbUtils {
         // 查询数据库中是否已存在该文件
         MediaFile mediaFile = currentProxy.getOneFileInfo(fileMd5);
 
-        // 若数据库中不存在该文件, 将文件信息入库
+        // 若数据库中不存在该文件
         if (mediaFile == null) {
+            // 将文件信息入库
             mediaFile = saveFileInfo(companyId, fileMd5, dto, bucket, filename, objectName);
         }
 
@@ -184,6 +185,16 @@ public class FileDbUtils {
         return mediaFileMapper.selectOne(new LambdaQueryWrapper<MediaFile>().eq(MediaFile::getId, fileMd5));
     }
 
+    /**
+     * 保存文件信息到数据库
+     * @param companyId 机构 ID
+     * @param fileMd5 文件 MD5 值
+     * @param dto 文件操作 (保存) 参数 DTO
+     * @param bucket 存储桶名
+     * @param filename 文件名
+     * @param objectName 对象名 (文件的路径)
+     * @return
+     */
     private MediaFile saveFileInfo(Long companyId, String fileMd5, FileParamsDto dto, String bucket, String filename, String objectName) {
         MediaFile mediaFile = new MediaFile();
         BeanUtils.copyProperties(dto, mediaFile);

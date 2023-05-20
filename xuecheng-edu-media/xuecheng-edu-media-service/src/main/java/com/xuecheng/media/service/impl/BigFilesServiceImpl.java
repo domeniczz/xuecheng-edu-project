@@ -5,7 +5,7 @@ import com.xuecheng.media.mapper.MediaFileMapper;
 import com.xuecheng.media.model.dto.FileParamsDto;
 import com.xuecheng.media.model.po.MediaFile;
 import com.xuecheng.media.service.BigFilesService;
-import com.xuecheng.media.utils.FileDbUtils;
+import com.xuecheng.media.utils.FileInfoDbUtils;
 import com.xuecheng.media.utils.FileUtils;
 import com.xuecheng.media.utils.MinioUtils;
 
@@ -14,6 +14,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.io.File;
+import java.util.Optional;
 
 import io.minio.ObjectWriteResponse;
 import io.minio.StatObjectResponse;
@@ -33,7 +34,7 @@ public class BigFilesServiceImpl implements BigFilesService {
     private MediaFileMapper mediaFileMapper;
 
     @Autowired
-    private FileDbUtils fileDbUtils;
+    private FileInfoDbUtils fileInfoDbUtils;
 
     @Autowired
     private MinioUtils minioUtils;
@@ -62,7 +63,7 @@ public class BigFilesServiceImpl implements BigFilesService {
                     log.error("数据库中存在文件信息, 但 minio 中不存在该文件, fileMd5={}, bucket={}, filePath={}",
                             fileMd5, mediaFile.getBucket(), mediaFile.getFilePath());
                     // 删除数据库中的异常文件信息
-                    fileDbUtils.deleteFileInfo(mediaFile);
+                    fileInfoDbUtils.deleteFileInfo(mediaFile);
                 }
             } catch (Exception e) {
                 log.error("查询文件出错, FilterInputStream 出错, errorMsg={}", e.getMessage());
@@ -141,7 +142,7 @@ public class BigFilesServiceImpl implements BigFilesService {
 
         // ========== 校验合并后的文件与源文件是否一致 ==========
 
-        long fileSize = -1;
+        Optional<Long> fileSize = Optional.empty();
         try {
             // 获取合并后文件的大小
             fileSize = minioUtils.getFileSize(bucket, objectName);
@@ -149,7 +150,11 @@ public class BigFilesServiceImpl implements BigFilesService {
             log.error("获取文件大小出错, bucket={}, objectName={}, errorMsg={}", bucket, objectName, e.getMessage());
         }
 
-        if (!checkFileConsistency(fileSize, objectName)) {
+        if (!fileSize.isPresent()) {
+            return RestResponse.fail(false, "获取合并后文件大小出错");
+        }
+
+        if (!checkFileConsistency(fileSize.get(), objectName)) {
             log.error("合并后的文件与源文件不一致");
             // 删除校验失败的合并后文件
             deleteFile(objectName);
@@ -160,10 +165,10 @@ public class BigFilesServiceImpl implements BigFilesService {
         // ========== 将文件信息入库 ==========
 
         // 设置文件大小的信息
-        dto.setFileSize(fileSize);
+        dto.setFileSize(fileSize.get());
 
         // 将文件信息入库，并将文件添加到待处理任务列表，等待对视频进行转码
-        MediaFile mediaFiles = fileDbUtils.addFileInfo(companyId, fileMd5, dto, bucket, filename, objectName);
+        MediaFile mediaFiles = fileInfoDbUtils.addFileInfo(companyId, fileMd5, dto, bucket, filename, objectName);
         if (mediaFiles == null) {
             return RestResponse.fail(false, "文件上传失败");
         }
@@ -184,7 +189,7 @@ public class BigFilesServiceImpl implements BigFilesService {
             file.setBucket(bucket);
             file.setFilePath(objectName);
             // 再删除数据库中的文件信息
-            if (fileDbUtils.deleteFileInfo(file)) {
+            if (fileInfoDbUtils.deleteFileInfo(file)) {
                 return RestResponse.success(true);
             } else {
                 log.error("删除文件的数据库信息出错, bucket={}, objectName={}", bucket, objectName);
@@ -210,9 +215,9 @@ public class BigFilesServiceImpl implements BigFilesService {
      * @return {@link Boolean} {@code true} 校验通过, {@code false} 校验不通过
      */
     private boolean checkFileConsistency(long fileSize, String objectName) {
-        long mergedSize = minioUtils.getFileSize(bucket, objectName);
+        Optional<Long> mergedSize = minioUtils.getFileSize(bucket, objectName);
         // 若文件大小一致，再进行 MD5 校验
-        if (fileSize == mergedSize) {
+        if (mergedSize.isPresent() && fileSize == mergedSize.get()) {
             return true;
         } else {
             log.error("校验文件大小不一致, 原始文件大小={}, 合并文件大小={}", fileSize, mergedSize);
