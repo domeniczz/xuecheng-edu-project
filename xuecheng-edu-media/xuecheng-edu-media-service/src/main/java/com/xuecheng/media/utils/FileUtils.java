@@ -1,4 +1,4 @@
-package com.xuecheng.media.operations;
+package com.xuecheng.media.utils;
 
 import com.j256.simplemagic.ContentInfo;
 import com.j256.simplemagic.ContentInfoUtil;
@@ -23,9 +23,9 @@ import lombok.extern.slf4j.Slf4j;
  * @Created by Domenic
  */
 @Slf4j
-public class FileOperation {
+public class FileUtils {
 
-    private FileOperation() {
+    private FileUtils() {
         // prevents other classes from instantiating it
     }
 
@@ -55,7 +55,7 @@ public class FileOperation {
             path.append(String.format("%02d", now.getDayOfMonth()));
         }
 
-        return path.toString();
+        return path.append('/').toString();
     }
 
     /**

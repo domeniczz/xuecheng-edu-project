@@ -1,6 +1,7 @@
 package com.xuecheng.media.model.dto;
 
 import com.xuecheng.media.model.po.MediaFile;
+
 import io.swagger.annotations.ApiModel;
 import lombok.Data;
 import lombok.EqualsAndHashCode;

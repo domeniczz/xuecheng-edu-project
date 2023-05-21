@@ -1,13 +1,14 @@
 package com.xuecheng.content.model.dto;
 
 import com.xuecheng.base.validation.ValidationGroups;
+
+import javax.validation.constraints.Min;
+
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
-
-import javax.validation.constraints.Min;
 
 /**
  * @author Domenic

@@ -1,7 +1,7 @@
 package com.xuecheng.media.others;
 
-import com.xuecheng.media.operations.FileOperation;
 import com.xuecheng.media.operations.MinioOperation;
+import com.xuecheng.media.utils.FileUtils;
 
 import org.apache.commons.io.IOUtils;
 import org.junit.jupiter.api.Assertions;
@@ -141,7 +141,7 @@ public class MinioTest {
     void testUploadFile() {
         try {
             ObjectWriteResponse resp = minioOperation.uploadFile(localFilePath,
-                    FileOperation.getMimeTypeFromExt(filename.substring(filename.lastIndexOf("."))),
+                    FileUtils.getMimeTypeFromExt(filename.substring(filename.lastIndexOf("."))),
                     bucketName, objectName);
             Assertions.assertNotNull(resp, "上传文件失败");
             Assertions.assertEquals(resp.object(), objectName, "上传文件失败, 文件名称不一致");
@@ -166,8 +166,8 @@ public class MinioTest {
         }
 
         // 通过 MD5 校验文件的完整性
-        String srcMD5 = FileOperation.getFileMd5(src);
-        String destMD5 = FileOperation.getFileMd5(dest);
+        String srcMD5 = FileUtils.getFileMd5(src);
+        String destMD5 = FileUtils.getFileMd5(dest);
         Assertions.assertEquals(srcMD5, destMD5, "MD5 校验失败");
 
         // 删除下载的文件

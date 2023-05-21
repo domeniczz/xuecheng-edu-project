@@ -1,6 +1,7 @@
 package com.xuecheng.media.operations;
 
 import com.xuecheng.base.exception.XueChengEduException;
+import com.xuecheng.media.utils.FileUtils;
 
 import org.apache.commons.io.IOUtils;
 import org.apache.http.HttpStatus;
@@ -157,7 +158,7 @@ public class MinioOperation {
 
         try (InputStream downloadstream = minioClient.getObject(args)) {
             // 创建临时文件，示例命名：down-minio-6c2293.mp4
-            File file = File.createTempFile("down-minio-" + FileOperation.getUuid(), objectName.substring(objectName.lastIndexOf(".")));
+            File file = File.createTempFile("down-minio-" + FileUtils.getUuid(), objectName.substring(objectName.lastIndexOf(".")));
 
             try (FileOutputStream out = new FileOutputStream(file)) {
                 IOUtils.copy(downloadstream, out);
@@ -191,7 +192,7 @@ public class MinioOperation {
 
         try (InputStream downloadstream = minioClient.getObject(args)) {
             // 创建临时文件，示例命名：down-part-minio-6c2293.mp4
-            File file = File.createTempFile("down-part-minio-" + FileOperation.getUuid(), objectName.substring(objectName.lastIndexOf(".")));
+            File file = File.createTempFile("down-part-minio-" + FileUtils.getUuid(), objectName.substring(objectName.lastIndexOf(".")));
 
             try (FileOutputStream out = new FileOutputStream(file)) {
                 IOUtils.copy(downloadstream, out);
