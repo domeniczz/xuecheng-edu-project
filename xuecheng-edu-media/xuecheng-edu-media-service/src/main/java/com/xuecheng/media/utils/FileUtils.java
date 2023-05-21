@@ -55,7 +55,7 @@ public class FileUtils {
             path.append(String.format("%02d", now.getDayOfMonth()));
         }
 
-        return path.toString();
+        return path.append('/').toString();
     }
 
     /**

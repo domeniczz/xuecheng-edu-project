@@ -3,11 +3,9 @@ package com.xuecheng.media.operations;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.xuecheng.base.exception.XueChengEduException;
 import com.xuecheng.media.mapper.MediaFileMapper;
-import com.xuecheng.media.model.dto.FileParamsDto;
 import com.xuecheng.media.model.po.MediaFile;
 
 import org.apache.commons.lang3.StringUtils;
-import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Propagation;
@@ -45,19 +43,19 @@ public class FileInfoDbOperation {
      * @return 添加的 {@link MediaFile} 对象
      */
     @Transactional(rollbackFor = Exception.class)
-    public MediaFile addFileInfo(Long companyId, String fileMd5, FileParamsDto dto, String bucket, String filename, String objectName) {
-        if (StringUtils.isBlank(fileMd5)) {
-            log.error("传入的 MD5 值为空, objectName={}, FileParamsDto={}", objectName, dto);
+    public MediaFile addFileInfo(MediaFile mediaFileToAdd) {
+        if (StringUtils.isBlank(mediaFileToAdd.getId())) {
+            log.error("添加文件信息时, 传入的 MD5 值为空, objectName={}", mediaFileToAdd.getFilePath());
             throw new IllegalArgumentException("添加文件信息时, 传入的 MD5 值为空");
         }
 
         // 查询数据库中是否已存在该文件
-        MediaFile mediaFile = currentProxy.getOneFileInfo(fileMd5);
+        MediaFile mediaFile = currentProxy.getOneFileInfo(mediaFileToAdd.getId());
 
         // 若数据库中不存在该文件
         if (mediaFile == null) {
             // 将文件信息入库
-            mediaFile = saveFileInfo(companyId, fileMd5, dto, bucket, filename, objectName);
+            mediaFile = saveFileInfo(mediaFileToAdd);
         }
 
         return mediaFile;
@@ -74,20 +72,20 @@ public class FileInfoDbOperation {
      * @return 更新后的 {@link MediaFile} 对象
      */
     @Transactional(rollbackFor = Exception.class)
-    public MediaFile updateFileInfo(Long companyId, String fileMd5, FileParamsDto dto, String bucket, String filename, String objectName) {
-        if (StringUtils.isBlank(fileMd5)) {
-            log.error("传入的 MD5 值为空, objectName={}, FileParamsDto={}", objectName, dto);
+    public MediaFile updateFileInfo(MediaFile mediaFileToUpdate) {
+        if (StringUtils.isBlank(mediaFileToUpdate.getId())) {
+            log.error("更新文件信息时, 传入的 MD5 值为空, objectName={}", mediaFileToUpdate.getFilePath());
             throw new IllegalArgumentException("更新文件信息时, 传入的 MD5 值为空");
         }
 
         // 查询数据库中是否存在该文件
-        MediaFile mediaFile = currentProxy.getOneFileInfo(fileMd5);
+        MediaFile mediaFile = currentProxy.getOneFileInfo(mediaFileToUpdate.getId());
 
         // 若数据库中存在该文件, 将文件信息入库
         if (mediaFile != null) {
-            return saveFileInfo(companyId, fileMd5, dto, bucket, filename, objectName);
+            return saveFileInfo(mediaFileToUpdate);
         } else {
-            log.error("尝试更新数据库中不存在的文件信息, objectName={}, fileMd5={}", objectName, fileMd5);
+            log.error("尝试更新数据库中不存在的文件信息, objectName={}, fileMd5={}", mediaFileToUpdate.getFilePath(), mediaFileToUpdate.getId());
             XueChengEduException.cast("尝试更新数据库中不存在的文件信息");
             return null;
         }
@@ -143,27 +141,27 @@ public class FileInfoDbOperation {
      * @return 媒体/视频 文件信息的 {@link List}
      */
     @Transactional(propagation = Propagation.NOT_SUPPORTED)
-    public List<MediaFile> getListFileInfo(Long companyId, FileParamsDto dto, String bucket, String objectName) {
-        if (dto != null) {
+    public List<MediaFile> getListFileInfo(MediaFile fileToGet) {
+        if (fileToGet != null) {
             return mediaFileMapper.selectList(new LambdaQueryWrapper<MediaFile>()
                     // 机构 ID
-                    .eq(companyId != null, MediaFile::getCompanyId, companyId)
+                    .eq(fileToGet.getCompanyId() != null, MediaFile::getCompanyId, fileToGet.getCompanyId())
                     // 文件名
-                    .eq(StringUtils.isNotEmpty(dto.getFilename()), MediaFile::getFilename, dto.getFilename())
+                    .eq(StringUtils.isNotEmpty(fileToGet.getFilename()), MediaFile::getFilename, fileToGet.getFilename())
                     // 文件类型
-                    .eq(StringUtils.isNotEmpty(dto.getFileType()), MediaFile::getFileType, dto.getFileType())
+                    .eq(StringUtils.isNotEmpty(fileToGet.getFileType()), MediaFile::getFileType, fileToGet.getFileType())
                     // 文件存储路径
-                    .eq(objectName != null, MediaFile::getFilePath, objectName)
+                    .eq(fileToGet.getFilePath() != null, MediaFile::getFilePath, fileToGet.getFilePath())
                     // 文件访问 url
-                    .eq(objectName != null, MediaFile::getUrl, "/" + bucket + "/" + objectName)
+                    .eq(fileToGet.getFilePath() != null, MediaFile::getUrl, "/" + fileToGet.getBucket() + "/" + fileToGet.getFilePath())
                     // 文件大小
-                    .eq(dto.getFileSize() != null, MediaFile::getFileSize, dto.getFileSize())
+                    .eq(fileToGet.getFileSize() != null, MediaFile::getFileSize, fileToGet.getFileSize())
                     // 文件标签
-                    .eq(StringUtils.isNotEmpty(dto.getTags()), MediaFile::getTags, dto.getTags())
+                    .eq(StringUtils.isNotEmpty(fileToGet.getTags()), MediaFile::getTags, fileToGet.getTags())
                     // 文件上传人名称
-                    .eq(StringUtils.isNotEmpty(dto.getUsername()), MediaFile::getUsername, dto.getUsername())
+                    .eq(StringUtils.isNotEmpty(fileToGet.getUsername()), MediaFile::getUsername, fileToGet.getUsername())
                     // 文件备注
-                    .eq(StringUtils.isNotEmpty(dto.getRemark()), MediaFile::getRemark, dto.getRemark()));
+                    .eq(StringUtils.isNotEmpty(fileToGet.getRemark()), MediaFile::getRemark, fileToGet.getRemark()));
         } else {
             log.error("查询文件列表失败, 传入的 FileParamsDto 为空");
             throw new IllegalArgumentException("传入的 FileParamsDto 为空");
@@ -195,49 +193,29 @@ public class FileInfoDbOperation {
      * @param objectName 对象名 (文件的路径)
      * @return
      */
-    private MediaFile saveFileInfo(Long companyId, String fileMd5, FileParamsDto dto, String bucket, String filename, String objectName) {
-        MediaFile mediaFile = new MediaFile();
-        BeanUtils.copyProperties(dto, mediaFile);
-
-        // 文件 ID
-        mediaFile.setId(fileMd5);
-        // 机构 ID
-        mediaFile.setCompanyId(companyId);
-        // 机构名称
-        mediaFile.setCompanyName(null);
-        // 文件名
-        mediaFile.setFilename(filename);
-        // 标签
-        mediaFile.setTags(null);
-        // 备注
-        mediaFile.setRemark(null);
-        // 桶
-        mediaFile.setBucket(bucket);
-        // 文件存储路径
-        mediaFile.setFilePath(objectName);
+    private MediaFile saveFileInfo(MediaFile mediaFileToSave) {
         // 文件标识 ID
-        mediaFile.setFileId(fileMd5);
+        mediaFileToSave.setFileId(mediaFileToSave.getId());
         // 文件访问 url
-        mediaFile.setUrl("/" + bucket + "/" + objectName);
-        // 上传人
-        mediaFile.setUsername(null);
+        mediaFileToSave.setUrl("/" + mediaFileToSave.getBucket() + "/" + mediaFileToSave.getFilePath());
         // 上传时间
-        mediaFile.setCreateDate(LocalDateTime.now());
+        mediaFileToSave.setCreateDate(LocalDateTime.now());
         // 状态
-        mediaFile.setStatus("1");
+        mediaFileToSave.setStatus("1");
         // 审核状态：审核通过
-        mediaFile.setAuditStatus("002003");
+        mediaFileToSave.setAuditStatus("002003");
 
         // 插入数据库
-        int res = mediaFileMapper.insert(mediaFile);
+        int res = mediaFileMapper.insert(mediaFileToSave);
 
         if (res <= 0) {
-            log.error("文件信息保存到数据表 media_file 失败, bucket={}, objectName={}", bucket, objectName);
+            log.error("文件信息保存到数据表 media_file 失败, bucket={}, objectName={}", mediaFileToSave.getBucket(), mediaFileToSave.getFilePath());
             XueChengEduException.cast("文件上传后保存信息失败");
             return null;
         }
-        log.debug("文件信息保存到数据表 media_file 成功, fileMd5={}, objectName={}", fileMd5, objectName);
-        return mediaFile;
+        log.debug("文件信息保存到数据表 media_file 成功, fileMd5={}, objectName={}", mediaFileToSave.getId(), mediaFileToSave.getFilePath());
+
+        return mediaFileToSave;
     }
 
 }

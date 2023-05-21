@@ -112,8 +112,17 @@ public class MediaFileServiceImpl implements MediaFileService {
         // 最终的文件存放路径 (路径 + 文件名)
         String objectName = defaultFolderPath + finalFilename;
 
+        MediaFile mediaFileToAdd = new MediaFile();
+        BeanUtils.copyProperties(dto, mediaFileToAdd);
+        mediaFileToAdd.setId(fileMd5);
+        mediaFileToAdd.setCompanyId(companyId);
+        mediaFileToAdd.setBucket(bucket);
+        mediaFileToAdd.setFilename(finalFilename);
+        mediaFileToAdd.setFilePath(objectName);
+
         // 将上传的文件信息添加到数据库的文件信息表中
-        MediaFile resDb = fileInfoDbOperation.addFileInfo(companyId, fileMd5, dto, bucket, finalFilename, objectName);
+        MediaFile resDb = fileInfoDbOperation.addFileInfo(mediaFileToAdd);
+        // MediaFile resDb = fileInfoDbOperation.addFileInfo(companyId, fileMd5, dto, bucket, finalFilename, objectName);
 
         if (resDb != null) {
             // 上传文件到 minio
@@ -132,39 +141,47 @@ public class MediaFileServiceImpl implements MediaFileService {
     @Override
     public FileResultDto deleteMediaFile(Long companyId, FileParamsDto dto) {
 
-        // 从数据库中获取文件信息
-        List<MediaFile> fileList = fileInfoDbOperation.getListFileInfo(companyId, dto, bucket, null);
+        MediaFile mediaFileToDelete = new MediaFile();
+        BeanUtils.copyProperties(dto, mediaFileToDelete);
+        mediaFileToDelete.setCompanyId(companyId);
+        mediaFileToDelete.setBucket(bucket);
 
-        MediaFile fileToDelete = null;
+        // 尝试从数据库中获取文件信息
+        List<MediaFile> fileList = fileInfoDbOperation.getListFileInfo(mediaFileToDelete);
 
-        // 若该文件存在且仅有一条该文件记录，则删除该信息
-        if (fileList.size() == 1) {
-            // 获取文件信息
-            fileToDelete = fileList.get(0);
-
-            // 删除数据库中的文件信息
-            boolean dbRes = fileInfoDbOperation.deleteFileInfo(fileToDelete);
-            if (dbRes) {
-                // 将文件从 minio 中删除
-                boolean minioRes = minioOperation.deleteFile(bucket, fileToDelete.getFilePath());
-                if (minioRes) {
-                    // 返回 FileResultDto 对象
-                    FileResultDto resDto = new FileResultDto();
-                    BeanUtils.copyProperties(fileToDelete, resDto);
-                    return resDto;
-                }
-            }
-
-            XueChengEduException.cast("从数据库删除文件信息失败");
-        } else if (fileList.isEmpty()) {
+        if (fileList.isEmpty()) {
             log.error("从数据库删除文件信息失败，数据库中没有该文件 ({}) 的记录, bucket={}", dto.getFilename(), bucket);
             XueChengEduException.cast("从数据库删除文件信息失败，无效文件!");
-        } else {
-            log.error("从数据库删除文件信息失败，数据库中有 {} 条该文件 ({}) 的记录, bucket={}", fileList.size(), dto.getFilename(), bucket);
-            XueChengEduException.cast("从数据库删除文件信息失败，未知错误!");
+            return null;
         }
 
-        return null;
+        if (fileList.size() > 1) {
+            log.error("从数据库删除文件信息失败，数据库中有 {} 条该文件 ({}) 的记录, bucket={}", fileList.size(), dto.getFilename(), bucket);
+            XueChengEduException.cast("从数据库删除文件信息失败，未知错误!");
+            return null;
+        }
+
+        MediaFile fileToDelete = fileList.get(0);
+
+        // 删除数据库中的文件信息
+        boolean dbRes = fileInfoDbOperation.deleteFileInfo(fileToDelete);
+        if (!dbRes) {
+            XueChengEduException.cast("从数据库删除文件信息失败");
+            return null;
+        }
+
+        // 将文件从 minio 中删除
+        boolean minioRes = minioOperation.deleteFile(bucket, fileToDelete.getFilePath());
+        if (!minioRes) {
+            XueChengEduException.cast("从 Minio 中删除文件信息失败");
+            return null;
+        }
+
+        // 返回 FileResultDto 对象
+        FileResultDto resDto = new FileResultDto();
+        BeanUtils.copyProperties(fileToDelete, resDto);
+        return resDto;
+
     }
 
 }

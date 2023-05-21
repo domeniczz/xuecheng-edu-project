@@ -9,6 +9,7 @@ import com.xuecheng.media.operations.MinioOperation;
 import com.xuecheng.media.service.BigFilesService;
 import com.xuecheng.media.utils.FileUtils;
 
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -164,11 +165,18 @@ public class BigFilesServiceImpl implements BigFilesService {
 
         // ========== 将文件信息入库 ==========
 
-        // 设置文件大小的信息
-        dto.setFileSize(fileSize.get());
+        MediaFile mediaFileToAdd = new MediaFile();
+        BeanUtils.copyProperties(dto, mediaFileToAdd);
+        mediaFileToAdd.setFileSize(fileSize.get());
+        mediaFileToAdd.setId(fileMd5);
+        mediaFileToAdd.setCompanyId(companyId);
+        mediaFileToAdd.setBucket(bucket);
+        mediaFileToAdd.setFilename(filename);
+        mediaFileToAdd.setFilePath(objectName);
 
         // 将文件信息入库，并将文件添加到待处理任务列表，等待对视频进行转码
-        MediaFile mediaFiles = fileInfoDbOperation.addFileInfo(companyId, fileMd5, dto, bucket, filename, objectName);
+        MediaFile mediaFiles = fileInfoDbOperation.addFileInfo(mediaFileToAdd);
+        // MediaFile mediaFiles = fileInfoDbOperation.addFileInfo(companyId, fileMd5, dto, bucket, filename, objectName);
         if (mediaFiles == null) {
             return RestResponse.fail(false, "文件上传失败");
         }
