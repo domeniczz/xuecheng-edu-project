@@ -71,7 +71,9 @@ docker stop mysql
    docker rename mysql mysql_old
    ```
 
-4. After the new container is up and running, you can restore the data from the dump:
+3. **Create the new MySQL container**
+
+4. **Restore the data from the dump**:
 
    ```bash
    # replace $MYSQL_ROOT_PASSWORD with the root password

@@ -28,12 +28,12 @@ SQL 文件：xc_edu_media.sql
 
 ## Nacos 初始化数据库
 
-数据库名称：nacos_schema_1.4.1
+数据库名称：nacos_1.4.1
 
-SQL 文件：nacos_1.4.1.sql
+SQL 文件：nacos_schema_1.4.1.sql
 
 ## XXL-JOB 初始化数据库
 
-数据库名称：xxl-job_schema_2.3.1
+数据库名称：xxl_job_2.3.1
 
-SQL 文件：xxl_job_2.3.1.sql
+SQL 文件：xxl-job_schema_2.3.1.sql
