@@ -1,10 +1,11 @@
 package com.xuecheng.content.model.po;
 
 import com.baomidou.mybatisplus.annotation.TableName;
-import io.swagger.annotations.ApiModel;
-import lombok.Data;
 
 import java.io.Serializable;
+
+import io.swagger.annotations.ApiModel;
+import lombok.Data;
 
 /**
  * @author Domenic

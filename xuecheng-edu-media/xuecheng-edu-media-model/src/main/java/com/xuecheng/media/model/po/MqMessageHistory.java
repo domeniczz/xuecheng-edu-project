@@ -1,10 +1,11 @@
 package com.xuecheng.media.model.po;
 
 import com.baomidou.mybatisplus.annotation.TableName;
-import lombok.Data;
 
 import java.io.Serializable;
 import java.time.LocalDateTime;
+
+import lombok.Data;
 
 /**
  * @author Domenic

@@ -1,10 +1,11 @@
 package com.xuecheng.media.model.po;
 
 import com.baomidou.mybatisplus.annotation.TableName;
-import lombok.Data;
 
 import java.io.Serializable;
 import java.time.LocalDateTime;
+
+import lombok.Data;
 
 /**
  * @author Domenic
@@ -92,6 +93,5 @@ public class MqMessage implements Serializable {
      * 最近通知时间
      */
     private LocalDateTime informDate;
-
 
 }
