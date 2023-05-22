@@ -1,6 +1,7 @@
 package com.xuecheng.content.mapper;
 
 import com.xuecheng.content.model.dto.CourseCategoryTreeDto;
+
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,10 +25,7 @@ public class CourseCategoryMapperTest {
     void testCourseCategoryMapper() {
         List<CourseCategoryTreeDto> courseCategoryTreeList = courseCategoryMapper.selectTreeNodes("1");
         Assertions.assertNotNull(courseCategoryTreeList);
-
-        System.out.println("\n===================================================");
-        courseCategoryTreeList.forEach(System.out::println);
-        System.out.println("===================================================\n");
+        Assertions.assertTrue(!courseCategoryTreeList.isEmpty(), "课程分类查询结果为空");
     }
 
 }

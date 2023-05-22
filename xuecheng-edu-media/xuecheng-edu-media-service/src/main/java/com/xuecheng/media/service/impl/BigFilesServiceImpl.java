@@ -14,7 +14,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
-import java.io.File;
+import java.nio.file.Paths;
 import java.util.Optional;
 
 import io.minio.ObjectWriteResponse;
@@ -103,7 +103,7 @@ public class BigFilesServiceImpl implements BigFilesService {
         String chunkFilePath = getChunkFileFolderPath(fileMd5) + chunkIndex;
 
         // 获取分块文件的 MD5
-        String chunkMd5 = FileUtils.getFileMd5(new File(localChunkFilePath));
+        String chunkMd5 = FileUtils.getFileMd5(Paths.get(localChunkFilePath));
 
         // 获取文件的 mimeType (传入值为 null 或 空 表示没有扩展名)
         String mimeType = FileUtils.getMimeTypeFromExt("");
@@ -176,7 +176,6 @@ public class BigFilesServiceImpl implements BigFilesService {
 
         // 将文件信息入库，并将文件添加到待处理任务列表，等待对视频进行转码
         MediaFile mediaFiles = fileInfoDbOperation.addFileInfo(mediaFileToAdd);
-        // MediaFile mediaFiles = fileInfoDbOperation.addFileInfo(companyId, fileMd5, dto, bucket, filename, objectName);
         if (mediaFiles == null) {
             return RestResponse.fail(false, "文件上传失败");
         }

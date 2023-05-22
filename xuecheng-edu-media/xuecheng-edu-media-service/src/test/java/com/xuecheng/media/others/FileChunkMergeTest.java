@@ -22,12 +22,14 @@ import java.io.RandomAccessFile;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.security.GeneralSecurityException;
+import java.security.SecureRandom;
 import java.util.Arrays;
-import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Stream;
 
 import io.minio.ObjectWriteResponse;
+import io.minio.errors.MinioException;
 
 /**
  * @author Domenic
@@ -59,9 +61,7 @@ public class FileChunkMergeTest {
     @Value("${bigfile.folder.path}")
     private String sourceFolderPath;
 
-    private String sourceFilenameWithoutExt;
     private String chunkFolderPath;
-    private int chunkTotalNum;
 
     private String mergedFilename;
     private String mergedFilenameMinio;
@@ -70,14 +70,14 @@ public class FileChunkMergeTest {
     private String objectFolderPathMinio;
 
     @BeforeAll
-    void setUp() throws Exception {
+    void setUp() throws IOException, MinioException, GeneralSecurityException {
 
         // 分块文件在本地的保存路径
         chunkFolderPath = sourceFolderPath + "chunk" + File.separator;
         // 分块文件在 minio 中的保存路径
         objectFolderPathMinio = "chunk/";
 
-        sourceFilenameWithoutExt = sourceFilename.substring(0, sourceFilename.lastIndexOf("."));
+        String sourceFilenameWithoutExt = sourceFilename.substring(0, sourceFilename.lastIndexOf("."));
         String sourceFileExt = sourceFilename.substring(sourceFilename.lastIndexOf("."));
 
         // 分块合并后的文件的本地保存路径 (路径 + 名称)，示例：test-merge.mp4
@@ -96,7 +96,7 @@ public class FileChunkMergeTest {
         }
 
         // minio 中的桶名，示例：testbucket56
-        bucketName = "testbucket" + (int) Math.floor(Math.random() * (100 + 1));
+        bucketName = "testbucket" + new SecureRandom().nextInt(100);
         minioOperation.createBucket(bucketName);
     }
 
@@ -111,11 +111,11 @@ public class FileChunkMergeTest {
         File sourceFile = new File(sourceFolderPath + sourceFilename);
 
         // 文件分块的数量
-        chunkTotalNum = (int) Math.ceil(sourceFile.length() * 1.0 / chunkSize);
+        int chunkTotalNum = (int) Math.ceil(sourceFile.length() * 1.0 / chunkSize);
         Assertions.assertTrue(chunkTotalNum > 0, "文件分块数量不能小于 1");
 
         // 从源文件读数据，向分块文件中写数据
-        try (RandomAccessFile raf_r = new RandomAccessFile(sourceFile, "r");) {
+        try (RandomAccessFile rafRead = new RandomAccessFile(sourceFile, "r");) {
             // 缓冲区
             byte[] buffer = new byte[1024];
 
@@ -125,21 +125,21 @@ public class FileChunkMergeTest {
                 File chunkedFile = new File(chunkFolderPath + i);
 
                 // 向分块文件中写入数据
-                try (RandomAccessFile raf_w = new RandomAccessFile(chunkedFile, "rw")) {
+                try (RandomAccessFile rafWrite = new RandomAccessFile(chunkedFile, "rw")) {
                     int len = -1;
                     // 按照缓冲区大小，从源文件中读取数据
-                    while ((len = raf_r.read(buffer)) != -1) {
-                        long remaining = chunkSize - raf_w.length();
+                    while ((len = rafRead.read(buffer)) != -1) {
+                        long remaining = chunkSize - rafWrite.length();
                         int writeLength = (int) Math.min(len, remaining);
 
-                        raf_w.write(buffer, 0, writeLength);
+                        rafWrite.write(buffer, 0, writeLength);
 
                         // 如果分块文件达到分块大小，就不再写入数据
-                        if (raf_w.length() == chunkSize) {
+                        if (rafWrite.length() == chunkSize) {
                             break;
                         }
                         // 若分块文件超过分块大小，就抛出异常
-                        else if (raf_w.length() > chunkSize) {
+                        else if (rafWrite.length() > chunkSize) {
                             throw new IllegalStateException("The chunk file \"" + i + "\" exceeds the predefined chunk size of \"" + chunkSize + "\"");
                         }
                     }
@@ -165,25 +165,20 @@ public class FileChunkMergeTest {
         List<File> fileList = Arrays.asList(files);
 
         // 对分块文件夹下的文件，进行排序 (分块文件名称为分块序号)
-        fileList.sort(new Comparator<File>() {
-            @Override
-            public int compare(File f1, File f2) {
-                return Integer.parseInt(f1.getName()) - Integer.parseInt(f2.getName());
-            }
-        });
+        fileList.sort((f1, f2) -> Integer.parseInt(f1.getName()) - Integer.parseInt(f2.getName()));
 
-        try (RandomAccessFile raf_w = new RandomAccessFile(mergedFile, "rw")) {
+        try (RandomAccessFile rafWrite = new RandomAccessFile(mergedFile, "rw")) {
             // 缓冲区
             byte[] buffer = new byte[1024];
 
             // 遍历分块文件，写入合并文件
             for (File file : fileList) {
                 // 读取分块文件
-                try (RandomAccessFile raf_r = new RandomAccessFile(file, "r")) {
+                try (RandomAccessFile rafRead = new RandomAccessFile(file, "r")) {
                     int len = -1;
                     // 按照缓冲区大小，从源文件中读取数据
-                    while ((len = raf_r.read(buffer)) != -1) {
-                        raf_w.write(buffer, 0, len);
+                    while ((len = rafRead.read(buffer)) != -1) {
+                        rafWrite.write(buffer, 0, len);
                     }
                 }
             }
@@ -194,8 +189,8 @@ public class FileChunkMergeTest {
         Assertions.assertEquals(mergedFile.getName(), mergedFilename);
 
         // 合并文件完成后，对合并的文件 MD5 校验
-        String sourceMD5 = FileUtils.getFileMd5(new File(sourceFolder + File.separator + sourceFilename));
-        String mergeMD5 = FileUtils.getFileMd5(mergedFile);
+        String sourceMD5 = FileUtils.getFileMd5(Paths.get(sourceFolder + File.separator + sourceFilename));
+        String mergeMD5 = FileUtils.getFileMd5(mergedFile.toPath());
         Assertions.assertEquals(sourceMD5, mergeMD5, "MD5 校验失败");
     }
 
@@ -204,7 +199,7 @@ public class FileChunkMergeTest {
      */
     @Test
     @Order(3)
-    void testUploadChunksToMinio() throws Exception {
+    void testUploadChunksToMinio() throws IOException {
         // 将分块文件上传到 minio
         try (Stream<Path> stream = Files.list(Paths.get(chunkFolderPath))) {
             stream.filter(Files::isRegularFile).forEach(file -> {
@@ -227,7 +222,7 @@ public class FileChunkMergeTest {
      */
     @Test
     @Order(4)
-    void testMergeChunksOnMinio() throws Exception {
+    void testMergeChunksOnMinio() throws IOException {
         // 合并文件
         ObjectWriteResponse resp = minioOperation.mergeChunks(bucketName, mergedFilenameMinio, objectFolderPathMinio);
         Assertions.assertNotNull(resp, "合并文件失败");
@@ -235,7 +230,7 @@ public class FileChunkMergeTest {
     }
 
     @AfterAll
-    void tearDown() throws Exception {
+    void tearDown() throws IOException, MinioException, GeneralSecurityException {
 
         /* 删除本地测试产生的文件 */
 

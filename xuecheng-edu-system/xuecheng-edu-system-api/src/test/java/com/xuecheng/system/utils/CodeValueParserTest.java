@@ -7,12 +7,15 @@ import org.junit.jupiter.api.Test;
 
 import java.util.Map;
 
+import lombok.extern.slf4j.Slf4j;
+
 /**
  * @author Domenic
  * @Classname CodeValueParserTest
  * @Description Code 解析器测试类
  * @Created by Domenic
  */
+@Slf4j
 public class CodeValueParserTest {
 
     @Test
@@ -21,7 +24,7 @@ public class CodeValueParserTest {
         try {
             Map<String, String> itemValues = CodeValueParser.parseItemValues(jsonString, 5);
             Assertions.assertNotNull(itemValues);
-            itemValues.forEach((k, v) -> System.out.println(k + " : " + v));
+            itemValues.forEach((k, v) -> log.error(k + " : " + v));
         } catch (JsonProcessingException e) {
             e.printStackTrace();
         }

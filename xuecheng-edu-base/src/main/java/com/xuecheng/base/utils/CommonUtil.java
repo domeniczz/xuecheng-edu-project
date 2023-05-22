@@ -4,6 +4,7 @@ import org.apache.commons.lang.math.NumberUtils;
 import org.apache.commons.lang3.StringUtils;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -56,7 +57,7 @@ public class CommonUtil {
 
 		BigDecimal decimal = new BigDecimal(s);
 		if (isFen != null && isFen.booleanValue()) {
-			decimal = decimal.divide(new BigDecimal(100), 2);
+			decimal = decimal.divide(new BigDecimal(100), RoundingMode.HALF_UP).setScale(2, RoundingMode.HALF_UP);
 		}
 		return decimal;
 	}

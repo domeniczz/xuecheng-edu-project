@@ -107,8 +107,7 @@ public class FileUtil {
                 bos.write(buffer, 0, readBytes);
             }
 
-            byte[] res = bos.toByteArray();
-            return res;
+            return bos.toByteArray();
         }
     }
 

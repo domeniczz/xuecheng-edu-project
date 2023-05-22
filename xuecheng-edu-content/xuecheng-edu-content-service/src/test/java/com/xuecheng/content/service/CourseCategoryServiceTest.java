@@ -27,10 +27,7 @@ public class CourseCategoryServiceTest {
     void testQueryTreeNodes() {
         List<CourseCategoryTreeDto> res = courseCategoryService.queryTreeNodes();
         Assertions.assertNotNull(res);
-
-        System.out.println("\n===================================================");
-        res.forEach(System.out::println);
-        System.out.println("===================================================\n");
+        Assertions.assertTrue(!res.isEmpty(), "课程分类查询结果为空");
     }
 
     @Test
@@ -38,10 +35,7 @@ public class CourseCategoryServiceTest {
         String categoryId = "1-1";
         CourseCategory res = courseCategoryService.query(categoryId);
         Assertions.assertNotNull(res);
-
-        System.out.println("\n===================================================\n"
-                + res
-                + "\n===================================================\n");
+        Assertions.assertEquals(categoryId, res.getId(), "课程分类查询结果不正确");
     }
 
 }

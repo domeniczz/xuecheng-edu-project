@@ -21,7 +21,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
-import java.io.File;
+import java.nio.file.Paths;
 import java.util.List;
 
 import io.minio.ObjectWriteResponse;
@@ -104,7 +104,7 @@ public class MediaFileServiceImpl implements MediaFileService {
         String defaultFolderPath = FileUtils.getFolderPathByDate(true, true, true);
 
         // 文件 MD5 值
-        String fileMd5 = FileUtils.getFileMd5(new File(tempFilePath));
+        String fileMd5 = FileUtils.getFileMd5(Paths.get(tempFilePath));
 
         // 最终的文件名
         String finalFilename = filename.substring(0, filename.lastIndexOf(".")) + fileMd5 + ext;
@@ -122,7 +122,6 @@ public class MediaFileServiceImpl implements MediaFileService {
 
         // 将上传的文件信息添加到数据库的文件信息表中
         MediaFile resDb = fileInfoDbOperation.addFileInfo(mediaFileToAdd);
-        // MediaFile resDb = fileInfoDbOperation.addFileInfo(companyId, fileMd5, dto, bucket, finalFilename, objectName);
 
         if (resDb != null) {
             // 上传文件到 minio

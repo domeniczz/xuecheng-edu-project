@@ -41,14 +41,14 @@ public class RestResponse<T> {
          */
         FAIL(-1);
 
-        private int code;
+        private int codeNum;
 
         Code(int code) {
-            this.code = code;
+            this.codeNum = code;
         }
 
-        public int getCode() {
-            return code;
+        public int getCodeNum() {
+            return codeNum;
         }
     }
 
@@ -56,7 +56,7 @@ public class RestResponse<T> {
      * 默认构造成功的响应信息
      */
     public RestResponse() {
-        this(Code.SUCCESS.getCode(), "success");
+        this(Code.SUCCESS.getCodeNum(), "success");
     }
 
     public RestResponse(int code, String msg) {
@@ -71,7 +71,7 @@ public class RestResponse<T> {
      */
     public static <T> RestResponse<T> fail(String msg) {
         RestResponse<T> resp = new RestResponse<>();
-        resp.setCode(Code.FAIL.getCode());
+        resp.setCode(Code.FAIL.getCodeNum());
         resp.setMsg(msg);
         return resp;
     }
@@ -84,7 +84,7 @@ public class RestResponse<T> {
      */
     public static <T> RestResponse<T> fail(T result, String msg) {
         RestResponse<T> resp = new RestResponse<>();
-        resp.setCode(Code.FAIL.getCode());
+        resp.setCode(Code.FAIL.getCodeNum());
         resp.setMsg(msg);
         resp.setResult(result);
         return resp;
@@ -97,7 +97,7 @@ public class RestResponse<T> {
      */
     public static <T> RestResponse<T> success(T result) {
         RestResponse<T> resp = new RestResponse<>();
-        resp.setCode(Code.SUCCESS.getCode());
+        resp.setCode(Code.SUCCESS.getCodeNum());
         resp.setResult(result);
         return resp;
     }
@@ -110,7 +110,7 @@ public class RestResponse<T> {
      */
     public static <T> RestResponse<T> success(T result, String msg) {
         RestResponse<T> resp = new RestResponse<>();
-        resp.setCode(Code.SUCCESS.getCode());
+        resp.setCode(Code.SUCCESS.getCodeNum());
         resp.setMsg(msg);
         resp.setResult(result);
         return resp;
@@ -122,7 +122,7 @@ public class RestResponse<T> {
      */
     public static <T> RestResponse<T> success() {
         RestResponse<T> resp = new RestResponse<>();
-        resp.setCode(Code.SUCCESS.getCode());
+        resp.setCode(Code.SUCCESS.getCodeNum());
         resp.setMsg("success");
         return resp;
     }
@@ -134,7 +134,7 @@ public class RestResponse<T> {
      */
     public static <T> RestResponse<T> success(String msg) {
         RestResponse<T> resp = new RestResponse<>();
-        resp.setCode(Code.SUCCESS.getCode());
+        resp.setCode(Code.SUCCESS.getCodeNum());
         resp.setMsg(msg);
         return resp;
     }
@@ -144,7 +144,7 @@ public class RestResponse<T> {
      * @return {@code true} 为成功，{@code false} 为错误
      */
     public boolean isSuccess() {
-        return this.code == Code.SUCCESS.getCode();
+        return this.code == Code.SUCCESS.getCodeNum();
     }
 
 }

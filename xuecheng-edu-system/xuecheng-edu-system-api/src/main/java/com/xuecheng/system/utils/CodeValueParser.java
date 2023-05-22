@@ -15,6 +15,10 @@ import java.util.Map;
  */
 public class CodeValueParser {
 
+    private CodeValueParser() {
+        // prevents other classes from instantiating it
+    }
+
     /**
      * 解析 JSON 字符串 (itemValues)，得到 code 和 description
      * @param jsonString JSON 字符串

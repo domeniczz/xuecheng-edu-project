@@ -93,7 +93,7 @@ public class MediaFileServiceTest {
 
         PageResult<MediaFile> res = mediaFileService.queryMediaFileList(companyId, pageParams, queryMediaParamsDto);
         Assertions.assertNotNull(res, "查询媒资文件列表失败");
-        Assertions.assertTrue(res.getItems().size() > 0, "媒资文件列表为空");
+        Assertions.assertTrue(!res.getItems().isEmpty(), "媒资文件列表为空");
 
         // 更新文件路径 (变为在文件服务器中的路径)
         filePath = res.getItems().get(0).getFilePath();
@@ -114,7 +114,9 @@ public class MediaFileServiceTest {
     @Order(3)
     void testDeleteMediaFile() {
         // 若测试失败，可能是因为 bucket Access Policy 是 private，需要改为 public
-        mediaFileService.deleteMediaFile(companyId, dto);
+        FileResultDto res = mediaFileService.deleteMediaFile(companyId, dto);
+        Assertions.assertNotNull(res, "删除媒资文件失败");
+        Assertions.assertEquals(companyId, res.getCompanyId());
     }
 
 }

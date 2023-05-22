@@ -6,10 +6,10 @@ import com.j256.simplemagic.ContentInfoUtil;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.http.MediaType;
 
-import java.io.File;
-import java.io.FileInputStream;
 import java.io.InputStream;
 import java.math.BigInteger;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.security.MessageDigest;
 import java.time.LocalDate;
 import java.util.UUID;
@@ -91,8 +91,8 @@ public class FileUtils {
      * @param file 文件
      * @return MD5 字符串
      */
-    public static String getFileMd5(File file) {
-        try (InputStream is = new FileInputStream(file)) {
+    public static String getFileMd5(Path path) {
+        try (InputStream is = Files.newInputStream(path)) {
             MessageDigest md = MessageDigest.getInstance("MD5");
             byte[] buffer = new byte[4096];
             int read;
@@ -101,7 +101,7 @@ public class FileUtils {
             }
             return new BigInteger(1, md.digest()).toString(16);
         } catch (Exception e) {
-            log.error("获取文件 \"{}\" MD5 出错, errorMag={}", file.getName(), e.getMessage());
+            log.error("获取文件 \"{}\" MD5 出错, errorMsg={}", path.getFileName(), e.getMessage());
             return null;
         }
     }

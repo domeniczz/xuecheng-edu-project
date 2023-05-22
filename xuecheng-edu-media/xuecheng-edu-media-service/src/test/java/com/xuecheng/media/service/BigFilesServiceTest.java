@@ -5,6 +5,7 @@ import com.xuecheng.base.utils.FileUtil;
 import com.xuecheng.media.model.dto.FileParamsDto;
 import com.xuecheng.media.utils.FileUtils;
 
+import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.MethodOrderer;
@@ -47,7 +48,6 @@ public class BigFilesServiceTest {
      */
     @Value("${bigfile.folder.path}")
     private String folderPath;
-    private String fileType;
     private FileParamsDto dto;
     private String fileMd5;
 
@@ -60,7 +60,7 @@ public class BigFilesServiceTest {
         // 机构 ID
         companyId = 100011L;
         // 文件类型：视频 (图片 001001; 视频 001002; 其他 001003)
-        fileType = "001002";
+        String fileType = "001002";
         // 文件大小 (乱写的)
         long fileSize = 10000L;
 
@@ -75,7 +75,7 @@ public class BigFilesServiceTest {
 
         // 文件 MD5
         File file = new File(folderPath + filename);
-        fileMd5 = FileUtils.getFileMd5(file);
+        fileMd5 = FileUtils.getFileMd5(file.toPath());
 
         // 分块文件夹
         chunkFolderPath = folderPath + "chunk" + File.separator;
@@ -152,6 +152,14 @@ public class BigFilesServiceTest {
         Assertions.assertTrue(res.getResult(), "合并后的文件删除失败");
     }
 
+    @AfterAll
+    void tearDown() throws IOException {
+        // 清空分块文件夹
+        if (!FileUtil.isFolderEmpty(chunkFolderPath)) {
+            FileUtil.clearFolderRecursively(chunkFolderPath);
+        }
+    }
+
     /**
      * 准备测试文件的本地分块文件
      * @throws IOException IO 异常
@@ -168,7 +176,7 @@ public class BigFilesServiceTest {
         // 计算分块总数
         chunkTotalNum = (int) Math.ceil(sourceFile.length() * 1.0 / chunkSize);
         // 从源文件读数据，向分块文件中写数据
-        try (RandomAccessFile raf_r = new RandomAccessFile(sourceFile, "r");) {
+        try (RandomAccessFile rafRead = new RandomAccessFile(sourceFile, "r");) {
             // 缓冲区
             byte[] buffer = new byte[1024];
             // 逐一向各个分块中写入数据
@@ -176,22 +184,22 @@ public class BigFilesServiceTest {
                 // 分块文件名称就是该分块的编号
                 File chunkedFile = new File(chunkFolderPath + i);
                 // 向分块文件中写入数据
-                try (RandomAccessFile raf_w = new RandomAccessFile(chunkedFile, "rw")) {
+                try (RandomAccessFile rafWrite = new RandomAccessFile(chunkedFile, "rw")) {
                     int len = -1;
                     // 按照缓冲区大小，从源文件中读取数据
-                    while ((len = raf_r.read(buffer)) != -1) {
+                    while ((len = rafRead.read(buffer)) != -1) {
                         // 写入数据之前，检查是否会超过分块大小
-                        long remaining = chunkSize - raf_w.length();
+                        long remaining = chunkSize - rafWrite.length();
                         int writeLength = (int) Math.min(len, remaining);
 
-                        raf_w.write(buffer, 0, writeLength);
+                        rafWrite.write(buffer, 0, writeLength);
 
                         // 若分块文件达到分块大小，就不再写入数据
-                        if (raf_w.length() == chunkSize) {
+                        if (rafWrite.length() == chunkSize) {
                             break;
                         }
                         // 若分块文件超过分块大小，就抛出异常
-                        else if (raf_w.length() > chunkSize) {
+                        else if (rafWrite.length() > chunkSize) {
                             throw new IllegalStateException("The chunk file \"" + i + "\" exceeds the predefined chunk size of \"" + chunkSize + "\"");
                         }
                     }
@@ -205,8 +213,6 @@ public class BigFilesServiceTest {
      * @return 文件路径
      */
     private String getMergedFileObjectName() {
-        // 源文件名称
-        String filename = dto.getFilename();
         // 文件扩展名
         String fileExt = filename.substring(filename.lastIndexOf("."));
         // 指定合并后文件的 objectname

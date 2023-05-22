@@ -82,7 +82,7 @@ public class MediaFileController {
     }
 
     @PostMapping(value = "/delete/coursefile")
-    public FileResultDto delete(@RequestBody FileParamsDto dto) throws IOException {
+    public FileResultDto delete(@RequestBody FileParamsDto dto) {
 
         // TODO: 4/27/2023 6:36 PM 通过单点登录系统，获取到用户所属机构的 ID
         long companyId = 1232141425L;

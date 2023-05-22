@@ -3,7 +3,6 @@ package com.xuecheng.media.others;
 import com.xuecheng.media.operations.MinioOperation;
 import com.xuecheng.media.utils.FileUtils;
 
-import org.apache.commons.io.IOUtils;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.MethodOrderer;
@@ -16,14 +15,21 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.SpringBootTest;
 
 import java.io.File;
-import java.io.FileOutputStream;
 import java.io.FilterInputStream;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
+import java.security.GeneralSecurityException;
+import java.security.SecureRandom;
 
 import io.minio.BucketExistsArgs;
 import io.minio.GetBucketPolicyArgs;
 import io.minio.MinioClient;
 import io.minio.ObjectWriteResponse;
 import io.minio.SetBucketPolicyArgs;
+import io.minio.errors.MinioException;
 
 /**
  * @author Domenic
@@ -62,7 +68,7 @@ public class MinioTest {
     void setUp() {
 
         // minio 中的桶名
-        bucketName = "testbucket" + (int) Math.floor(Math.random() * (100 + 1));
+        bucketName = "testbucket" + new SecureRandom().nextInt(100);
 
         // 文件在本地的路径
         localFilePath = localFolderPath + filename;
@@ -94,7 +100,7 @@ public class MinioTest {
      */
     @Test
     @Order(2)
-    void testSetBucketAccessPolicyPublic() throws Exception {
+    void testSetBucketAccessPolicyPublic() throws IOException, MinioException, GeneralSecurityException {
         String policy = "{\n" +
                 "    \"Version\": \"2012-10-17\"," +
                 "    \"Statement\": [" +
@@ -128,7 +134,7 @@ public class MinioTest {
      */
     @Test
     @Order(6)
-    void testDeleteBucket() throws Exception {
+    void testDeleteBucket() throws IOException, MinioException, GeneralSecurityException {
         minioOperation.deleteBucket(bucketName);
         Assertions.assertFalse(minioClient.bucketExists(BucketExistsArgs.builder().bucket(bucketName).build()));
     }
@@ -155,14 +161,13 @@ public class MinioTest {
      */
     @Test
     @Order(4)
-    void testDownloadFile() throws Exception {
-        File src = new File(localFilePath);
-        File dest = new File(testDownloadFilePath);
+    void testDownloadFile() throws IOException {
+        Path src = Paths.get(localFilePath);
+        Path dest = Paths.get(testDownloadFilePath);
 
-        try (FilterInputStream in = minioOperation.queryFile(bucketName, objectName);
-                FileOutputStream out = new FileOutputStream(dest)) {
+        try (FilterInputStream in = minioOperation.queryFile(bucketName, objectName)) {
             // 将下载的数据流写入到目标文件
-            IOUtils.copy(in, out);
+            Files.copy(in, dest, StandardCopyOption.REPLACE_EXISTING);
         }
 
         // 通过 MD5 校验文件的完整性
@@ -171,7 +176,7 @@ public class MinioTest {
         Assertions.assertEquals(srcMD5, destMD5, "MD5 校验失败");
 
         // 删除下载的文件
-        boolean res = dest.delete();
+        boolean res = Files.deleteIfExists(dest);
         Assertions.assertTrue(res, "删除文件失败");
     }
 
@@ -180,7 +185,7 @@ public class MinioTest {
      */
     @Test
     @Order(5)
-    void testDeleteFile() throws Exception {
+    void testDeleteFile() throws IOException {
         boolean res = minioOperation.deleteFile(bucketName, objectName);
         Assertions.assertTrue(res, "删除文件失败");
     }

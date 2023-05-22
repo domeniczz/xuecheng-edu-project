@@ -28,7 +28,7 @@ public class DictionaryMapperTest {
         // 查询全部
         List<Dictionary> dictionaryList = dictionaryMapper.selectList(null);
         Assertions.assertNotNull(dictionaryList);
-        Assertions.assertTrue(dictionaryList.size() > 0);
+        Assertions.assertTrue(!dictionaryList.isEmpty());
     }
 
     @Test
