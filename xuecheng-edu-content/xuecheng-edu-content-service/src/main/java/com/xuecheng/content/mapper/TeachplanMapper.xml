@@ -3,7 +3,7 @@
 <mapper namespace="com.xuecheng.content.mapper.TeachplanMapper">
 
     <!-- 通用查询映射结果 -->
-    <resultMap id="BaseResultMap" type="com.xuecheng.content.model.po.Teachplan">
+    <resultMap id="BaseResultMap" type="Teachplan">
         <id column="id" property="id"/>
         <result column="pname" property="pname"/>
         <result column="parentid" property="parentid"/>
@@ -28,7 +28,7 @@
     </sql>
 
 
-    <resultMap id="treeNodeResultMap" type="com.xuecheng.content.model.dto.TeachplanDto">
+    <resultMap id="treeNodeResultMap" type="TeachplanDto">
         <id column="parent_id" property="id"/>
         <result column="parent_pname" property="pname"/>
         <result column="parent_parentid" property="parentid"/>
@@ -40,7 +40,7 @@
         <result column="parent_courseId" property="courseId"/>
         <result column="parent_coursePubId" property="coursePubId"/>
         <!-- 映射子节点，一对多映射，ofType list 中的对象类型 -->
-        <collection property="teachPlanTreeNodes" ofType="com.xuecheng.content.model.dto.TeachplanDto">
+        <collection property="teachPlanTreeNodes" ofType="TeachplanDto">
             <id column="child_id" property="id"/>
             <result column="child_pname" property="pname"/>
             <result column="child_parentid" property="parentid"/>
@@ -52,7 +52,7 @@
             <result column="child_courseId" property="courseId"/>
             <result column="child_coursePubId" property="coursePubId"/>
             <!-- 一对一映射 -->
-            <association property="teachplanMedia" javaType="com.xuecheng.content.model.po.TeachplanMedia">
+            <association property="teachplanMedia" javaType="TeachplanMedia">
                 <id column="teachplanMeidaId" property="id"/>
                 <result column="mediaFilename" property="mediaFilename"/>
                 <result column="mediaId" property="mediaId"/>

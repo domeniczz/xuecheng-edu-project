@@ -3,7 +3,7 @@
 <mapper namespace="com.xuecheng.media.mapper.MediaFileMapper">
 
     <!-- 通用查询映射结果 -->
-    <resultMap id="BaseResultMap" type="com.xuecheng.media.model.po.MediaFile">
+    <resultMap id="BaseResultMap" type="MediaFile">
         <id column="id" property="id" />
         <result column="company_id" property="companyId" />
         <result column="company_name" property="companyName" />

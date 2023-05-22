@@ -3,7 +3,7 @@
 <mapper namespace="com.xuecheng.content.mapper.CourseCategoryMapper">
 
     <!-- 通用查询映射结果 -->
-    <resultMap id="BaseResultMap" type="com.xuecheng.content.model.po.CourseCategory">
+    <resultMap id="BaseResultMap" type="CourseCategory">
         <id column="id" property="id"/>
         <result column="name" property="name"/>
         <result column="label" property="label"/>
@@ -24,7 +24,7 @@
         查询结果按照 id 和 orderby 排序
         使用递归查询的好处是可以查询任意层级的节点，无需提前知道层数
     -->
-    <select id="selectTreeNodes" parameterType="string" resultType="com.xuecheng.content.model.dto.CourseCategoryTreeDto">
+    <select id="selectTreeNodes" parameterType="string" resultType="CourseCategoryTreeDto">
         -- `cte` is an alias for the result (a virtual table) of WITH clause
         WITH RECURSIVE cte AS (
             -- get root node whose id is a variable
