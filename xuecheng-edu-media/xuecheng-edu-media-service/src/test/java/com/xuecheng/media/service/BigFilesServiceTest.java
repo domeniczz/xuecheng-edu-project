@@ -3,7 +3,6 @@ package com.xuecheng.media.service;
 import com.xuecheng.base.model.RestResponse;
 import com.xuecheng.base.utils.FileUtil;
 import com.xuecheng.media.model.dto.FileParamsDto;
-import com.xuecheng.media.utils.FileUtils;
 
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.Assertions;
@@ -20,6 +19,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import java.io.File;
 import java.io.IOException;
 import java.io.RandomAccessFile;
+import java.nio.file.FileSystems;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -75,10 +75,10 @@ public class BigFilesServiceTest {
 
         // 文件 MD5
         File file = new File(folderPath + filename);
-        fileMd5 = FileUtils.getFileMd5(file.toPath());
+        fileMd5 = FileUtil.getFileMd5(file.toPath());
 
         // 分块文件夹
-        chunkFolderPath = folderPath + "chunk" + File.separator;
+        chunkFolderPath = folderPath + "chunk" + FileSystems.getDefault().getSeparator();
 
         // 创建分块文件夹 (若不存在)
         Path path = Paths.get(chunkFolderPath);
@@ -214,10 +214,10 @@ public class BigFilesServiceTest {
      */
     private String getMergedFileObjectName() {
         // 文件扩展名
-        String fileExt = filename.substring(filename.lastIndexOf("."));
+        String fileExt = FileUtil.getFileExtension(filename);
         // 指定合并后文件的 objectname
         return fileMd5.charAt(0) + "/" + fileMd5.charAt(1) + "/" + fileMd5 + "/" +
-                filename.substring(0, filename.lastIndexOf(".")) + "-" + fileMd5 + fileExt;
+                FileUtil.dropFileExtension(filename) + "-" + fileMd5 + fileExt;
     }
 
 }

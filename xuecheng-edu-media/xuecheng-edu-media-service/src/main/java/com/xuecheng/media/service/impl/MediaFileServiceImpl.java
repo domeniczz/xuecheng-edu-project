@@ -5,6 +5,7 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.xuecheng.base.exception.XueChengEduException;
 import com.xuecheng.base.model.PageParams;
 import com.xuecheng.base.model.PageResult;
+import com.xuecheng.base.utils.FileUtil;
 import com.xuecheng.media.mapper.MediaFileMapper;
 import com.xuecheng.media.model.dto.FileParamsDto;
 import com.xuecheng.media.model.dto.FileResultDto;
@@ -13,7 +14,6 @@ import com.xuecheng.media.model.po.MediaFile;
 import com.xuecheng.media.operations.FileInfoDbOperation;
 import com.xuecheng.media.operations.MinioOperation;
 import com.xuecheng.media.service.MediaFileService;
-import com.xuecheng.media.utils.FileUtils;
 
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.BeanUtils;
@@ -22,6 +22,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.nio.file.Paths;
+import java.time.LocalDate;
 import java.util.List;
 
 import io.minio.ObjectWriteResponse;
@@ -95,19 +96,19 @@ public class MediaFileServiceImpl implements MediaFileService {
         String filename = dto.getFilename();
 
         // 文件扩展名
-        String ext = filename.substring(filename.lastIndexOf("."));
+        String ext = FileUtil.getFileExtension(filename);
 
         // 文件 mimeType
-        String mimeType = FileUtils.getMimeTypeFromExt(ext);
+        String mimeType = FileUtil.getMimeTypeFromExt(ext);
 
         // 文件存储路径 (年/月/日)
-        String defaultFolderPath = FileUtils.getFolderPathByDate(true, true, true);
+        String defaultFolderPath = getFolderPathByDate(true, true, true);
 
         // 文件 MD5 值
-        String fileMd5 = FileUtils.getFileMd5(Paths.get(tempFilePath));
+        String fileMd5 = FileUtil.getFileMd5(Paths.get(tempFilePath));
 
         // 最终的文件名
-        String finalFilename = filename.substring(0, filename.lastIndexOf(".")) + fileMd5 + ext;
+        String finalFilename = FileUtil.dropFileExtension(filename) + fileMd5 + ext;
 
         // 最终的文件存放路径 (路径 + 文件名)
         String objectName = defaultFolderPath + finalFilename;
@@ -181,6 +182,35 @@ public class MediaFileServiceImpl implements MediaFileService {
         BeanUtils.copyProperties(fileToDelete, resDto);
         return resDto;
 
+    }
+
+    /**
+     * 根据日期生成路径，示例：年/月/日
+     * @param year 路径是否包含 年
+     * @param month 路径是否包含 月
+     * @param day 路径是否包含 日
+     * @return 文件夹路径
+     */
+    public static String getFolderPathByDate(boolean year, boolean month, boolean day) {
+        LocalDate now = LocalDate.now();
+
+        StringBuilder path = new StringBuilder();
+
+        if (year) {
+            path.append(now.getYear());
+        }
+
+        if (month && path.length() > 0) {
+            path.append('/');
+            path.append(String.format("%02d", now.getMonthValue()));
+        }
+
+        if (day && path.length() > 0) {
+            path.append('/');
+            path.append(String.format("%02d", now.getDayOfMonth()));
+        }
+
+        return path.append('/').toString();
     }
 
 }

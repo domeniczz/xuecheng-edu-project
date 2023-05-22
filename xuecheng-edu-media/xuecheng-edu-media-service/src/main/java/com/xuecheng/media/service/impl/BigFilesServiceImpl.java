@@ -1,13 +1,13 @@
 package com.xuecheng.media.service.impl;
 
 import com.xuecheng.base.model.RestResponse;
+import com.xuecheng.base.utils.FileUtil;
 import com.xuecheng.media.mapper.MediaFileMapper;
 import com.xuecheng.media.model.dto.FileParamsDto;
 import com.xuecheng.media.model.po.MediaFile;
 import com.xuecheng.media.operations.FileInfoDbOperation;
 import com.xuecheng.media.operations.MinioOperation;
 import com.xuecheng.media.service.BigFilesService;
-import com.xuecheng.media.utils.FileUtils;
 
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -103,10 +103,10 @@ public class BigFilesServiceImpl implements BigFilesService {
         String chunkFilePath = getChunkFileFolderPath(fileMd5) + chunkIndex;
 
         // 获取分块文件的 MD5
-        String chunkMd5 = FileUtils.getFileMd5(Paths.get(localChunkFilePath));
+        String chunkMd5 = FileUtil.getFileMd5(Paths.get(localChunkFilePath));
 
         // 获取文件的 mimeType (传入值为 null 或 空 表示没有扩展名)
-        String mimeType = FileUtils.getMimeTypeFromExt("");
+        String mimeType = FileUtil.getMimeTypeFromExt("");
 
         // 将分块文件上传到 minio
         ObjectWriteResponse resp = minioOperation.uploadFile(localChunkFilePath, mimeType, bucket, chunkFilePath);
@@ -130,7 +130,7 @@ public class BigFilesServiceImpl implements BigFilesService {
         // 源文件名称
         String filename = dto.getFilename();
         // 文件扩展名
-        String fileExt = filename.substring(filename.lastIndexOf("."));
+        String fileExt = FileUtil.getFileExtension(filename);
         // 指定合并后文件的 objectname
         String objectName = getMergedFilePath(filename, fileMd5, fileExt);
 
@@ -253,7 +253,7 @@ public class BigFilesServiceImpl implements BigFilesService {
      */
     private String getMergedFilePath(String filename, String fileMd5, String fileExt) {
         return fileMd5.charAt(0) + "/" + fileMd5.charAt(1) + "/" + fileMd5 + "/" +
-                filename.substring(0, filename.lastIndexOf(".")) + "-" + fileMd5 + fileExt;
+                FileUtil.dropFileExtension(filename) + "-" + fileMd5 + fileExt;
     }
 
 }

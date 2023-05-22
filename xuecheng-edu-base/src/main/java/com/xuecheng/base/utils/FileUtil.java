@@ -1,8 +1,11 @@
 package com.xuecheng.base.utils;
 
+import com.j256.simplemagic.ContentInfo;
+import com.j256.simplemagic.ContentInfoUtil;
 import com.xuecheng.base.config.CustomPropertiesReader;
 
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.http.MediaType;
 
 import java.io.BufferedInputStream;
 import java.io.BufferedWriter;
@@ -11,15 +14,20 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.InputStream;
+import java.math.BigInteger;
 import java.nio.file.DirectoryStream;
+import java.nio.file.FileSystems;
 import java.nio.file.FileVisitResult;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.SimpleFileVisitor;
 import java.nio.file.attribute.BasicFileAttributes;
+import java.security.MessageDigest;
 import java.util.Comparator;
 import java.util.List;
+import java.util.UUID;
 import java.util.stream.Stream;
 
 import lombok.extern.slf4j.Slf4j;
@@ -280,6 +288,142 @@ public class FileUtil {
                 }
             }
         }
+    }
+
+    /**
+     * 获取文件的 mimeType
+     * @param filename 完整的文件名
+     * @return mimeType 类型字符串
+     */
+    public static String getMimeType(String filename) {
+        return getMimeTypeFromExt(getFileExtension(filename));
+    }
+
+    /**
+     * <p>
+     * 根据扩展名获取文件的 mimeType<br/>
+     * 传入值为 {@code null} 或 空 表示没有扩展名，返回通用 mimeType，表示是一个字节流
+     * </p>
+     * @param ext 文件扩展名
+     * @return mimeType 类型字符串
+     */
+    public static String getMimeTypeFromExt(String ext) {
+
+        // 若 ext 是 null 或为空白，则设置其值为空字符串
+        if (StringUtils.isBlank(ext)) {
+            ext = "";
+        }
+
+        // 根据扩展名获取 mimeType
+        ContentInfo extMatch = ContentInfoUtil.findExtensionMatch(ext);
+
+        // 通用的 mimeType，表示是一个字节流
+        String mimeType = MediaType.APPLICATION_OCTET_STREAM_VALUE;
+
+        if (extMatch != null) {
+            mimeType = extMatch.getMimeType();
+        }
+
+        return mimeType;
+    }
+
+    /**
+     * 获取文件的 MD5
+     * @param file 文件
+     * @return MD5 字符串
+     */
+    public static String getFileMd5(Path path) {
+        try (InputStream is = Files.newInputStream(path)) {
+            MessageDigest md = MessageDigest.getInstance("MD5");
+            byte[] buffer = new byte[4096];
+            int read;
+            while ((read = is.read(buffer)) != -1) {
+                md.update(buffer, 0, read);
+            }
+            return new BigInteger(1, md.digest()).toString(16);
+        } catch (Exception e) {
+            log.error("获取文件 \"{}\" MD5 出错, errorMsg={}", path.getFileName(), e.getMessage());
+            return null;
+        }
+    }
+
+    /**
+     * 生成 UUID (32 位 16 进制数)
+     * @return {@link UUID} 字符串
+     */
+    public static String getUuid() {
+        return UUID.randomUUID().toString().replace("-", "");
+    }
+
+    /**
+     * 去除文件扩展名
+     * @param src 完整的文件名
+     * @return 去除扩展名后的文件路径/名称
+     */
+    public static String dropFileExtension(String src) {
+        return src.substring(0, src.lastIndexOf("."));
+    }
+
+    /**
+     * 获取文件名称，不包括扩展名
+     * @param src 文件路径/名称
+     * @return 文件路径/名称 (不包括扩展名)
+     */
+    public static String getFileName(String src) {
+        int index = src.lastIndexOf(FileSystems.getDefault().getSeparator());
+
+        if (index != -1) {
+            return src.substring(index + 1, src.length());
+        }
+
+        return FileUtil.dropFileExtension(src);
+    }
+
+    /**
+     * 获取文件名称，不包括扩展名
+     * @param src 文件路径/名称
+     * @param separator 路径分隔符
+     * @return 文件路径/名称 (不包括扩展名)
+     */
+    public static String getFileName(String src, String separator) {
+        int index = src.lastIndexOf(separator);
+
+        if (index != -1) {
+            return src.substring(index + 1, src.length());
+        }
+
+        return FileUtil.dropFileExtension(src);
+    }
+
+    /**
+     * 获取文件扩展名
+     * @param src 文件路径/名称 (默认获取系统的路径分隔符)
+     * @return 文件扩展名 (不包括 {@code .})
+     */
+    public static String getFileExtension(String src) {
+        int index = src.lastIndexOf(FileSystems.getDefault().getSeparator());
+
+        if (index != -1) {
+            return src.substring(index + 1, src.length());
+        }
+
+        return src.substring(src.lastIndexOf(".") + 1);
+    }
+
+    /**
+     * 获取文件扩展名
+     * @param src 文件路径/名称
+     * @param separator 指定路径分隔符
+     * @return 文件扩展名
+     */
+    public static String getFileExtension(String src, String separator) {
+        int index = src.lastIndexOf(separator);
+
+        if (index != -1) {
+            return src.substring(index + 1, src.length());
+        }
+
+        return src.substring(src.lastIndexOf(".") + 1);
     }
 
 }

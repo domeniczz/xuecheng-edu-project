@@ -2,7 +2,6 @@ package com.xuecheng.media.others;
 
 import com.xuecheng.base.utils.FileUtil;
 import com.xuecheng.media.operations.MinioOperation;
-import com.xuecheng.media.utils.FileUtils;
 
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.Assertions;
@@ -19,6 +18,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import java.io.File;
 import java.io.IOException;
 import java.io.RandomAccessFile;
+import java.nio.file.FileSystems;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -73,7 +73,7 @@ public class FileChunkMergeTest {
     void setUp() throws IOException, MinioException, GeneralSecurityException {
 
         // 分块文件在本地的保存路径
-        chunkFolderPath = sourceFolderPath + "chunk" + File.separator;
+        chunkFolderPath = sourceFolderPath + "chunk" + FileSystems.getDefault().getSeparator();
         // 分块文件在 minio 中的保存路径
         objectFolderPathMinio = "chunk/";
 
@@ -189,8 +189,8 @@ public class FileChunkMergeTest {
         Assertions.assertEquals(mergedFile.getName(), mergedFilename);
 
         // 合并文件完成后，对合并的文件 MD5 校验
-        String sourceMD5 = FileUtils.getFileMd5(Paths.get(sourceFolder + File.separator + sourceFilename));
-        String mergeMD5 = FileUtils.getFileMd5(mergedFile.toPath());
+        String sourceMD5 = FileUtil.getFileMd5(Paths.get(sourceFolder + FileSystems.getDefault().getSeparator() + sourceFilename));
+        String mergeMD5 = FileUtil.getFileMd5(mergedFile.toPath());
         Assertions.assertEquals(sourceMD5, mergeMD5, "MD5 校验失败");
     }
 
@@ -206,7 +206,7 @@ public class FileChunkMergeTest {
                 try {
                     String objectName = objectFolderPathMinio + file.getFileName().toString();
                     ObjectWriteResponse resp = minioOperation.uploadFile(file.toAbsolutePath().toString(),
-                            FileUtils.getMimeTypeFromExt(""),
+                            FileUtil.getMimeTypeFromExt(""),
                             bucketName, objectName);
                     Assertions.assertNotNull(resp, "上传文件失败");
                     Assertions.assertEquals(resp.object(), objectName, "上传文件失败, 文件名称不一致");

@@ -1,7 +1,7 @@
 package com.xuecheng.media.others;
 
+import com.xuecheng.base.utils.FileUtil;
 import com.xuecheng.media.operations.MinioOperation;
-import com.xuecheng.media.utils.FileUtils;
 
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
@@ -14,9 +14,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.SpringBootTest;
 
-import java.io.File;
 import java.io.FilterInputStream;
 import java.io.IOException;
+import java.nio.file.FileSystems;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -74,9 +74,9 @@ public class MinioTest {
         localFilePath = localFolderPath + filename;
 
         // 文件下载后在本地的路径 (示例：xxx-test-download.xxx)
-        testDownloadFilePath = localFolderPath + File.separator +
-                filename.substring(0, filename.lastIndexOf(".")) +
-                "-download" + filename.substring(filename.lastIndexOf("."));
+        testDownloadFilePath = localFolderPath + FileSystems.getDefault().getSeparator() +
+                FileUtil.dropFileExtension(filename) +
+                "-download" + FileUtil.getFileExtension(filename);
 
         // 文件在 minio 中的保存路径 (路径 + 名称)
         objectName = "test/" + filename;
@@ -147,8 +147,7 @@ public class MinioTest {
     void testUploadFile() {
         try {
             ObjectWriteResponse resp = minioOperation.uploadFile(localFilePath,
-                    FileUtils.getMimeTypeFromExt(filename.substring(filename.lastIndexOf("."))),
-                    bucketName, objectName);
+                    FileUtil.getMimeType(filename), bucketName, objectName);
             Assertions.assertNotNull(resp, "上传文件失败");
             Assertions.assertEquals(resp.object(), objectName, "上传文件失败, 文件名称不一致");
         } catch (Exception e) {
@@ -171,8 +170,8 @@ public class MinioTest {
         }
 
         // 通过 MD5 校验文件的完整性
-        String srcMD5 = FileUtils.getFileMd5(src);
-        String destMD5 = FileUtils.getFileMd5(dest);
+        String srcMD5 = FileUtil.getFileMd5(src);
+        String destMD5 = FileUtil.getFileMd5(dest);
         Assertions.assertEquals(srcMD5, destMD5, "MD5 校验失败");
 
         // 删除下载的文件

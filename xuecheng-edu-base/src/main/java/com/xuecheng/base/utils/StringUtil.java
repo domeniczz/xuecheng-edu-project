@@ -1,6 +1,5 @@
 package com.xuecheng.base.utils;
 
-import java.io.File;
 import java.nio.charset.Charset;
 import java.util.UUID;
 import java.util.regex.Pattern;
@@ -261,56 +260,6 @@ public class StringUtil {
 		}
 
 		return longArr;
-	}
-
-	/**
-	 * 获取文件后缀
-	 * @param src 文件的路径/名称
-	 * @return 文件后缀名 (不带 {@code .})
-	 */
-	public static String getFileExt(String src) {
-		// 获取文件名
-		String filename = src.substring(src.lastIndexOf(File.separator) + 1, src.length());
-
-		return filename.substring(filename.lastIndexOf(".") + 1);
-	}
-
-	/**
-	 * 获取文件后缀 (指定路径分隔符)
-	 * @param src 文件的路径/名称
-	 * @param separator 路径分隔符
-	 * @return 文件后缀名
-	 */
-	public static String getFileExt(String src, String separator) {
-		// 获取文件名
-		String filename = src.substring(src.lastIndexOf(separator) + 1, src.length());
-
-		return filename.substring(filename.lastIndexOf(".") + 1);
-	}
-
-	/**
-	 * 获取文件名称，不带文件后缀部分
-	 * @param src 文件的路径/名称
-	 * @return 文件的路径/名称 (不带后缀)
-	 */
-	public static String getFileName(String src) {
-		// 获取文件名
-		String filename = src.substring(src.lastIndexOf(File.separator) + 1, src.length());
-
-		return filename.substring(0, filename.lastIndexOf("."));
-	}
-
-	/**
-	 * 获取文件名称，不带文件后缀部分
-	 * @param src 文件的路径/名称
-	 * @param separator 路径分隔符
-	 * @return 文件的路径/名称 (不带后缀)
-	 */
-	public static String getFileName(String src, String separator) {
-		// 获取文件名
-		String filename = src.substring(src.lastIndexOf(separator) + 1, src.length());
-
-		return filename.substring(0, filename.lastIndexOf("."));
 	}
 
 	/**
