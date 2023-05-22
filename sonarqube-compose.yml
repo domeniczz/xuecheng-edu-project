@@ -1,37 +1,77 @@
-# Run docker-compose -p sonarqube -f sonarqube-compose.yml up -d
-# -p specifies the name of project (the compose name)
-# -f specifies the name of docker compose file
+## Prerequisites: set `max_map_count`                                        ##
+## Linux:                                                                    ##
+## - sysctl -w vm.max_map_count=524288                                       ##
+## - sysctl -p                                                               ##
+## Windows:                                                                  ##
+## - wsl -d docker-desktop sysctl -w vm.max_map_count=524288                 ##
+## - wsl -d docker-desktop sysctl -p                                         ##
+##                                                                           ##
+## Run docker-compose -p sonar -f sonarqube-compose.yml up -d                ##
+## `-p` specifies the name of project (the compose name)                     ##
+## `-f` specifies the name of docker compose file                            ##
+## `-d` means runs in detached mode                                          ##
+##                                                                           ##
+## For more info, please refer to                                            ##
+## - https://hub.docker.com/_/sonarqube                                      ##
+## - https://docs.sonarqube.org/latest/setup-and-upgrade/install-the-server/ ##
 
-version: '3'
+version: "3"
+
 services:
   sonarqube:
     container_name: sonarqube-server
     image: sonarqube:lts-community
+    restart: always
     ports:
       - "9191:9000"
       - "9192:9001"
     networks:
-      - sonarqube-env
-    environment:
-      - SONARQUBE_JDBC_USERNAME=sonar
-      - SONARQUBE_JDBC_PASSWORD=sonar
-      - SONARQUBE_JDBC_URL=jdbc:postgresql://postgresql-sonar:5432/sonar
-    # restart: always
+      - sonar
     depends_on:
       - db
+    environment:
+      SONAR_JDBC_URL: jdbc:postgresql://postgresql-sonar:5432/sonar
+      SONAR_JDBC_USERNAME: sonar
+      SONAR_JDBC_PASSWORD: sonar
+    # Set sysctl options
+    # sysctls:
+    #   - vm.max_map_count=524288
+    # Set ulimit options
+    ulimits:
+      nofile:
+        soft: 131072
+        hard: 131072
+      nproc:
+        soft: 8192
+        hard: 8192
+    # volumes:
+    #   - sonarqube_data:/opt/sonarqube/data
+    #   - sonarqube_extensions:/opt/sonarqube/extensions
+    #   - sonarqube_logs:/opt/sonarqube/logs
 
   db:
     container_name: postgresql-sonar
-    image: postgres
+    image: postgres:latest
+    restart: always
     ports:
       - "9193:5432"
     networks:
-      - sonarqube-env
+      - sonar
     environment:
-      - POSTGRES_USER=sonar
-      - POSTGRES_PASSWORD=sonar
-      - POSTGRES_DB=sonar
-    # restart: always
+      POSTGRES_USER: sonar
+      POSTGRES_PASSWORD: sonar
+      # ALLOW_IP_RANGE: 0.0.0.0/0
+    # volumes:
+    #   - postgresql:/var/lib/postgresql
+    #   - postgresql_data:/var/lib/postgresql/data
 
 networks:
-  sonarqube-env:
+  sonar:
+    driver: bridge
+
+# volumes:
+#   sonarqube_data:
+#   sonarqube_extensions:
+#   sonarqube_logs:
+#   postgresql:
+#   postgresql_data:
