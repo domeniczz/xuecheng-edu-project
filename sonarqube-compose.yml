@@ -1,10 +1,7 @@
 ## Prerequisites: set `max_map_count`                                        ##
-## Linux:                                                                    ##
-## - sysctl -w vm.max_map_count=524288                                       ##
-## - sysctl -p                                                               ##
-## Windows:                                                                  ##
-## - wsl -d docker-desktop sysctl -w vm.max_map_count=524288                 ##
-## - wsl -d docker-desktop sysctl -p                                         ##
+## In linux command line:                                                    ##
+## - sudo sysctl -w vm.max_map_count=524288                                  ##
+## - sudo sysctl -p                                                          ##
 ##                                                                           ##
 ## Run docker-compose -p sonar -f sonarqube-compose.yml up -d                ##
 ## `-p` specifies the name of project (the compose name)                     ##
@@ -30,12 +27,10 @@ services:
     depends_on:
       - db
     environment:
+      # SonarQube will create database `sonar` automatically
       SONAR_JDBC_URL: jdbc:postgresql://postgresql-sonar:5432/sonar
       SONAR_JDBC_USERNAME: sonar
       SONAR_JDBC_PASSWORD: sonar
-    # Set sysctl options
-    # sysctls:
-    #   - vm.max_map_count=524288
     # Set ulimit options
     ulimits:
       nofile:
@@ -60,6 +55,7 @@ services:
     environment:
       POSTGRES_USER: sonar
       POSTGRES_PASSWORD: sonar
+      # allow all IP address to connect
       # ALLOW_IP_RANGE: 0.0.0.0/0
     # volumes:
     #   - postgresql:/var/lib/postgresql
