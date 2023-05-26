@@ -8,11 +8,11 @@ package com.xuecheng.base.exception;
  */
 public class XueChengEduException extends RuntimeException {
 
-    public XueChengEduException(String errMessage) {
-        super(errMessage);
+    public XueChengEduException(String errorMessage) {
+        super(errorMessage);
     }
 
-    public String getErrMessage() {
+    public String getErrorMessage() {
         return getMessage();
     }
 
@@ -20,15 +20,15 @@ public class XueChengEduException extends RuntimeException {
      * 抛出指定错误信息的异常
      * @param message 错误信息
      */
-    public static void cast(String message) {
-        throw new XueChengEduException(message);
+    public static void cast(String errorMessage) {
+        throw new XueChengEduException(errorMessage);
     }
 
     /**
      * 抛出通用的异常
      * @param error 通用异常枚举
      */
-    public static void cast(CommonError error) {
+    public static void cast(CommonException error) {
         throw new XueChengEduException(error.getErrMessage());
     }
 

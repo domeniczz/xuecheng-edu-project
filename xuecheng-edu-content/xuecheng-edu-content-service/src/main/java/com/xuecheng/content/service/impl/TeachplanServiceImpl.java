@@ -1,7 +1,7 @@
 package com.xuecheng.content.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
-import com.xuecheng.base.exception.CommonError;
+import com.xuecheng.base.exception.CommonException;
 import com.xuecheng.base.exception.XueChengEduException;
 import com.xuecheng.base.model.RestResponse;
 import com.xuecheng.content.mapper.TeachplanMapper;
@@ -72,7 +72,7 @@ public class TeachplanServiceImpl implements TeachplanService {
                 // 大章节下没有小章节，允许删除
                 int res = teachplanMapper.deleteById(id);
                 if (res < 0) {
-                    XueChengEduException.cast(CommonError.UNKOWN_ERROR);
+                    XueChengEduException.cast(CommonException.UNKOWN_ERROR);
                     return null;
                 }
                 // 删除小章节后，将大章节进行重新排序
@@ -84,7 +84,7 @@ public class TeachplanServiceImpl implements TeachplanService {
             // 删除小章节，同时将关联的信息进行删除
             int resPlan = teachplanMapper.deleteById(id);
             if (resPlan < 0) {
-                XueChengEduException.cast(CommonError.UNKOWN_ERROR);
+                XueChengEduException.cast(CommonException.UNKOWN_ERROR);
                 return null;
             } else {
                 // 删除小章节后，还要删除在课程计划媒资关联表中的数据
@@ -205,7 +205,7 @@ public class TeachplanServiceImpl implements TeachplanService {
         if (res > 0) {
             return teachplan;
         } else {
-            XueChengEduException.cast(CommonError.UNKOWN_ERROR);
+            XueChengEduException.cast(CommonException.UNKOWN_ERROR);
             return null;
         }
     }
@@ -221,7 +221,7 @@ public class TeachplanServiceImpl implements TeachplanService {
         if (res > 0) {
             return teachplan;
         } else {
-            XueChengEduException.cast(CommonError.UNKOWN_ERROR);
+            XueChengEduException.cast(CommonException.UNKOWN_ERROR);
             return null;
         }
     }

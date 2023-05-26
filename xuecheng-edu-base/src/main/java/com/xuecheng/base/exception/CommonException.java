@@ -6,7 +6,7 @@ package com.xuecheng.base.exception;
  * @Description 通用异常枚举类
  * @Created by Domenic
  */
-public enum CommonError {
+public enum CommonException {
 
     /**
      * 未知错误
@@ -35,7 +35,7 @@ public enum CommonError {
         return errMessage;
     }
 
-    private CommonError(String errMessage) {
+    private CommonException(String errMessage) {
         this.errMessage = errMessage;
     }
 

@@ -1,4 +1,8 @@
-package com.xuecheng.base.exception;
+package com.xuecheng.base.exception.handler;
+
+import com.xuecheng.base.exception.OperationFailedException;
+import com.xuecheng.base.exception.XueChengEduException;
+import com.xuecheng.base.model.RestErrorResponse;
 
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.http.HttpStatus;
@@ -32,12 +36,12 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(XueChengEduException.class)
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
     public RestErrorResponse customException(XueChengEduException e) {
-        log.error("系统异常, errorMsg={}", e.getErrMessage(), e);
-        return new RestErrorResponse(e.getErrMessage());
+        log.error("系统异常, errorMsg={}", e.getErrorMessage(), e);
+        return new RestErrorResponse(e.getErrorMessage());
     }
 
     /**
-     * 参数校验
+     * 参数校验异常
      * @param e {@link MethodArgumentNotValidException}
      * @return {@link RestErrorResponse}
      */
@@ -62,7 +66,18 @@ public class GlobalExceptionHandler {
     }
 
     /**
-     * HTTP 请求方法不支持
+     * 操作失败异常
+     * @param e {@link OperationFailedException}
+     * @return {@link RestErrorResponse}
+     */
+    @ExceptionHandler(OperationFailedException.class)
+    @ResponseStatus(HttpStatus.METHOD_NOT_ALLOWED)
+    public RestErrorResponse operationFailedException(OperationFailedException e) {
+        return new RestErrorResponse(e.getMessage());
+    }
+
+    /**
+     * HTTP 请求方法不支持异常
      * @param e {@link HttpRequestMethodNotSupportedException}
      * @return {@link RestErrorResponse}
      */
