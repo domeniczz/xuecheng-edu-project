@@ -1,16 +1,26 @@
-## Prerequisites: set `max_map_count`                                        ##
-## In linux command line:                                                    ##
-## - sudo sysctl -w vm.max_map_count=524288                                  ##
-## - sudo sysctl -p                                                          ##
-##                                                                           ##
-## Run docker-compose -p sonar -f sonarqube-compose.yml up -d                ##
-## `-p` specifies the name of project (the compose name)                     ##
-## `-f` specifies the name of docker compose file                            ##
-## `-d` means runs in detached mode                                          ##
-##                                                                           ##
-## For more info, please refer to                                            ##
-## - https://hub.docker.com/_/sonarqube                                      ##
-## - https://docs.sonarqube.org/latest/setup-and-upgrade/install-the-server/ ##
+## Prerequisites: set `max_map_count`                                                                          ##
+## In linux command line:                                                                                      ##
+## - sudo sysctl -w vm.max_map_count=524288                                                                    ##
+## - sudo sysctl -p                                                                                            ##
+##                                                                                                             ##
+## Install docker-compose plugin if not: https://docs.docker.com/compose/install/linux/                        ##
+##                                                                                                             ##
+## Execute commands below to install:                                                                          ##
+## 1. sudo curl -L \                                                                                           ##
+##    "https://github.com/docker/compose/releases/download/<VERSION>/docker-compose-$(uname -s)-$(uname -m)" \ ##
+##    -o /usr/local/bin/docker-compose                                                                         ##
+## 2. sudo mv /usr/local/bin/docker-compose /usr/bin/docker-compose                                            ##
+## 2. sudo chmod +x /usr/bin/docker-compose                                                                    ##
+## 3. docker-compose --version                                                                                 ##
+##                                                                                                             ##
+## Start docker compose: `docker-compose -p sonar -f sonarqube-compose.yml up -d`                              ##
+## - `-p` specifies the name of project (the compose name)                                                     ##
+## - `-f` specifies the name of docker compose file                                                            ##
+## - `-d` means runs in detached mode                                                                          ##
+##                                                                                                             ##
+## For more info, please refer to                                                                              ##
+## - https://hub.docker.com/_/sonarqube                                                                        ##
+## - https://docs.sonarqube.org/latest/setup-and-upgrade/install-the-server/                                   ##
 
 version: "3"
 
