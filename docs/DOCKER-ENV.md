@@ -113,11 +113,11 @@ docker run -d \
     -e TOMCAT_ACCESSLOG_ENABLED=false \
     -e TIME_ZONE=Asia/Shanghai \
     # config to connect to MySQL database in another docker container
-    -e SPRING_DATASOURCE_URL="jdbc:mysql://mysql:3304/nacos_1.4.1?useSSL=false&characterEncoding=utf8&serverTimezone=UTC&connectTimeout=1000&socketTimeout=3000&autoReconnect=true"
-    -e SPRING_DATASOURCE_USERNAME=root
-    -e SPRING_DATASOURCE_PASSWORD=root
+    -e SPRING_DATASOURCE_URL="jdbc:mysql://mysql:3304/nacos_1.4.1?useSSL=false&characterEncoding=utf8&serverTimezone=UTC&connectTimeout=1000&socketTimeout=3000&autoReconnect=true" \
+    -e SPRING_DATASOURCE_USERNAME=root \
+    -e SPRING_DATASOURCE_PASSWORD=root \
     # connect to a custom network
-    --network=<network-name>
+    --network=<network-name> \
     ## volume is optional if you like (may have some problem here)
     # -v /data/nacos/logs:/home/nacos/data \
     # -v /data/nacos/logs:/home/nacos/logs \
