@@ -64,7 +64,6 @@ public class FileChunkMergeTest {
     private String chunkFolderPath;
 
     private String mergedFilename;
-    private String mergedFilenameMinio;
 
     private String bucketName;
     private String objectFolderPathMinio;
@@ -77,12 +76,11 @@ public class FileChunkMergeTest {
         // 分块文件在 minio 中的保存路径
         objectFolderPathMinio = "chunk/";
 
-        String sourceFilenameWithoutExt = sourceFilename.substring(0, sourceFilename.lastIndexOf("."));
-        String sourceFileExt = sourceFilename.substring(sourceFilename.lastIndexOf("."));
+        String sourceFilenameWithoutExt = FileUtil.dropFileExtension(sourceFilename);
+        String sourceFileExt = FileUtil.dropFileExtension(sourceFilename);
 
         // 分块合并后的文件的本地保存路径 (路径 + 名称)，示例：test-merge.mp4
         mergedFilename = sourceFilenameWithoutExt + "-merge" + sourceFileExt;
-        mergedFilenameMinio = mergedFilename;
 
         // 创建分块文件夹 (若不存在)
         Path path = Paths.get(chunkFolderPath);
@@ -224,9 +222,9 @@ public class FileChunkMergeTest {
     @Order(4)
     void testMergeChunksOnMinio() throws IOException {
         // 合并文件
-        ObjectWriteResponse resp = minioOperation.mergeChunks(bucketName, mergedFilenameMinio, objectFolderPathMinio);
+        ObjectWriteResponse resp = minioOperation.mergeChunks(bucketName, mergedFilename, objectFolderPathMinio);
         Assertions.assertNotNull(resp, "合并文件失败");
-        Assertions.assertEquals(resp.object(), mergedFilenameMinio);
+        Assertions.assertEquals(resp.object(), mergedFilename);
     }
 
     @AfterAll
@@ -246,7 +244,7 @@ public class FileChunkMergeTest {
         minioOperation.clearFolderNonRecursively(bucketName, chunkFolderPath);
 
         // 删除和合并后的文件
-        minioOperation.deleteFile(bucketName, mergedFilenameMinio);
+        minioOperation.deleteFile(bucketName, mergedFilename);
 
         // 删除测试桶
         minioOperation.deleteBucket(bucketName);

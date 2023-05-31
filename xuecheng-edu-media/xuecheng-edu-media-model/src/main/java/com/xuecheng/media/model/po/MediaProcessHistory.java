@@ -44,10 +44,13 @@ public class MediaProcessHistory implements Serializable {
      */
     private String bucket;
 
+    /**
+     * 文件在 minio 中的路径 (objectName)
+     */
     private String filePath;
 
     /**
-     * 状态,1:未处理，视频处理完成更新为2
+     * 状态：1.未处理; 2.处理成功; 3.处理失败
      */
     private String status;
 
@@ -66,6 +69,7 @@ public class MediaProcessHistory implements Serializable {
      * 媒资文件访问地址
      */
     private String url;
+
     /**
      * 失败原因
      */
@@ -77,6 +81,6 @@ public class MediaProcessHistory implements Serializable {
      * </p>
      * <!-- 不要改为基本类型，维持包装类 Integer -->
      */
-    private Integer failCount;
+    private int failCount;
 
 }

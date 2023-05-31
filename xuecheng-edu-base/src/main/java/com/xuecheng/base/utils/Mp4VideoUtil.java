@@ -6,6 +6,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -26,9 +27,9 @@ public class Mp4VideoUtil extends AbstractVideoUtil {
      * 转换视频编码，生成 mp4 文件
      * @param originalVideoPath 源视频路径
      * @param outputVideoPath 输出视频路径
-     * @return 成功返回 success，失败返回控制台日志
+     * @return 成功返回空, 失败返回控制台日志
      */
-    public static String generateMp4(String originalVideoPath, String outputVideoPath) {
+    public static Optional<String> generateMp4(String originalVideoPath, String outputVideoPath) {
         // (若存在) 清除已生成的 mp4
         clearMp4(outputVideoPath);
 
@@ -76,11 +77,8 @@ public class Mp4VideoUtil extends AbstractVideoUtil {
 
         // 校验视频时长是否一致
         Boolean res = checkVideoTime(originalVideoPath, outputVideoPath);
-        if (Boolean.FALSE.equals(res)) {
-            return outstring;
-        } else {
-            return "success";
-        }
+
+        return Boolean.FALSE.equals(res) ? Optional.of(outstring) : Optional.empty();
     }
 
     /**

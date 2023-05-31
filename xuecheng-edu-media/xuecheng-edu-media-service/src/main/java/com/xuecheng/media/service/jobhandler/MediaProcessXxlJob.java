@@ -8,6 +8,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
+import io.minio.errors.MinioException;
+import lombok.extern.slf4j.Slf4j;
+
 /**
  * @author Domenic
  * @Classname SampleXxlJob
@@ -15,6 +18,7 @@ import org.springframework.stereotype.Component;
  * @Created by Domenic
  */
 @Component
+@Slf4j
 public class MediaProcessXxlJob {
 
     @Autowired
@@ -32,7 +36,13 @@ public class MediaProcessXxlJob {
      */
     @XxlJob("residualFileCleanerJob")
     public void residualFileCleanerJob() {
-        minioOperation.clearResidualChunkFiles(bucket);
+        try {
+            minioOperation.clearResidualChunkFiles(bucket);
+        } catch (MinioException e) {
+            log.error("删除残留的 chunk 文件出错, bucket={}, errorMsg={}\nhttpTrace={}", bucket, e.getMessage(), e.httpTrace());
+        } catch (Exception e) {
+            log.error("删除残留的 chunk 文件出错, bucket={}, errorMsg={}", bucket, e.getMessage());
+        }
     }
 
     /**

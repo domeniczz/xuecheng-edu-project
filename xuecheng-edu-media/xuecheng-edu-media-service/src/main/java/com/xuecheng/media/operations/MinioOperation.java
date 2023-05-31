@@ -2,17 +2,19 @@ package com.xuecheng.media.operations;
 
 import com.xuecheng.base.exception.XueChengEduException;
 import com.xuecheng.base.utils.FileUtil;
+import com.xuecheng.base.utils.StringUtil;
 
-import org.apache.commons.io.IOUtils;
 import org.apache.http.HttpStatus;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.io.File;
-import java.io.FileOutputStream;
 import java.io.FilterInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.StandardCopyOption;
 import java.security.GeneralSecurityException;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
@@ -66,10 +68,8 @@ public class MinioOperation {
                 .bucket(bucketName)
                 .build();
 
-        // 检查桶是否存在
         boolean exist = minioClient.bucketExists(args);
         if (!exist) {
-            // 创建桶
             minioClient.makeBucket(MakeBucketArgs.builder().bucket(bucketName).build());
         }
     }
@@ -86,27 +86,25 @@ public class MinioOperation {
                 .bucket(bucketName)
                 .build();
 
-        // 删除桶
         minioClient.removeBucket(args);
     }
 
     /**
      * 查询文件
      * @param bucket 桶名
-     * @param filePath 文件的路径
+     * @param objectName 文件的路径
      * @return 输入流 {@link FilterInputStream}
      */
-    public FilterInputStream queryFile(String bucket, String filePath) {
+    public FilterInputStream queryFile(String bucket, String objectName) {
         GetObjectArgs args = GetObjectArgs.builder()
                 .bucket(bucket)
-                .object(filePath)
+                .object(objectName)
                 .build();
 
-        // 查询远程服务获取到一个流对象
         try {
             return minioClient.getObject(args);
         } catch (Exception e) {
-            log.error("向 minio 查询文件出错 (" + filePath + ")");
+            log.error("向 minio 查询文件出错 ({}), errorMsg={}", bucket + ": " + objectName, e.getMessage());
             return null;
         }
     }
@@ -132,12 +130,11 @@ public class MinioOperation {
                     .contentType(mimeType)
                     .build();
 
-            // 上传文件
             ObjectWriteResponse res = minioClient.uploadObject(args);
             log.debug("上传文件到 minio 成功, bucket={}, objectName={}", bucket, objectName);
             return res;
         } catch (Exception e) {
-            log.error("上传文件到 minio 出错, bucket={}, objectName={}", bucket, objectName);
+            log.error("上传文件到 minio 出错, bucket={}, objectName={}, errorMsg={}", bucket, objectName, e.getMessage());
             XueChengEduException.cast("上传文件到 minio 出错，未知错误!");
             return null;
         }
@@ -149,7 +146,7 @@ public class MinioOperation {
      * @param objectName 对象名 (文件的路径)
      * @return 下载后的文件 {@link File}
      */
-    public File downloadFile(String bucket, String objectName) {
+    public Path downloadFile(String bucket, String objectName) {
 
         GetObjectArgs args = GetObjectArgs.builder()
                 .bucket(bucket)
@@ -158,18 +155,17 @@ public class MinioOperation {
 
         try (InputStream downloadstream = minioClient.getObject(args)) {
             // 创建临时文件，示例命名：down-minio-6c2293.mp4
-            File file = File.createTempFile("down-minio-" + FileUtil.getUuid(), objectName.substring(objectName.lastIndexOf(".")));
+            Path tempFile = Files.createTempFile("down-minio-" + StringUtil.getUuid(), FileUtil.getFileExtension(objectName));
 
-            try (FileOutputStream out = new FileOutputStream(file)) {
-                IOUtils.copy(downloadstream, out);
-            }
+            Files.copy(downloadstream, tempFile, StandardCopyOption.REPLACE_EXISTING);
 
             log.debug("从 minio 下载文件成功, bucket={}, objectName={}, saveDir={}", bucket, objectName, System.getProperty("java.io.tmpdir"));
 
-            return file;
+            return tempFile;
         } catch (Exception e) {
             log.error("从 minio 下载文件出错, bucket={}, objectName={}", bucket, objectName);
         }
+
         return null;
     }
 
@@ -181,7 +177,7 @@ public class MinioOperation {
      * @param length 下载的长度
      * @return 下载的文件内容 {@link File}
      */
-    public File downloadFileParts(String bucket, String objectName, long offset, long length) {
+    public Path downloadFileParts(String bucket, String objectName, long offset, long length) {
 
         GetObjectArgs args = GetObjectArgs.builder()
                 .bucket(bucket)
@@ -192,19 +188,18 @@ public class MinioOperation {
 
         try (InputStream downloadstream = minioClient.getObject(args)) {
             // 创建临时文件，示例命名：down-part-minio-6c2293.mp4
-            File file = File.createTempFile("down-part-minio-" + FileUtil.getUuid(), objectName.substring(objectName.lastIndexOf(".")));
+            Path tempFile = Files.createTempFile("down-part-minio-" + StringUtil.getUuid(), FileUtil.getFileExtension(objectName));
 
-            try (FileOutputStream out = new FileOutputStream(file)) {
-                IOUtils.copy(downloadstream, out);
-            }
+            Files.copy(downloadstream, tempFile, StandardCopyOption.REPLACE_EXISTING);
 
             log.debug("从 minio 下载部分的文件成功, downloadSize={}, bucket={}, objectName={}, saveDir={}",
-                    file.length(), bucket, objectName, System.getProperty("java.io.tmpdir"));
+                    Files.size(tempFile), bucket, objectName, System.getProperty("java.io.tmpdir"));
 
-            return file;
+            return tempFile;
         } catch (Exception e) {
             log.error("从 minio 下载部分发文件出错, bucket={}, objectName={}", bucket, objectName);
         }
+
         return null;
     }
 
@@ -220,7 +215,6 @@ public class MinioOperation {
                 .object(objectName)
                 .build();
 
-        // 删除文件
         try {
             minioClient.removeObject(args);
             log.debug("从 minio 删除文件成功, bucket={}, objectName={}", bucket, objectName);
@@ -360,62 +354,57 @@ public class MinioOperation {
      * </p>
      * @param bucketName 桶名称
      */
-    public void clearResidualChunkFiles(String bucketName) {
-        try {
-            // 获取所有文件
-            Iterable<Result<Item>> results = minioClient.listObjects(ListObjectsArgs.builder()
-                    .bucket(bucketName)
-                    // 递归
-                    .recursive(true)
-                    .build());
+    public boolean clearResidualChunkFiles(String bucketName) throws IOException, MinioException, GeneralSecurityException {
+        // 获取所有文件
+        Iterable<Result<Item>> results = minioClient.listObjects(ListObjectsArgs.builder()
+                .bucket(bucketName)
+                // 递归
+                .recursive(true)
+                .build());
 
-            LocalDateTime now = LocalDateTime.now();
-            String lastMd5Path = "";
-            // 记录被清理的，分块文件数量
-            int leftoverChunkFileCount = 0;
-            // 记录被清理的，分块文件夹数量
-            int leftoverChunkFolderCount = 0;
-            // 记录同一个分块文件夹中的文件，最近的一次修改时间 (初始化最早的时间: -999999999-01-01T00:00:00)
-            LocalDateTime latestLastModified = LocalDateTime.MIN;
+        LocalDateTime now = LocalDateTime.now();
+        String lastMd5Path = "";
+        // 记录被清理的，分块文件数量
+        int leftoverChunkFileCount = 0;
+        // 记录被清理的，分块文件夹数量
+        int leftoverChunkFolderCount = 0;
+        // 记录同一个分块文件夹中的文件，最近的一次修改时间 (初始化最早的时间: -999999999-01-01T00:00:00)
+        LocalDateTime latestLastModified = LocalDateTime.MIN;
 
-            // 遍历所有文件，查找残留的分块文件
-            for (Result<Item> result : results) {
-                Item item = result.get();
-                String itemObjectName = item.objectName();
-                String[] pathParts = itemObjectName.split("/");
+        // 遍历所有文件，查找残留的分块文件
+        for (Result<Item> result : results) {
+            Item item = result.get();
+            String itemObjectName = item.objectName();
+            String[] pathParts = itemObjectName.split("/");
 
-                // 因为循环的 item 是文件，因此 length - 2 获取的就是该文件所在的文件夹名
-                // 若文件夹名为 "chunk"，则表示该文件是分块文件
-                String folderName = pathParts[pathParts.length - 2];
-                // 从文件路径中获取分块文件的源文件的 MD5 值
-                String currentMd5Path = pathParts[pathParts.length - 3];
-                if (pathParts.length > 1 && "chunk".equals(folderName)) {
-                    // 判断是否切换到了另一个源文件的残留分块文件夹
-                    if (!Objects.equals(currentMd5Path, lastMd5Path)) {
-                        lastMd5Path = currentMd5Path;
-                        leftoverChunkFolderCount++;
-                        // 重置为最早的时间
-                        latestLastModified = LocalDateTime.MIN;
-                    }
+            // 因为循环的 item 是文件，因此 length - 2 获取的就是该文件所在的文件夹名
+            // 若文件夹名为 "chunk"，则表示该文件是分块文件
+            String folderName = pathParts[pathParts.length - 2];
+            // 从文件路径中获取分块文件的源文件的 MD5 值
+            String currentMd5Path = pathParts[pathParts.length - 3];
+            if (pathParts.length > 1 && "chunk".equals(folderName)) {
+                // 判断是否切换到了另一个源文件的残留分块文件夹
+                if (!Objects.equals(currentMd5Path, lastMd5Path)) {
+                    lastMd5Path = currentMd5Path;
+                    leftoverChunkFolderCount++;
+                    // 重置为最早的时间
+                    latestLastModified = LocalDateTime.MIN;
+                }
 
-                    LocalDateTime lastModified = item.lastModified().toInstant().atZone(ZoneId.systemDefault()).toLocalDateTime();
-                    latestLastModified = lastModified.isAfter(latestLastModified) ? lastModified : latestLastModified;
+                LocalDateTime lastModified = item.lastModified().toInstant().atZone(ZoneId.systemDefault()).toLocalDateTime();
+                latestLastModified = lastModified.isAfter(latestLastModified) ? lastModified : latestLastModified;
 
-                    // 若最后修改日期比当前时间早 24 小时，则对分块文件进行删除
-                    if (latestLastModified.isBefore(now.minusHours(24))) {
-                        minioClient.removeObject(RemoveObjectArgs.builder().bucket(bucketName).object(itemObjectName).build());
-                        leftoverChunkFileCount++;
-                        log.debug("删除残留的分块文件: " + itemObjectName);
-                    }
+                // 若最后修改日期比当前时间早 24 小时，则对分块文件进行删除
+                if (latestLastModified.isBefore(now.minusHours(24))) {
+                    minioClient.removeObject(RemoveObjectArgs.builder().bucket(bucketName).object(itemObjectName).build());
+                    leftoverChunkFileCount++;
+                    log.debug("删除残留的分块文件: " + itemObjectName);
                 }
             }
-
-            log.debug("总共清理了 {} 个残留的分块文件夹, 删除了 {} 个残留的分块文件", leftoverChunkFolderCount, leftoverChunkFileCount);
-        } catch (MinioException e) {
-            log.error("删除残留的 chunk 文件出错, bucket={}, errorMsg={}\nhttpTrace={}", bucketName, e.getMessage(), e.httpTrace());
-        } catch (Exception e) {
-            log.error("删除残留的 chunk 文件出错, bucket={}, errorMsg={}", bucketName, e.getMessage());
         }
+
+        log.debug("总共清理了 {} 个残留的分块文件夹, 删除了 {} 个残留的分块文件", leftoverChunkFolderCount, leftoverChunkFileCount);
+        return true;
     }
 
     /**

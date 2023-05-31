@@ -27,7 +27,6 @@ import java.nio.file.attribute.BasicFileAttributes;
 import java.security.MessageDigest;
 import java.util.Comparator;
 import java.util.List;
-import java.util.UUID;
 import java.util.stream.Stream;
 
 import lombok.extern.slf4j.Slf4j;
@@ -122,13 +121,13 @@ public class FileUtil {
     /**
      * 创建临时文件
      * @param fileName 文件名
-     * @param fileExt 文件扩展名
+     * @param fileExt 文件扩展名 (不包含 ".")
      * @return {@link Path}
      * @throws IOException IO 异常
      */
     public static Path createTempFileIfNotExist(String fileName, String fileExt) throws IOException {
         String tempDirectoryPath = System.getProperty("java.io.tmpdir");
-        Path filePath = Paths.get(tempDirectoryPath, fileName + fileExt);
+        Path filePath = Paths.get(tempDirectoryPath, fileName + "." + fileExt);
 
         if (Files.notExists(filePath)) {
             Files.createFile(filePath);
@@ -257,7 +256,7 @@ public class FileUtil {
      * @throws IOException IO 异常
      */
     public static <T> void writeItemToFile(T item, String outputFileName) throws IOException {
-        Path outputPath = createTempFileIfNotExist(outputFileName, ".txt");
+        Path outputPath = createTempFileIfNotExist(outputFileName, "txt");
         try (BufferedWriter writer = Files.newBufferedWriter(outputPath)) {
             String val = String.valueOf(item);
             // 若值为 null 或 为空 或 只包含空格，则跳过
@@ -276,7 +275,7 @@ public class FileUtil {
      * @throws IOException IO 异常
      */
     public static <T> void writeListToFile(List<T> items, String outputFileName) throws IOException {
-        Path outputPath = createTempFileIfNotExist(outputFileName, ".txt");
+        Path outputPath = createTempFileIfNotExist(outputFileName, "txt");
         try (BufferedWriter writer = Files.newBufferedWriter(outputPath)) {
             for (T item : items) {
                 String val = String.valueOf(item);
@@ -345,14 +344,6 @@ public class FileUtil {
             log.error("获取文件 \"{}\" MD5 出错, errorMsg={}", path.getFileName(), e.getMessage());
             return null;
         }
-    }
-
-    /**
-     * 生成 UUID (32 位 16 进制数)
-     * @return {@link UUID} 字符串
-     */
-    public static String getUuid() {
-        return UUID.randomUUID().toString().replace("-", "");
     }
 
     /**

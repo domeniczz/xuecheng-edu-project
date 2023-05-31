@@ -4,6 +4,7 @@ import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.xuecheng.base.exception.XueChengEduException;
 import com.xuecheng.media.mapper.MediaFileMapper;
 import com.xuecheng.media.model.po.MediaFile;
+import com.xuecheng.media.service.MediaProcessService;
 
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,6 +29,9 @@ public class FileInfoDbOperation {
 
     @Autowired
     private MediaFileMapper mediaFileMapper;
+
+    @Autowired
+    private MediaProcessService mediaProcessService;
 
     @Autowired
     private FileInfoDbOperation currentProxy;
@@ -56,6 +60,8 @@ public class FileInfoDbOperation {
         if (mediaFile == null) {
             // 将文件信息入库
             mediaFile = saveFileInfo(mediaFileToAdd);
+            // 将文件添加到待处理文件列表中
+            mediaProcessService.addPendingTask(mediaFile);
         }
 
         return mediaFile;

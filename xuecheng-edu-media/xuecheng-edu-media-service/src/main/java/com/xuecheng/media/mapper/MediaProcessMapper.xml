@@ -19,4 +19,24 @@
         id, file_id, filename, bucket, status, create_date, finish_date, url
     </sql>
 
+    <!-- 获取待处理任务列表 -->
+    <select id="selectMediaProcessList" resultType="MediaProcess">
+        SELECT *
+        FROM media_process p
+        WHERE p.id % #{shardTotal} = #{shardIndex}
+            AND (p.status = 1 OR p.status = 3)
+            AND p.fail_count &lt; 3
+        LIMIT #{count}
+    </select>
+
+    <!-- 执行一次任务，更新任务数据 -->
+    <update id="startProcessOnce">
+        UPDATE media_process AS p
+        -- treat `status` as an optimistic lock, set it to 4 means the task is being processed
+        SET p.status = '4'
+        WHERE (p.status = '1' OR p.status = '3')
+            AND p.fail_count &lt; 3
+            AND p.id = #{processId};
+    </update>
+
 </mapper>

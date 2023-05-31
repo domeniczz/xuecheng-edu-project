@@ -102,14 +102,14 @@ public class BigFilesServiceImpl implements BigFilesService {
         // 获取分块文件的路径
         String chunkFilePath = getChunkFileFolderPath(fileMd5) + chunkIndex;
 
-        // 获取分块文件的 MD5
-        String chunkMd5 = FileUtil.getFileMd5(Paths.get(localChunkFilePath));
-
         // 获取文件的 mimeType (传入值为 null 或 空 表示没有扩展名)
         String mimeType = FileUtil.getMimeTypeFromExt("");
 
         // 将分块文件上传到 minio
         ObjectWriteResponse resp = minioOperation.uploadFile(localChunkFilePath, mimeType, bucket, chunkFilePath);
+
+        // 获取分块文件的 MD5
+        String chunkMd5 = FileUtil.getFileMd5(Paths.get(localChunkFilePath));
         // 校验分块的 MD5 和 ETag 值是否一致，来判断分块文件一致性是否受损
         if (resp != null && chunkMd5.equals(resp.etag())) {
             // 上传成功
