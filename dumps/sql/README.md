@@ -1,4 +1,4 @@
-[English](https://github.com/domeniczz/xuecheng-edu-project/blob/master/sql/README.md) | [中文](https://github.com/domeniczz/xuecheng-edu-project/blob/master/sql/README-zh.md)
+[English](https://github.com/domeniczz/xuecheng-edu-project/blob/master/dumps/sql/README.md) | [中文](https://github.com/domeniczz/xuecheng-edu-project/blob/master/dumps/sql/README-zh.md)
 
 ## Data Dictionary
 
