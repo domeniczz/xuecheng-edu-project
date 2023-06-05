@@ -16,7 +16,7 @@
 ## Start docker compose: `docker-compose -p sonar -f sonarqube-compose.yml up -d`                              ##
 ## - `-p` specifies the name of project (the compose name)                                                     ##
 ## - `-f` specifies the name of docker compose file                                                            ##
-## - `-d` means runs in detached mode                                                                          ##
+## - `-d` means running in detached mode                                                                       ##
 ##                                                                                                             ##
 ## For more info, please refer to                                                                              ##
 ## - https://hub.docker.com/_/sonarqube                                                                        ##

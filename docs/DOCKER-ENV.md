@@ -222,13 +222,13 @@ docker pull xuxueli/xxl-job-admin:2.3.1
 > ```bash
 > # Create a new network
 > docker network create <network-name>
-> 
+>
 > # Connect MySQL container to the network
 > docker network connect <network-name> mysql
-> 
+>
 > # Connect XXL-JOB container to the network (after creating)
 > docker network connect <network-name> xxl-job-admin
-> 
+>
 > # Disconnect from a network (if needed)
 > docker network disconnect <network-name> <container-name>
 > ```
@@ -314,6 +314,11 @@ docker stop nginx
 everytime config file has been changed, you should reload nginx:
 
 ```bash
+# run the command inside the container
 nginx -s reload
+
+# run command outside of the container
+docker exec nginx nginx -s reload
 ```
 
+To access minio from another container via nginx, it's recommended not to use the localhost address (127.0.0.1) as the host. Instead, the container name (for instance, "minio") should be specified as the host.
