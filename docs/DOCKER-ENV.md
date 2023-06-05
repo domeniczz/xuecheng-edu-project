@@ -1,6 +1,12 @@
-You can build the docker environment on your own if you like.
+You can build the docker environment for this project on your own if you like.
 
 Below are the instructions of installing each tool in docker.
+
+> **NOTE:** If you're running Docker in Windows, it's recommended to run docker commands in the WSL distribution for better compatibility. Otherwise, you may encounter some weird errors, for example, failed to mount directories in WSL to docker containers.
+>
+> **NOTE:** Remember to check if the target directory of `--volume` exists in docker container, if not sure, you can create a test container first to find target directory in container.
+>
+> **NOTE:** Before running a Docker container, if you mount a volume to it, make sure
 
 ## MySQL
 
@@ -113,7 +119,7 @@ docker run -d \
     -e TOMCAT_ACCESSLOG_ENABLED=false \
     -e TIME_ZONE=Asia/Shanghai \
     # config to connect to MySQL database in another docker container
-    -e SPRING_DATASOURCE_URL="jdbc:mysql://mysql:3304/nacos_1.4.1?useSSL=false&characterEncoding=utf8&serverTimezone=UTC&connectTimeout=1000&socketTimeout=3000&autoReconnect=true" \
+    -e SPRING_DATASOURCE_URL="jdbc:mysql://mysql:3306/nacos_1.4.1?useSSL=false&characterEncoding=utf8&serverTimezone=UTC&connectTimeout=1000&socketTimeout=3000&autoReconnect=true" \
     -e SPRING_DATASOURCE_USERNAME=root \
     -e SPRING_DATASOURCE_PASSWORD=root \
     # connect to a custom network
@@ -231,11 +237,11 @@ docker pull xuxueli/xxl-job-admin:2.3.1
 
 ```bash
 docker run -d \
+	--name xxl-job-admin \
 	# In this case, database url is "jdbc:mysql://mysql:3306/xxl_job_2.3.1", 
 	# `mysql` is the container name of MySQL database that it's connected to
 	# 3306 is the default MySQL port (NOT the mapped port)
 	-e PARAMS="--spring.datasource.url=jdbc:mysql://mysql:3306/xxl_job_2.3.1?useUnicode=true&serverTimezone=UTC&useSSL=false&characterEncoding=UTF-8&autoReconnect=true --spring.datasource.username=root --spring.datasource.password=root" \
-	--name xxl-job-admin \
 	-p 8088:8080 \
 	# mount local directory /data/xxl-job-admin to the container (may have some problem here)
 	# -v /data/xxl-job-admin:/data/applogs \
@@ -259,5 +265,55 @@ docker exec -it xxl-job-admin bash
 ```bash
 docker start xxl-job-admin
 docker stop xxl-job-admin
+```
+
+## Nginx
+
+### Install
+
+[nginx - docker hub](https://hub.docker.com/_/nginx)
+
+**pull the image:**
+
+```bash
+docker pull nginx:latest
+```
+
+**Create & Run the container:**
+
+```bash
+docker run -d \
+	--name nginx \
+	-v /data/nginx/html:/usr/share/nginx/html \
+	-v /data/nginx/conf:/etc/nginx \
+	-p 80:80 \
+	nginx:latest
+```
+
+```bash
+# set container auto start-up
+docker update --restart=always nginx
+```
+
+**Attach shell & Log into the container:**
+
+```bash
+# go into nginx container
+docker exec -it nginx /bin/bash
+```
+
+**Start & Stop container:**
+
+```bash
+docker start nginx
+docker stop nginx
+```
+
+### Usage
+
+everytime config file has been changed, you should reload nginx:
+
+```bash
+nginx -s reload
 ```
 
